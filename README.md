@@ -15,9 +15,9 @@ not conflict with other ChiliPeppr widgets.
 | Name                  | Widget / GRBL |
 | Description           | This widget shows the GRBL Buffer so other widgets can limit their flow of sending commands and other specific GRBL features. |
 | chilipeppr.load() URL | http://raw.githubusercontent.com/jpadie/grbl1-test-widget/master/auto-generated-widget.html |
-| Edit URL              | http://ide.c9.io/jpadie/grbl1_1_test |
+| Edit URL              | http://ide.c9.io/jpadie/grbl1_test_widget |
 | Github URL            | http://github.com/jpadie/grbl1-test-widget |
-| Test URL              | https://preview.c9users.io/jpadie/grbl1_1_test/widget.html |
+| Test URL              | https://preview.c9users.io/jpadie/grbl1_test_widget/widget.html |
 
 ## Example Code for chilipeppr.load() Statement
 
