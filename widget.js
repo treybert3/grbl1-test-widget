@@ -647,6 +647,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         	if(this.version.substring(0,1) === '1'){
         		return this.grblResponseV1(recvline);
         	}
+        	console.log("GRBL WIDGET: version 0.9 line received");
             //console.log("GRBL: Message Received - " + recvline.dataline);
             if (!(recvline.dataline) || recvline.dataline=='\n') {
                 //console.log("GRBL: got recvline but it's not a dataline, so returning.");
