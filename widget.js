@@ -19,13 +19,19 @@ cprequire_test(["inline:com-chilipeppr-widget-grbl"], function (grbl) {
     chilipeppr.publish("/com-chilipeppr-widget-3dviewer/unitsChanged","inch");
     
     var sendTestPositionData = function() {
-        setTimeout(function() {
-            // MPos:[-0.05,0.00,0.00],WPos:[-0.05,0.00,0.00]
-            chilipeppr.publish("/com-chilipeppr-widget-serialport/recvline", { 
-                //dataline: "MPos:[-0.05,0.00,0.00],WPos:[-0.05,0.200,-1.00]"  //0.8a            
-                dataline: "<idle,MPos:-0.05,0.00,0.00,WPos:-0.05,0.200,-1.00>"  //0.8c
+       
+        setTimeout(function(ver) {
+            if (ver.substr(0, 3) == 1.1) {
+                var dataline = "<Idle|MPos:-0.05,0.00,0.00>";
+            }
+            else {
+                var dataline = "<idle,MPos:-0.05,0.00,0.00,WPos:-0.05,0.200,-1.00>";
+            }
+            chilipeppr.publish("/com-chilipeppr-widget-serialport/recvline", {
+            //dataline: "MPos:[-0.05,0.00,0.00],WPos:[-0.05,0.200,-1.00]"  //0.8a
+                dataline: dataline
             });
-        }, 2000);
+            }, 2000, this.version);
         
     };
     sendGrblVersion();
@@ -317,18 +323,18 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         grblResponseV1: function(recvline){
         
         	var pushMessages = {
-			   status : new RegExp("^\<(.*?)\\>"),
-			   gCodeState: new RegExp("^\\[GC:(.*?)\\]"),
-			   welcome : new RegExp("^Grbl (.*?) .*?"),
-			   alarm:	new RegExp("^ALARM:(.*?)"),
-			   error: new RegExp("^error:(.*?)"),
-			   setting: new RegExp("^\\$(.*?)=(.*?)"),
-			   message: new RegExp("^\\[MSG:(.*?)\\]"),
-			   helpMessage: new RegExp("^\\[HLP:(.*?)\\]"),
-			   hashQuery: new RegExp("^\\[(G54|G55|G56|G57|G58|G59|G28|G92|TLO|PRB):(.*?)\\]"),
-			   version: new RegExp("^\\[VER:(.*?)\\]"),
-			   options: new RegExp("^\\[OPT:(.*?)\\]"),
-			   startupLineExecution: new RegExp("^\\>(.*?):(.*?)")
+			   status : new RegExp("^\\<(.*?)\\>","i"),
+			   gCodeState: new RegExp("^\\[GC:(.*?)\\]","i"),
+			   welcome : new RegExp("^Grbl (.*?) .*?","i"),
+			   alarm:	new RegExp("^ALARM:(.*?)","i"),
+			   error: new RegExp("^error:(.*?)","i"),
+			   setting: new RegExp("^\\$(.*?)=(.*?)","i"),
+			   message: new RegExp("^\\[MSG:(.*?)\\]","i"),
+			   helpMessage: new RegExp("^\\[HLP:(.*?)\\]","i"),
+			   hashQuery: new RegExp("^\\[(G54|G55|G56|G57|G58|G59|G28|G92|TLO|PRB):(.*?)\\]","i"),
+			   version: new RegExp("^\\[VER:(.*?)\\]","i"),
+			   options: new RegExp("^\\[OPT:(.*?)\\]","i"),
+			   startupLineExecution: new RegExp("^\\>(.*?):(.*?)","i")
 		   };
 
 		   var errorMessages = [
@@ -466,7 +472,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
      					//we need the bits
      					var fields = result[1].split("|");
      					//0 is the machine state
-     					var status = new RegExp("^(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)");
+     					var status = new RegExp("^(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)","i");
      					if(status.exec(fields[0])){
      						if(fields[0].indexOf('Hold:')>=0 || fields[0].indexOf('Door:') >= 0){
      							this.status = subStates[fields[0]];
@@ -480,40 +486,40 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 	     				var receivedWorkCoords = false; 
      					for(var i = 1;i<fields.length;i++){
      						var bit = fields[i].split(":");
-     						switch (bit[0]){
-     							case "MPos":
+     						switch (bit[0].toLowerCase()){
+     							case "mpos":
 	     							var coords = bit[1].split(',');
      								this.last_machine.x = coords[0];
      								this.last_machine.y = coords[1];
      								this.last_machine.z = coords[2];
      								receivedMachineCoords = true;
      							break;
-     							case "WPos":
+     							case "wpos":
 	     							var coords = bit[1].split(',');
      								this.last_work.x = coords[0];
      								this.last_work.y = coords[1];
      								this.last_work.z = coords[2];
      								receivedWorkCoords = true;
      							break;
-     							case "WCO":
+     							case "wco":
      								var offset = bit[1].split(',');
      								this.offsets.x = offset[0];
      								this.offsets.y = offset[1];
      								this.offsets.z = offset[2];
      							break;
-     							case "Bf":
+     							case "bf":
      							break;
-     							case "Ln":
+     							case "ln":
      							break;
-     							case "F":
+     							case "f":
      							break;
-     							case "Fs":
+     							case "fs":
      							break;
-     							case "Pn":
+     							case "pn":
      							break;
-     							case "Ov":
+     							case "ov":
      							break;
-     							case "A":
+     							case "a":
      							break;     							
      						}
      					}
