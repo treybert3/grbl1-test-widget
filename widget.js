@@ -321,7 +321,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.publishAxisStatus({"posx":0.000, "posy":0.000,"posz":0.000});
         },
         grblResponseV1: function(recvline){
-        
+            console.log("GRBL WIDGET: received 1.1 line");
         	var pushMessages = {
 			   status : new RegExp("^\\<(.*?)\\>","i"),
 			   gCodeState: new RegExp("^\\[GC:(.*?)\\]","i"),
@@ -566,13 +566,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 		$('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui  
      				break;
      				case 'alarm':
-     					chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", alarmCodes[parseInt(result[1])]);
-     					if(parseInt(result[1]) == 4 || parseInt(result[1]) == 5){
+     					chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", alarmCodes[parseInt(result[1]),10]);
+     					if(parseInt(result[1],10) == 4 || parseInt(result[1],10) == 5){
 		                    chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", "alarm");
 		                }
      				break;
      				case 'error':
-     					chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorCodes[parseInt(result[1])]);
+     					chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorCodes[parseInt(result[1]),10]);
      					//should we stop now?
      				break;
      				case 'setting':
@@ -598,7 +598,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
      						break;
      						case "Pgm End":
 	     						chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Program ended, gCode modes restored to defaults.");
-	     					break
+	     					break;
      						case "Sleeping":
      							chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Sleeping.");
 							break;     					
@@ -610,7 +610,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
      				case 'hashQuery':
      					if(result[0] == 'PRB'){
 							var bits = result[2].split(':');
-							var probeSuccess = parseInt(bits[1]);
+							var probeSuccess = parseInt(bits[1],10);
 							var coords = bits[1].split(',');
 							if(this.work_mode===this.report_mode){
                         		chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {	"x":parseFloat(coords[0]) - this.offsets.x,"y":parseFloat(coords[1]) - this.offsets.y,"z":parseFloat(coords[2]) - this.offsets.z, status: probeSuccess});
@@ -644,7 +644,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             	
         },
         grblResponse: function (recvline) {
-        	if(this.version.substring(0,3) === '1.1'){
+        	if(this.version.substring(0,1) === '1'){
         		return this.grblResponseV1(recvline);
         	}
             //console.log("GRBL: Message Received - " + recvline.dataline);
