@@ -1,8 +1,11 @@
 #com-chilipeppr-widget-grbl-body {
-    /* padding:0; */
+    /*padding:0; */
 }
 .com-chilipeppr-interface-cnccontroller-stat .col {
     padding:0 10px 0 0;
+}
+#com-chilipeppr-widget-grbl-body{
+    font-size:12px;
 }
 .com-chilipeppr-interface-cnccontroller-stat .col:last-child {
     padding:0;
@@ -16,16 +19,13 @@
 .com-chilipeppr-interface-cnccontroller-stat div.col.lblpad {
     padding-left:10px;
 }
-.com-chilipeppr-interface-cnccontroller-stat  .stat-unit {
-    font-size:9px;
-    display:none;
-}
+  
 .com-chilipeppr-interface-cnccontroller-stat  div.col.well {
     margin-bottom:0px;
     padding-left:5px;
 }
 .com-chilipeppr-interface-cnccontroller-stat  .stat-sm {
-    font-size:10px;
+    font-size:12px;
 }
 
 #com-chilipeppr-widget-grbl .enabled{

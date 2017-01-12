@@ -27,12 +27,94 @@
         <span class="panel-title" data-toggle="popover">GRBL</span>
     </div>
     <div id="com-chilipeppr-widget-grbl-body" class="panel-body">
-        <div id="grbl-buffer-warning" style="color:red;font-size:12px;text-align:center;">You must connect to your GRBL device using the GRBL buffer algorithm for this workspace to work properly.  Connecting to any other buffer (default, tinyg, etc) will cause unpredictable behavior.<br/><br/></div>
-        <div id="grbl-current-state">Current State: <span class="com-chilipeppr-grbl-state">Offline</span></div>
-        <div id="grbl-mcs-wcs-offsets">Machine/Work Offsets: <span class="com-chilipeppr-grbl-mcswcsoffset"></span></div>
+        <div id="grbl-buffer-warning" style="color:red;font-size:12px;text-align:center;">
+            You must connect to your GRBL device using the GRBL buffer algorithm in this workspace.  Connecting to any other buffer (default, tinyg, etc) will cause unpredictable behavior.<br/><br/>
+        </div>
+        <div class="container-fluid com-chilipeppr-interface-cnccontroller-stat">
+            <div class="row stat-row">
+                <div class="col col-xs-3" id="ttl-state">
+                    State
+                </div>
+                <div class="col col-xs-9 well" id='stat-state-background-box'>
+                    <span class="stat-sm stat-state">Offline</span>
+                </div>
+            </div><!-- row -->
+            <div class="row stat-row">
+                <div class="col col-xs-3" id="ttl-mcoords">
+                    Machine Coords (mm)
+                </div>
+                <div class="col col-xs-9 well">
+                    <span class="stat-sm stat-mcoords">0</span>
+                </div>
+            </div>
+            <div class="row stat-row">
+                <div class="col col-xs-3" id="ttl-units">
+                    Units
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-units">-</span>
+                </div>
+                <div class="col col-xs-3 lblpad" id="ttl-feedrate">
+                    Feedrate
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-feedrate">0</span>                   
+                </div>
+            </div><!-- row -->
+            <div class="row stat-row">
+                <div class="col col-xs-3" id="ttl-distance">
+                    Distance
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm stat-distance">-</span>
+                </div>
+                <div class="col col-xs-3 lblpad" id="ttl-motion">
+                    Motion
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm stat-motion">-</span>
+                </div>
+            </div><!-- row -->
+            <div class="row stat-row">
+                <div class="col col-xs-3" id="ttl-wcs">
+                    WCS
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm stat-wcs">-</span>
+                </div>
+                <div class="col col-xs-3 lblpad" id="ttl-plane">
+                    Plane
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm stat-plane">-</span>
+                </div>
+            </div><!-- row -->
+            <div class="row stat-row">
+                <div class="col col-xs-3" id="ttl-coolant">
+                    Coolant
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm stat-coolant">-</span>
+                </div>
+                <div class="col col-xs-3 lblpad" id="ttl-spindle">
+                    Spindle
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm stat-spindle">-</span>
+                </div>
+            </div><!-- row -->
+            <div class="row stat-row">
+                <div class="col col-xs-3" id="ttl-queue">
+                    SPJS Queue
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm stat-queue">0</span>
+                </div>
+            </div><!-- row -->
+            <span style="font-size:0.8em;">(These parameters may not update in real time)</span>
+        </div>
     </div>
-    <div id="com-chilipeppr-widget-grbl-ftr" class="panel-footer" style="font-size:10px;">
-        Work in progress - to report issues please use the chilipeppr google + community (v1.5b of 0.8c+ code, v0.0.1 1.1+)</div>
+    <div id="com-chilipeppr-widget-grbl-ftr" class="panel-footer" style="font-size:10px;">To report issues please visit the <a href='https://plus.google.com/communities/104346367498010042037'>Chilipeppr Community</a> (v3)</div>
 </div>
 
 <div class="modal fade " id="com-chilipeppr-widget-grbl-modal" tabindex="-1" role="dialog">
