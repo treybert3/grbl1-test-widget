@@ -535,7 +535,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 "G-code locked out during alarm or jog state",
                 "Soft limits cannot be enabled without homing also enabled.",
                 "Max characters per line exceeded. Line was not processed and executed.",
-                "(Compile Option) Grbl '$' setting value exceeds the maximum step rate supported.",
+                "(Compile Option) Grbl '&#36;' setting value exceeds the maximum step rate supported.",
                 "Safety door detected as opened and door state initiated.",
                 "(Grbl-Mega Only) Build info or startup line exceeded EEPROM line length limit.",
                 "Jog target exceeds machine travel. Command ignored.",
