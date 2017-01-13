@@ -93,7 +93,7 @@ function Queue() {
     };
 }
 
-cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie"], function() {
+cpdefine("inline:#com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie"], function() {
     return {
         id: "com-chilipeppr-widget-grbl",
         implements: {
@@ -647,7 +647,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             $.each(pushMessages, function(key, value) {
                 if (!parsing) return;
                 var result = key.exec(msg);
-                var needsM2W = false;
                 if (result) {
                     parsing = false;
                 }
@@ -711,12 +710,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             }
                         }
                         //end of status
-                        if (receivedMachineCoords && !receivedWordCoords) {
+                        if (receivedMachineCoords && !receivedWorkCoords) {
                             this.last_work.x = this.last_machine.x - this.offsets.x;
                             this.last_work.y = this.last_machine.y - this.offsets.y;
                             this.last_work.z = this.last_machine.z - this.offsets.z;
                         }
-                        else if (!receivedMachineCoords && receivedWordCoords) {
+                        else if (!receivedMachineCoords && receivedWorkCoords) {
                             this.last_machine.x = this.last_work.x + this.offsets.x;
                             this.last_machine.y = this.last_work.y + this.offsets.y;
                             this.last_machine.z = this.last_work.z + this.offsets.z;
