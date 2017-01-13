@@ -38,7 +38,7 @@ chilipeppr.load(
     // Callback after widget loaded into #myDivWidgetGrbl
     // Now use require.js to get reference to instantiated widget
     cprequire(
-      ["inline:#com-chilipeppr-widget-grbl"], // the id you gave your widget
+      ["inline:com-chilipeppr-widget-grbl"], // the id you gave your widget
       function(myObjWidgetGrbl) {
         // Callback that is passed reference to the newly loaded widget
         console.log("Widget / GRBL 1.1 compatibility test just got loaded.", myObjWidgetGrbl);

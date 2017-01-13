@@ -93,7 +93,7 @@ function Queue() {
     };
 }
 
-cpdefine("inline:#com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie"], function() {
+cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie"], function() {
     return {
         id: "com-chilipeppr-widget-grbl",
         implements: {
