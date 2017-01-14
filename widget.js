@@ -684,8 +684,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var receivedMachineCoords = false;
                         var receivedWorkCoords = false;
                         for (var i = 1; i < fields.length; i++) {
+                            console.log('GRBL WIDGET: checking item ' + i + " of " + fields.length);
                             var bit = fields[i].split(":");
-                            console.log("GRBL WIDGET: status information: ", fields[i],bit);
+                            console.log("GRBL WIDGET: status part information: ", fields[i],bit);
                             switch (bit[0].toLowerCase()) {
                                 case "mpos":
                                     var coords = bit[1].split(',');
@@ -729,7 +730,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                             }
                             if(i < fields.length-1){
-                            console.log("GRBL WIDGET: looping to next status item");
+                                console.log("GRBL WIDGET: looping to next status item");
                             }
                         }
                         //end of status
