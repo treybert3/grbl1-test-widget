@@ -648,7 +648,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             var parsing = true;
             $.each(pushMessages, function(key, value) {
                 console.log("GRBL WIDGET: testing regex", key, value);
-                if (!parsing) return;
+                if (!parsing){
+                    console.log("GRBL WIDGET: not checking because line already parsed");
+                    return;
+                } return;
                 var result = value.exec(msg);
                 if (result) {
                     parsing = false;
@@ -661,7 +664,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //we need the bits
                         var fields = result[1].split("|");
                         console.log("GRBL WIDGET: status information: ", fields);
-                        //0 is the machine state
+                        //0 is always the machine state
                         var status = new RegExp("^(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
                         if (status.exec(fields[0])) {
                             if (fields[0].indexOf('Hold:') >= 0 || fields[0].indexOf('Door:') >= 0) {
@@ -678,6 +681,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var receivedWorkCoords = false;
                         for (var i = 1; i < fields.length; i++) {
                             var bit = fields[i].split(":");
+                            console.log("GRBL WIDGET: status information: ", bits);
                             switch (bit[0].toLowerCase()) {
                                 case "mpos":
                                     var coords = bit[1].split(',');
