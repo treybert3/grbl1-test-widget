@@ -506,7 +506,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
         },
         grblResponseV1: function(recvline) {
-            console.log("GRBL WIDGET: received 1.1 line");
             var pushMessages = {
                 status: new RegExp("^\\<(.*?)\\>", "i"),
                 gCodeState: new RegExp("^\\[GC:(.*?)\\]", "i"),
@@ -638,23 +637,30 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             };
 
             if (!(recvline.dataline) || recvline.dataline == '\n') {
-                //console.log("GRBL: got recvline but it's not a dataline, so returning.");
+                console.log("GRBL WIDGET: got recvline but it's not a dataline, so returning.");
                 return true;
             }
 
+            console.log("GRBL WIDGET: received 1.1 line");
+            console.log("GRBL WIDGET: line is: ", recvline.dataline);
+            
             var msg = recvline.dataline;
             var parsing = true;
             $.each(pushMessages, function(key, value) {
+                console.log("GRBL WIDGET: testing regex", key, value);
                 if (!parsing) return;
                 var result = value.exec(msg);
                 if (result) {
                     parsing = false;
+                    console.log("GRBL WIDGET: got a match");
                 }
 
                 switch (key) {
                     case 'status':
+                        
                         //we need the bits
                         var fields = result[1].split("|");
+                        console.log("GRBL WIDGET: status information: ", fields);
                         //0 is the machine state
                         var status = new RegExp("^(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
                         if (status.exec(fields[0])) {
