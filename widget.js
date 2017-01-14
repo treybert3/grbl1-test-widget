@@ -692,27 +692,25 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "mpos":
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: machine coords: ", coords);
-                                    
-                                    this.last_machine.x = coords[0];
-                                    this.last_machine.y = coords[1];
-                                    this.last_machine.z = coords[2];
+                                    ['x','y','z'].forEach(function(val, index){
+                                        this.last_machine[val] = coords[index];
+                                    },this);
                                     receivedMachineCoords = true;
                                     break;
                                 case "wpos":
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: work coords: ", coords);
-                            
-                                    this.last_work.x = coords[0];
-                                    this.last_work.y = coords[1];
-                                    this.last_work.z = coords[2];
+                                    ['x','y','z'].forEach(function(val, index){
+                                        this.last_work[val] = coords[index];
+                                    },this);
                                     receivedWorkCoords = true;
                                     break;
                                 case "wco":
                                     var offset = bit[1].split(',');
                                     console.log("GRBL WIDGET: offset information: ",offset);
-                                    this.offsets.x = offset[0];
-                                    this.offsets.y = offset[1];
-                                    this.offsets.z = offset[2];
+                                    ['x','y','z'].forEach(function(val, index){
+                                        this.offsets[val] = coords[index];
+                                    },this);
                                     break;
                                 case "bf":
                                     break;
@@ -733,14 +731,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         }
                         //end of status
                         if (receivedMachineCoords && !receivedWorkCoords) {
-                            this.last_work.x = this.last_machine.x - this.offsets.x;
-                            this.last_work.y = this.last_machine.y - this.offsets.y;
-                            this.last_work.z = this.last_machine.z - this.offsets.z;
+                            ['x','y','z'].forEach(function(val){
+                                this.last_work[val] = this.last_machine[val] - this.offsets[val];
+                            },this);
+                            
                         }
                         else if (!receivedMachineCoords && receivedWorkCoords) {
-                            this.last_machine.x = this.last_work.x + this.offsets.x;
-                            this.last_machine.y = this.last_work.y + this.offsets.y;
-                            this.last_machine.z = this.last_work.z + this.offsets.z;
+                            ['x','y','z'].forEach(function(val){
+                                this.last_machine[val] = this.last_work[val] + this.offsets[val];
+                            },this);
                         }
                         
 
@@ -787,7 +786,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         }
                         break;
                     case 'error':
-                        chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorCodes[parseInt(result[1]), 10]);
+                        chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorMessages[parseInt(result[1]), 10]);
                         //should we stop now?
                         break;
                     case 'setting':
@@ -919,7 +918,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     //remove brackets
                     msg = msg.replace(/<|>|\[|\]|\n/g, "");
                     //change colons to commas & split string
-                    rpt_array = msg.replace(/:/g, ",").split(",");
+                    var rpt_array = msg.replace(/:/g, ",").split(",");
 
                     if (this.version === '0.8a')
                         $('.stat-state').text("Too Old - Upgrade GRBL!");
