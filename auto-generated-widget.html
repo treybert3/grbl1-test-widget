@@ -763,7 +763,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "wco":
                                     var offset = bit[1].split(',');
                                     console.log("GRBL WIDGET: offset information: ",offset);
-                            
                                     this.offsets.x = offset[0];
                                     this.offsets.y = offset[1];
                                     this.offsets.z = offset[2];
@@ -783,7 +782,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "a":
                                     break;
                             }
-                            console.log("GRBL WIDGET: finished loop.  i = " + i);
+                            console.log("GRBL WIDGET: finished switch statement.  i = " + i);
                         }
                         //end of status
                         if (receivedMachineCoords && !receivedWorkCoords) {
@@ -796,6 +795,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             this.last_machine.y = this.last_work.y + this.offsets.y;
                             this.last_machine.z = this.last_work.z + this.offsets.z;
                         }
+                        
 
                         //UI updates
                         chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', this.status);
