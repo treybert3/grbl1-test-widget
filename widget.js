@@ -685,10 +685,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var receivedWorkCoords = false;
                         for (var i = 1; i < fields.length; i++) {
                             var bit = fields[i].split(":");
-                            console.log("GRBL WIDGET: status information: ", bits);
+                            console.log("GRBL WIDGET: status information: ", fields[i],bits);
                             switch (bit[0].toLowerCase()) {
                                 case "mpos":
                                     var coords = bit[1].split(',');
+                                    console.log("GRBL WIDGET: machine coords: ", coords);
+                                    
                                     this.last_machine.x = coords[0];
                                     this.last_machine.y = coords[1];
                                     this.last_machine.z = coords[2];
@@ -696,6 +698,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "wpos":
                                     var coords = bit[1].split(',');
+                                    console.log("GRBL WIDGET: work coords: ", coords);
+                            
                                     this.last_work.x = coords[0];
                                     this.last_work.y = coords[1];
                                     this.last_work.z = coords[2];
@@ -703,6 +707,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "wco":
                                     var offset = bit[1].split(',');
+                                    console.log("GRBL WIDGET: offset information: ",offset);
+                            
                                     this.offsets.x = offset[0];
                                     this.offsets.y = offset[1];
                                     this.offsets.z = offset[2];
