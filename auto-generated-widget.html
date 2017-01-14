@@ -51,6 +51,7 @@
 
     <script type='text/javascript'>
     //<![CDATA[
+/* global $, cprequire_test, cpdefine, chilipeppr */
 // Test this element. This code is auto-removed by the chilipeppr.load()
 cprequire_test(["inline:com-chilipeppr-widget-grbl"], function(grbl) {
     //console.log("test running of " + grbl.id);
@@ -706,11 +707,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     return;
                 } return;
                 var result = value.exec(msg);
-                if (result) {
+                if (result ) {
                     parsing = false;
                     console.log("GRBL WIDGET: got a match");
+                } else {
+                    console.log("GRBL WIDGET: not got a match");
                 }
-
                 switch (key) {
                     case 'status':
                         
