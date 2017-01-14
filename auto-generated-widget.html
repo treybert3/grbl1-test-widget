@@ -705,13 +705,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 if (!parsing){
                     console.log("GRBL WIDGET: not checking because line already parsed");
                     return;
-                } return;
+                }
                 var result = value.exec(msg);
+                console.log("GRBL WIDGET: result of primary regex", result);
                 if (result ) {
                     parsing = false;
                     console.log("GRBL WIDGET: got a match");
                 } else {
                     console.log("GRBL WIDGET: not got a match");
+                    return;
                 }
                 switch (key) {
                     case 'status':
