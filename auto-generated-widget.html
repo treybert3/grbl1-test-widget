@@ -331,6 +331,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         "z": "z"
                     });
             });
+            this.last_machine = this.last_work = this.offsets = {
+                x: 0.000,y:0.000,z:0.000
+            };
         },
         options: null,
         setupUiFromCookie: function() {
