@@ -1507,6 +1507,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         //    that.sendCode('?\n'); //request status/coordinates
         //},
         publishAxisStatus: function(axes) {
+            console.log("GRBL WIDGET: axis footprint", axes);
             var _axes = {};
             $.each(axes, function(index, val) {
                 _axes[index] = val.toFixed(3);
