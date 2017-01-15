@@ -909,7 +909,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 "z": that.toMM(parseFloat(that.last_work.z))
                             });
                         }
-                        $('.stat-mcoords').html("X:" + that.last_machine.x.toFixed(3) + " Y:" + that.last_machine.y.toFixed(3) + " Z:" + that.last_machine.z.toFixed(3));
+                        $('.stat-mcoords').html("X:" + that.last_machine.x.toFixed(3) + " Y:" + that.last_machine.y.toFixed(3) + " Z:" + that.last_machine.z.toFixed(3) + ' mm');
 
                         break;
                     case 'gCodeState':
@@ -1592,7 +1592,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             $("#ttl-state").attr("data-title", "State");
             $("#ttl-state").attr("data-content", "Current state of the GRBL controller");
             $("#ttl-state").popover();
-
+    
             //wcs
             $("#ttl-wcs").attr("data-delay", "500");
             $("#ttl-wcs").attr("data-animation", "true");
@@ -1690,7 +1690,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             $("#ttl-mcoords").attr("data-toggle", "popover");
             $("#ttl-mcoords").attr("data-title", "Machine Coordinates");
             $("#ttl-mcoords").attr("data-content", "Shows the current machine coordinates based on the machine origin.  This differs from the current work coordinates when a work coordinate offset has been applied.");
-            $("#ttl-queue").popover();
+            $("#ttl-mcoords").popover();
         }
     };
 });
