@@ -440,9 +440,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
             var that = this;
-
+            console.log("GRBL WIDGET: opening controller");
             //wait three second for arduino initialization before requesting the grbl config variables.
             setTimeout(function() {
+                   console.log("GRBL WIDGET: opening controller timeout");
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", ""); //Request port info
                 if (that.version === ""){
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
