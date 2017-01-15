@@ -969,6 +969,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                        	
                         break;
                     case 'setting':
+                        console.log("GRBL WIDGET: parsing settings.  Data:", result);
 						var configCode = parseInt(result[1],10);
 						switch (configCode){
 							case 11:
