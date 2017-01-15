@@ -456,7 +456,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 //wait one additional second before checking for what reporting units grbl is configured for.
                 setTimeout(function(context) {
                     context.updateReportUnits();
-                    
                     if(context.version.substring(0,1) == '1'){
                         $('.v1Suppress').hide();
                     } else {
