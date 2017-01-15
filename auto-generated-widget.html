@@ -469,7 +469,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons start
             // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
             $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
-                that.sendCode('\x84');
+                that.sendCode('\x84' + "\n");
             });
 
             $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
