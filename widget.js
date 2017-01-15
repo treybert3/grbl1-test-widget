@@ -800,6 +800,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             console.log("GRBL WIDGET: finished switch statement.  i = " + i);
                         }
                         //end of status
+                        
+                        console.log("GRBL WIDGET: FOOTPRINT received status update","machine", that.last_machine, "work", that.last_work, "offset", that.offsets, "receivedMachine", receivedMachineCoords,'receivedWork',receivedWorkCoords);
                         if (receivedMachineCoords && !receivedWorkCoords) {
                             ['x','y','z'].forEach(function(val){
                                 that.last_work[val] = that.last_machine[val] - that.offsets[val];
@@ -811,7 +813,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 that.last_machine[val] = that.last_work[val] + that.offsets[val];
                             },that);
                         }
-                        
+                        console.log("GRBL WIDGET: FOOTPRINT at line 816.  current values", "machine", that.last_machine, "work", that.last_work, "offsets", that.offsets);
                         //send axis updates
                         if (that.work_mode === that.report_mode) {
                             that.publishAxisStatus({
