@@ -215,8 +215,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, function(msg) {
                 this.grblResponse(msg);
             });
-
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onportopen", this, this.openController);
+            
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onPortOpen", this, this.openController);
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onportclose", this, this.closeController);
 
             // subscribe to jogdone so we can stop the planner buffer immediately
