@@ -694,7 +694,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x','y','z'].forEach(function(val, index){
-                                        that.last_machine[val] = coords[index];
+                                        that.last_machine[val] = parseFloat(coords[index]);
                                     },that);
                                     receivedMachineCoords = true;
                                     break;
@@ -702,7 +702,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x','y','z'].forEach(function(val, index){
-                                        that.last_work[val] = coords[index];
+                                        that.last_work[val] = parseFloat(coords[index]);
                                     },that);
                                     receivedWorkCoords = true;
                                     break;
@@ -710,7 +710,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var offset = bit[1].split(',');
                                     console.log("GRBL WIDGET: offset information: ",offset);
                                     ['x','y','z'].forEach(function(val, index){
-                                        that.offsets[val] = coords[index];
+                                        that.offsets[val] = parseFloat(coords[index]);
                                     },that);
                                     break;
                                 case "bf":
