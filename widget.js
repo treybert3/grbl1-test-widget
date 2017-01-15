@@ -1099,31 +1099,27 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
                             var obj = {
-                                    "x": parseFloat(coords[0]) - that.offsets.x,
-                                    "y": parseFloat(coords[1]) - that.offsets.y,
-                                    "z": parseFloat(coords[2]) - that.offsets.z
+                                    "x": (parseFloat(coords[0]) - that.offsets.x).toFixed(3),
+                                    "y": (parseFloat(coords[1]) - that.offsets.y).toFixed(3),
+                                    "z": (parseFloat(coords[2]) - that.offsets.z).toFixed(3),
+                                    status: probeSuccess
                             };
-                            /* se */
-                            obj.x = obj.x.toFixed(3);
-                            obj.y = obj.y.toFixed(3);
-                            obj.z = obj.z.toFixed(3);
-                            obj.status = probeSuccess;
                             if (that.work_mode === that.report_mode) {
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", obj);
                             }
                             else if (that.work_mode === 1 && that.report_mode === 0) { //work is inch, reporting in mm
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": that.toInch(obj.x).toFixed(3),
-                                    "y": that.toInch(obj.y).toFixed(3),
-                                    "z": that.toInch(obj.z).toFixed(3),
+                                    "x": that.toInch(obj.x),
+                                    "y": that.toInch(obj.y),
+                                    "z": that.toInch(obj.z),
                                     status: probeSuccess
                                 });
                             }
                             else if (that.work_mode === 0 && that.report_mode === 1) { //work is mm, reporting in inches
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": that.toMM(obj.x).toFixed(3),
-                                    "y": that.toMM(obj.y).toFixed(3),
-                                    "z": that.toMM(obj.z).toFixed(3),
+                                    "x": that.toMM(obj.x),
+                                    "y": that.toMM(obj.y),
+                                    "z": that.toMM(obj.z),
                                     status: probeSuccess
                                 });
                             }
