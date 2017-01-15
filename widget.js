@@ -914,6 +914,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         }
                         that.version = result[1];
                         $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + that.version + ")"); //update ui  
+                        that.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
                         break;
                     case 'alarm':
                         
