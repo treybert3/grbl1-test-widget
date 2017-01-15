@@ -278,7 +278,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 if (this.last_work.x !== null)
                     this.publishAxisStatus(this.last_work);
                 else if (this.last_machine.x !== null)
-                    this.publishAxisStatus(this.machine);
+                    this.publishAxisStatus(this.last_machine);
                 else
                     this.publishAxisStatus({
                         "x": 0.000,
