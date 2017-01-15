@@ -292,7 +292,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         options: null,
         setVersion: function(ver) {
             this.version = ver;
-            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/status",
+            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion",
                 this.version);
         },
         setupUiFromCookie: function() {
@@ -409,6 +409,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
 
             $('#com-chilipeppr-widget-grbl .hide-overrides').click(function(evt) {
+                $(this).toggleClass(".active");
                 $(".com-chilipeppr-widget-grbl-realtime-commands").toggle();
             });
 

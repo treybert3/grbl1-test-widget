@@ -44,10 +44,16 @@
             
             -->
             <div class="btn-group v1Show">
-                <button type="button" class="btn btn-xs btn-default btn-warning grbl-safety-door">
+                <button type="button" class="btn btn-xs btn-default btn-warning grbl-safety-door"
+                    data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" 
+                    data-title="Safety Door" 
+                    data-content="Immediately suspends into a DOOR state and disables the spindle and coolant. If in motion, the machine will decelerate to a stop and then be suspended"
+                    >
                     <span class="glyphicon glyphicon-warning-sign"></span>
                 </button>
-                <button type="button" class="btn btn-xs btn-default hide-overrides">
+                <button type="button" class="btn btn-xs btn-default hide-overrides"
+                    data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" 
+                    data-title="" data-content="Toggle Overrides">
                     <span class="glyphicon glyphicon-wrench"></span>
                 </button>
                 
@@ -59,9 +65,10 @@
                     Hold !
                 </button>
                 <button type="button" class="btn btn-xs btn-default grbl-cyclestart"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Cycle Start" data-content="Resume movement from stopping point"><span class="">~</span></button>
-                <button type="button" class="btn btn-xs btn-default grbl-verbose"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Toggle Verbose Output" data-content="Toggle verbose mode to show query responses in console - defaults to disabled, green when enabled"><span class="">v</span></button>
+                <!-- button type="button" class="btn btn-xs btn-default grbl-verbose"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Toggle Verbose Output" data-content="Toggle verbose mode to show query responses in console - defaults to disabled, green when enabled"><span class="">v</span></button -->
                 <!--<button type="button" class="btn btn-xs btn-default grbl-queueflush"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Queue Flush" data-content="Empty planner buffer. Used for jogging and other cycles"><span class="">%</span></button>-->
-                <button type="button" class="btn btn-xs btn-default grbl-reset" data-toggle="popover" data-placement="auto" data-container="body" data-content="GRBL Soft Reset" data-trigger="hover" ><span class=""></span>Ctrl+X</button><!--glyphicon glyphicon-refresh-->
+                <button type="button" class="btn btn-xs btn-default grbl-reset" data-toggle="popover" data-placement="auto" data-container="body" data-content="GRBL Soft Reset" data-trigger="hover" >
+                    <span class="glyphicon glyphicon-refresh"></span></button><!--Ctrl+X-->
                 <button type="button" id="com-chilipeppr-widget-grbl-btnoptions" class="btn btn-default btn-xs"><span class="glyphicon glyphicon-cog"></span></button>
             </div>
             <div class="btn-group">
@@ -71,7 +78,9 @@
                 <div class="dropdown">
                 <button type="button" class="btn btn-xs btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
                 <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <!-- <li class="divider"></li> -->
+                    <li class="divider"></li>
+                    <li><a href="" class="grbl-verbose">Toggle verbose mode</a></li>
+                    
                     <!-- <li role="presentation" class="dropdown-header fork-name"></li>
                     <li><a href="" target="_blank" class="standalone">View Widget Standalone</a></li>
                     <li><a href="" target="_blank" class="fork">Fork Widget</a></li> -->
@@ -149,61 +158,66 @@
             
               </div>
         
-          <div class="row overrides-btn">
+            <div class="row overrides-btn">
                <div class="col col-xs-3">
                       Spindle Overrides<br/>
                       <span class="ov-3" title="Current status">100</span>
                </div>
                <div class="col col-xs-9">
-                   <div class="btn-group">
-                     <button type="button" class="btn btn-xs btn-primary"  data-delay="500" data-animation="true" data-placement="auto" 
-                     data-container="body" data-trigger="hover" data-title="Spindle speed Overrides" 
-                     data-content="mmediately alters the spindle speed override value. An active spindle speed is altered within tens of milliseconds. Override values may be changed at any time, regardless of if the spindle is enabled or disabled." 
-                     data-send-code="99">
-                       100%
-                     </button>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-xs btn-primary"  data-delay="500" data-animation="true" data-placement="auto" 
+                        data-container="body" data-trigger="hover" data-title="Spindle speed Overrides" 
+                        data-content="mmediately alters the spindle speed override value. An active spindle speed is altered within tens of milliseconds. Override values may be changed at any time, regardless of if the spindle is enabled or disabled." 
+                        data-send-code="99">
+                            100%
+                        </button>
                     </div>
                     <div class="btn-group">
-                     <button type="button" class="btn btn-xs btn-default" data-send-code="9A">
-                       +10%
-                     </button>
-                     <button type="button" class="btn btn-xs btn-default" data-send-code="9B">
-                       -10%
-                     </button>
-                     </div>
+                        <button type="button" class="btn btn-xs btn-default" data-send-code="9A">
+                           +10%
+                         </button>
+                         <button type="button" class="btn btn-xs btn-default" data-send-code="9B">
+                           -10%
+                         </button>
+                    </div>
                     <div class="btn-group">
-                     <button type="button" class="btn btn-xs btn-default" data-send-code="9C">
-                       +1%
-                     </button>
-                     <button type="button" class="btn btn-xs btn-default" data-send-code="9D">
-                       -1%
-                     </button>
-                     </div>
-                    <div class="btn-group">
-                     <button type="button" class="btn btn-xs btn-warning" data-send-code="9E" 
-                     data-title="Toggle Spindle Stop" data-content="Toggles spindle enable or disable state immediately, but only while in the HOLD state. The command is otherwise ignored, especially while in motion. This prevents accidental disabling during a job that can either destroy the part/machine or cause personal injury. Industrial machines handle the spindle stop override similarly. When motion restarts via cycle start, the last spindle state will be restored and wait 4.0 seconds (configurable) before resuming the tool path. This ensures the user doesn't forget to turn it back on. While disabled, spindle speed override values may still be altered and will be in effect once the spindle is re-enabled. If a safety door is opened, the DOOR state will supersede the spindle stop override, where it will manage the spindle re-energizing itself upon closing the door and resuming. The prior spindle stop override state is cleared and reset.">
-                      STOP
-                     </button>
-                     
-                   </div>
-               </div>
+                        <button type="button" class="btn btn-xs btn-default" data-send-code="9C">
+                           +1%
+                        </button>
+                         <button type="button" class="btn btn-xs btn-default" data-send-code="9D">
+                           -1%
+                         </button>
+                    </div>
+                </div>
+            </div>
             
-              </div>
+            
           
           <div class="row overrides-btn">
             <div class="col col-xs-3">
-                      Coolant
+                      Toggle
                </div>
                <div class="col col-xs-9">
-            <button type="button" class="btn btn-xs btn-default" data-send-code="A0">
-              Flood
+            <button type="button" class="btn btn-xs btn-default" data-send-code="A0"
+            data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover"
+            data-title="Toggle Flood Coolant" data-content="Toggles flood coolant state and output pin until the next toggle or g-code command alters it. May be commanded at any time while in IDLE, RUN, or HOLD states. It is otherwise ignored."
+            >
+              Flood C
             </button>
-           
-             <button type="button" class="btn btn-xs btn-default" data-send-code="A1">
-              Mist
+            
+            <button type="button" class="btn btn-xs btn-default" data-send-code="A1"
+            data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover"
+            data-title="Toggle Mist Coolant" data-content="Enabled by ENABLE_M7 compile-time option. Default is disabled. Toggles mist coolant state and output pin until the next toggle or g-code command alters it."
+            >
+              Mist C
             </button>
-            </div>
+            <button type="button" class="btn btn-xs btn-warning" data-send-code="9E" 
+                data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover"
+                data-title="Toggle Spindle Stop" data-content="Toggles spindle enable or disable state immediately, but only while in the HOLD state. The command is otherwise ignored, especially while in motion. This prevents accidental disabling during a job that can either destroy the part/machine or cause personal injury. Industrial machines handle the spindle stop override similarly. When motion restarts via cycle start, the last spindle state will be restored and wait 4.0 seconds (configurable) before resuming the tool path. This ensures the user doesn't forget to turn it back on. While disabled, spindle speed override values may still be altered and will be in effect once the spindle is re-enabled. If a safety door is opened, the DOOR state will supersede the spindle stop override, where it will manage the spindle re-energizing itself upon closing the door and resuming. The prior spindle stop override state is cleared and reset.">
+                Stop Spindle
+            </button>
           </div>
+        </div>
         </div>
         
         

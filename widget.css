@@ -44,3 +44,6 @@
 .com-chilipeppr-widget-grbl-realtime-commands .overrides-btn{
     margin-bottom: 10px;
 }
+.com-chilipeppr-widget-grbl-realtime-commands .col:last-child{
+    padding:0;
+}
