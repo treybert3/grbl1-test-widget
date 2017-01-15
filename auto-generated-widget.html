@@ -575,10 +575,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             var pushMessages = {
                 status: new RegExp("^\\<(.*?)\\>", "i"),
                 gCodeState: new RegExp("^\\[GC:(.*?)\\]", "i"),
-                welcome: new RegExp("^Grbl (.*?) .*?$", "i"),
+                welcome: new RegExp("^Grbl (.*?) .*", "i"),
                 alarm: new RegExp("^ALARM:(.*)", "i"),
                 error: new RegExp("^error:(.*)", "i"),
-                setting: new RegExp("^\\$(.*?)=(.*?)$", "i"),
+                setting: new RegExp("^\\$(.*?)=(.*)", "i"),
                 message: new RegExp("^\\[MSG:(.*?)\\]", "i"),
                 helpMessage: new RegExp("^\\[HLP:(.*?)\\]", "i"),
                 hashQuery: new RegExp("^\\[(G54|G55|G56|G57|G58|G59|G28|G92|TLO|PRB):(.*?)\\]", "i"),
