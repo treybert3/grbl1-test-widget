@@ -733,7 +733,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x','y','z'].forEach(function(val, index){
-                                        that.last_machine[val] = parseFloat(coords[index]);
+                                        this.last_machine[val] = parseFloat(coords[index]);
                                     },that);
                                     receivedMachineCoords = true;
                                     break;
@@ -741,7 +741,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x','y','z'].forEach(function(val, index){
-                                        that.last_work[val] = parseFloat(coords[index]);
+                                        this.last_work[val] = parseFloat(coords[index]);
                                     },that);
                                     receivedWorkCoords = true;
                                     break;
@@ -749,7 +749,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var offset = bit[1].split(',');
                                     console.log("GRBL WIDGET: offset information: ",offset);
                                     ['x','y','z'].forEach(function(val, index){
-                                        that.offsets[val] = parseFloat(coords[index]);
+                                        this.offsets[val] = parseFloat(coords[index]);
                                     },that);
                                     break;
                                 case "bf":
@@ -851,7 +851,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 												z: 	that.toMM(that.last_work.z)
 										});
 									} else 
-									if (this.last_machine.x !== null) {
+									if (that.last_machine.x !== null) {
 										that.publishAxisStatus({
 												x: 	that.toMM(that.last_machine.x),
 												y: 	that.toMM(that.last_machine.y),
@@ -880,7 +880,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 													z: 	that.toInch(that.last_work.z)
 												});
 									} else 
-									if (this.last_machine.x !== null) {
+									if (that.last_machine.x !== null) {
 											that.publishAxisStatus({
 													x: 	that.toInch(that.last_machine.x),
 													y: 	that.toInch(that.last_machine.y),
@@ -997,13 +997,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 						                result[1], 
 						                configCode, 
 						                result[2], 
-						                val, 
-						                that.configStrings[result[1]]
+						                val
                         );
-						
+						/*
                         that.config[configCode] = [ val, 
                                                     that.configStrings[result[1]]
                                                 ]; //save config value and description
+                                                */
                         break;
                     case 'message':
                         //not all messages are implemented
