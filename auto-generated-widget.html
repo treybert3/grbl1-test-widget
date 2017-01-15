@@ -499,9 +499,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 if (that.version === ""){
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
                     that.sendCode(String.fromCharCode(36) + "I\n");
-                    that.sendCode("*status*\n"); //send request for initial status response.
-                    that.sendCode("$\n"); //get grbl params
                 }
+                that.sendCode("*status*\n"); //send request for initial status response.
+                that.sendCode("$\n"); //get grbl params
+                that.sendCode("$G\n");
                 //wait one additional second before checking for what reporting units grbl is configured for.
                 setTimeout(function() {
                     that.updateReportUnits();
