@@ -665,42 +665,43 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 "Door:3": "Door closed and resuming. Restoring from park, if applicable. Reset will throw an alarm."
             };
 
-            var configStrings = {
-                "0": "Step pulse time, microseconds",
-                "1": "Step idle delay, milliseconds",
-                "2": "Step pulse invert, mask",
-                "3": "Step direction invert, mask",
-                "4": "Invert step enable pin, boolean",
-                "5": "Invert limit pins, boolean",
-                "6": "Invert probe pin, boolean",
-                "10": "Status report options, mask",
-                "11": "Junction deviation, millimeters",
-                "12": "Arc tolerance, millimeters",
-                "13": "Report in inches, boolean",
-                "20": "Soft limits enable, boolean",
-                "21": "Hard limits enable, boolean",
-                "22": "Homing cycle enable, boolean",
-                "23": "Homing direction invert, mask",
-                "24": "Homing locate feed rate, mm/min",
-                "25": "Homing search seek rate, mm/min",
-                "26": "Homing switch debounce delay, milliseconds",
-                "27": "Homing switch pull-off distance, millimeters",
-                "30": "Maximum spindle speed, RPM",
-                "31": "Minimum spindle speed, RPM",
-                "32": "Laser-mode enable, boolean",
-                "100": "X-axis steps per millimeter",
-                "101": "Y-axis steps per millimeter",
-                "102": "Z-axis steps per millimeter",
-                "110": "X-axis maximum rate, mm/min",
-                "111": "Y-axis maximum rate, mm/min",
-                "112": "Z-axis maximum rate, mm/min",
-                "120": "X-axis acceleration, mm/sec^2",
-                "121": "Y-axis acceleration, mm/sec^2",
-                "122": "Z-axis acceleration, mm/sec^2",
-                "130": "X-axis maximum travel, millimeters",
-                "131": "Y-axis maximum travel, millimeters",
-                "132": "Z-axis maximum travel, millimeters"
-            };
+            var configStrings = [];
+            
+                configStrings[0] = 'Step pulse time; microseconds';
+                configStrings[1] = 'Step idle delay; milliseconds';
+                configStrings[2] = 'Step pulse invert; mask';
+                configStrings[3] = 'Step direction invert; mask';
+                configStrings[4] = 'Invert step enable pin; boolean';
+                configStrings[5] = 'Invert limit pins; boolean';
+                configStrings[6] = 'Invert probe pin; boolean';
+                configStrings[10] = 'Status report options; mask';
+                configStrings[11] = 'Junction deviation; millimeters';
+                configStrings[12] = 'Arc tolerance; millimeters';
+                configStrings[13] = 'Report in inches; boolean';
+                configStrings[20] = 'Soft limits enable; boolean';
+                configStrings[21] = 'Hard limits enable; boolean';
+                configStrings[22] = 'Homing cycle enable; boolean';
+                configStrings[23] = 'Homing direction invert; mask';
+                configStrings[24] = 'Homing locate feed rate; mm/min';
+                configStrings[25] = 'Homing search seek rate; mm/min';
+                configStrings[26] = 'Homing switch debounce delay; milliseconds';
+                configStrings[27] = 'Homing switch pull-off distance; millimeters';
+                configStrings[30] = 'Maximum spindle speed; RPM';
+                configStrings[31] = 'Minimum spindle speed; RPM';
+                configStrings[32] = 'Laser-mode enable; boolean';
+                configStrings[100] = 'X-axis steps per millimeter';
+                configStrings[101] = 'Y-axis steps per millimeter';
+                configStrings[102] = 'Z-axis steps per millimeter';
+                configStrings[110] = 'X-axis maximum rate; mm/min';
+                configStrings[111] = 'Y-axis maximum rate; mm/min';
+                configStrings[112] = 'Z-axis maximum rate; mm/min';
+                configStrings[120] = 'X-axis acceleration; mm/sec^2';
+                configStrings[121] = 'Y-axis acceleration; mm/sec^2';
+                configStrings[122] = 'Z-axis acceleration; mm/sec^2';
+                configStrings[130] = 'X-axis maximum travel; millimeters';
+                configStrings[131] = 'Y-axis maximum travel; millimeters';
+                configStrings[132] = 'Z-axis maximum travel; millimeters';
+          
 
             if (!(recvline.dataline) || recvline.dataline == '\n') {
                 console.log("GRBL WIDGET: got recvline but it's not a dataline, so returning.");
@@ -1065,7 +1066,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         );
 						
                         that.config[configCode] = [ val, 
-                                                    that.configStrings[result[1]]
+                                                    configStrings[configCode]
                                                 ]; //save config value and description
                         break;
                     case 'message':
