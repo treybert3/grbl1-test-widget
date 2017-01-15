@@ -333,9 +333,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     this.publishAxisStatus(this.machine);
                 else
                     this.publishAxisStatus({
-                        "x": "x",
-                        "y": "y",
-                        "z": "z"
+                        "x": 0.000,
+                        "y": 0.000,
+                        "z": 0.000
                     });
             });
 			
@@ -1440,11 +1440,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         //    that.sendCode('?\n'); //request status/coordinates
         //},
         publishAxisStatus: function(axes) {
-            console.log("GRBL WIDGET: received data into publishAxisStatus", axes);
-			axes.forEach(function (val, index, axes){
-				axes[index] = val.toFixed(3);
+            var _axes = {};
+        	$.each(axes, function (index, val){ 
+				_axes[index] = val.toFixed(3);
 			});
-            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", axes);
+            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", _axes);
         },
         plannerLastEvent: "resume",
         publishPlannerPause: function() {
