@@ -167,7 +167,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             '/com-chilipeppr-interface-cnccontroller/axes': "This widget will normalize the GRBL status report of axis coordinates to send off to other widgets like the XYZ widget. The axes publish payload contains {x:float, y:float, z:float, a:float} If a different CNC controller is implemented, it should normalize the coordinate status reports like this model. The goal of this is to abstract away the specific controller implementation from generic CNC widgets.",
             '/com-chilipeppr-interface-cnccontroller/units': "This widget will normalize the GRBL units to the interface object of units {units: \"mm\"} or {units: \"inch\"}. This signal will be published on load or when this widget detects a change in units so other widgets like the XYZ widget can display the units for the coordinates it is displaying.",
             '/com-chilipeppr-interface-cnccontroller/proberesponse': 'Publish a probe response with the coordinates triggered during probing, or an alarm state if the probe does not contact a surface',
-            '/com-chilipeppr-interface-cnccontroller/status': 'Publish a signal each time the GRBL status changes'
+            '/com-chilipeppr-interface-cnccontroller/status': 'Publish a signal each time the GRBL status changes',
+            '/com-chilipeppr-interface-cnccontroller/grblVersion' : 'Publish the version number of the currently installed grbl'
         },
         subscribe: {
             '/com-chilipeppr-interface-cnccontroller/jogdone': 'We subscribe to a jogdone event so that we can fire off an exclamation point (!) to the GRBL to force it to drop all planner buffer items to stop the jog immediately.',
@@ -342,6 +343,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 	       
         },
         options: null,
+        setVersion: function(ver){
+            this.version = ver;
+            chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', this.version);
+        },
         setupUiFromCookie: function() {
             // read vals from cookies
             var options = $.cookie('com-chilipeppr-widget-grbl-options');
@@ -540,7 +545,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.status = "Offline";
             chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', this.status);
             $('.com-chilipeppr-grbl-state').text(this.status);
-            this.version = "";
+            this.setVersion("");
             $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL");
             this.offsets = {
                 "x": 0.000,
@@ -852,12 +857,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 									var feedRate = 	that.controller_units === "inch"?
 													that.toMM(parseFloat(_bits[0])) :
 													parseFloat(_bits[0]);
+													                                // Why floating feedrate? is not integer?
 									$('.stat-feedrate').html(feedRate.toFixed(2));
 									var spindleSpeed = parseInt(_bits[1],10);
 									$('.stat-spindle').html(spindleSpeed);
                                     break;
                                 case "pn":
 									//reports pin status
+									// X Y Z XYZ limit pins, respectively
+                                    // P the probe pin.
+                                    // Shoud we use this information?
                                     break;
                                 case "ov":
 									//reports overrides	
@@ -993,7 +1002,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         if (that.version !== "") {
                             chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "GRBL has been reset - temporary work coordinate and tool offsets have been lost.");
                         }
-                        that.version = result[1];
+                        that.setVersion(result[1]);
                         $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + that.version + ")"); //update ui  
                         that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                         break;
@@ -1179,7 +1188,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         }
                         break;
                     case 'version':
-                        that.version = result[1];
+                        that.setVersion(result[1]);
                         break;
                     case 'options':
                         var opt;
@@ -1344,7 +1353,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "GRBL has been reset - temporary work coordinate and tool offsets have been lost.");
 
                     chilipeppr.publish("/com-chilipeppr-widget-gcode/stop", true); //stops gcode widget since grbl just reset.
-                    this.version = msg.split(" ")[1];
+                    this.setVersion(msg.split(" ")[1]);
                     $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui  
                     
                     this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
