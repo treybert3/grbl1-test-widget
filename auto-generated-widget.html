@@ -1284,7 +1284,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             else
                                 this.last_machine.unit = "mm";
 
-                            $('.stat-mcoords').html("X:" + this.last_machine.x.toFixed(3) + " Y:" + this.last_machine.y.toFixed(3) + " Z:" + this.last_machine.z.toFixed(3));
+                            $('.stat-mcoords').html("X:" + this.last_machine.x.toFixed(3) + " Y:" + this.last_machine.y.toFixed(3) + " Z:" + this.last_machine.z.toFixed(3) + " (mm)");
 
 
                             MPos_flag = true;
@@ -1717,8 +1717,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 </div>
             </div><!-- row -->
             <div class="row stat-row">
-                <div class="col col-xs-3" id="ttl-mcoords" style="font-size:80%">
-                    Machine Coords (mm)
+                <div class="col col-xs-3" id="ttl-mcoords" >
+                    M Crds
                 </div>
                 <div class="col col-xs-9 well">
                     <span class="stat-sm stat-mcoords">0</span>
