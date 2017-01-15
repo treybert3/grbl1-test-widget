@@ -647,7 +647,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             
             var msg = recvline.dataline;
             var parsing = true;
-            pushMessages.forEach(function(value,key) {
+			var that = this;
+            $.each(pushMessages,function(key,value) {
                 console.log("GRBL WIDGET: testing regex", key, value);
                 if (!parsing){
                     console.log("GRBL WIDGET: not checking because line already parsed");
@@ -672,14 +673,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var status = new RegExp("^(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
                         if (status.exec(fields[0])) {
                             if (fields[0].indexOf('Hold:') >= 0 || fields[0].indexOf('Door:') >= 0) {
-                                this.status = subStates[fields[0]];
+                                that.status = subStates[fields[0]];
                             }
                             else {
-                                this.status = fields[0];
+                                that.status = fields[0];
                             }
                         }
                         else {
-                            this.status = 'Offline';
+                            that.status = 'Offline';
                         }
                         var receivedMachineCoords = false;
                         var receivedWorkCoords = false;
@@ -693,24 +694,24 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x','y','z'].forEach(function(val, index){
-                                        this.last_machine[val] = coords[index];
-                                    },this);
+                                        that.last_machine[val] = coords[index];
+                                    },that);
                                     receivedMachineCoords = true;
                                     break;
                                 case "wpos":
                                     var coords = bit[1].split(',');
                                     console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x','y','z'].forEach(function(val, index){
-                                        this.last_work[val] = coords[index];
-                                    },this);
+                                        that.last_work[val] = coords[index];
+                                    },that);
                                     receivedWorkCoords = true;
                                     break;
                                 case "wco":
                                     var offset = bit[1].split(',');
                                     console.log("GRBL WIDGET: offset information: ",offset);
                                     ['x','y','z'].forEach(function(val, index){
-                                        this.offsets[val] = coords[index];
-                                    },this);
+                                        that.offsets[val] = coords[index];
+                                    },that);
                                     break;
                                 case "bf":
                                     break;
@@ -732,52 +733,52 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //end of status
                         if (receivedMachineCoords && !receivedWorkCoords) {
                             ['x','y','z'].forEach(function(val){
-                                this.last_work[val] = this.last_machine[val] - this.offsets[val];
-                            },this);
+                                that.last_work[val] = that.last_machine[val] - that.offsets[val];
+                            },that);
                             
                         }
                         else if (!receivedMachineCoords && receivedWorkCoords) {
                             ['x','y','z'].forEach(function(val){
-                                this.last_machine[val] = this.last_work[val] + this.offsets[val];
-                            },this);
+                                that.last_machine[val] = that.last_work[val] + that.offsets[val];
+                            },that);
                         }
                         
 
                         //UI updates
-                        chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', this.status);
-                        $('.com-chilipeppr-grbl-state').text(this.status); //Update UI
+                        chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
+                        $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
 
                         //send axis updates
-                        if (this.work_mode === this.report_mode) {
-                            this.publishAxisStatus({
-                                "posx": parseFloat(this.last_work.x),
-                                "posy": parseFloat(this.last_work.y),
-                                "posz": parseFloat(this.last_work.z)
+                        if (that.work_mode === that.report_mode) {
+                            that.publishAxisStatus({
+                                "posx": parseFloat(that.last_work.x),
+                                "posy": parseFloat(that.last_work.y),
+                                "posz": parseFloat(that.last_work.z)
                             });
                         }
-                        else if (this.work_mode === 1 && this.report_mode === 0) { //work is inch, reporting in mm
-                            this.publishAxisStatus({
-                                "posx": this.toInch(parseFloat(this.last_work.x)),
-                                "posy": this.toInch(parseFloat(this.last_work.y)),
-                                "posz": this.toInch(parseFloat(this.last_work.z))
+                        else if (that.work_mode === 1 && that.report_mode === 0) { //work is inch, reporting in mm
+                            that.publishAxisStatus({
+                                "posx": that.toInch(parseFloat(that.last_work.x)),
+                                "posy": that.toInch(parseFloat(that.last_work.y)),
+                                "posz": that.toInch(parseFloat(that.last_work.z))
                             });
                         }
-                        else if (this.work_mode === 0 && this.report_mode === 1) { //work is mm, reporting in inch
-                            this.publishAxisStatus({
-                                "posx": this.toMM(parseFloat(this.last_work.x)),
-                                "posy": this.toMM(parseFloat(this.last_work.y)),
-                                "posz": this.toMM(parseFloat(this.last_work.z))
+                        else if (that.work_mode === 0 && that.report_mode === 1) { //work is mm, reporting in inch
+                            that.publishAxisStatus({
+                                "posx": that.toMM(parseFloat(that.last_work.x)),
+                                "posy": that.toMM(parseFloat(that.last_work.y)),
+                                "posz": that.toMM(parseFloat(that.last_work.z))
                             });
                         }
                         break;
                     case 'gCodeState':
                         break;
                     case 'welcome':
-                        if (this.version !== "") {
+                        if (that.version !== "") {
                             chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "GRBL has been reset - temporary work coordinate and tool offsets have been lost.");
                         }
-                        this.version = result[1];
-                        $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui  
+                        that.version = result[1];
+                        $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + that.version + ")"); //update ui  
                         break;
                     case 'alarm':
                         chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", alarmCodes[parseInt(result[1], 10)]);
@@ -790,7 +791,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //should we stop now?
                         break;
                     case 'setting':
-                        this.config[parseInt(result[1], 10)] = [parseFloat(result[2]), configStrings[result[1]]]; //save config value and description
+                        that.config[parseInt(result[1], 10)] = [parseFloat(result[2]), configStrings[result[1]]]; //save config value and description
                         break;
                     case 'message':
                         //not all messages are implemented
@@ -826,52 +827,52 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[1].split(',');
-                            if (this.work_mode === this.report_mode) {
+                            if (that.work_mode === that.report_mode) {
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": parseFloat(coords[0]) - this.offsets.x,
-                                    "y": parseFloat(coords[1]) - this.offsets.y,
-                                    "z": parseFloat(coords[2]) - this.offsets.z,
+                                    "x": parseFloat(coords[0]) - that.offsets.x,
+                                    "y": parseFloat(coords[1]) - that.offsets.y,
+                                    "z": parseFloat(coords[2]) - that.offsets.z,
                                     status: probeSuccess
                                 });
                             }
-                            else if (this.work_mode === 1 && this.report_mode === 0) { //work is inch, reporting in mm
+                            else if (that.work_mode === 1 && that.report_mode === 0) { //work is inch, reporting in mm
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": this.toInch(parseFloat(coords[0]) - this.offsets.x),
-                                    "y": this.toInch(parseFloat(coords[1]) - this.offsets.y),
-                                    "z": this.toInch(parseFloat(coords[2]) - this.offsets.z),
+                                    "x": that.toInch(parseFloat(coords[0]) - that.offsets.x),
+                                    "y": that.toInch(parseFloat(coords[1]) - that.offsets.y),
+                                    "z": that.toInch(parseFloat(coords[2]) - that.offsets.z),
                                     status: probeSuccess
                                 });
                             }
-                            else if (this.work_mode === 0 && this.report_mode === 1) { //work is mm, reporting in inches
+                            else if (that.work_mode === 0 && that.report_mode === 1) { //work is mm, reporting in inches
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": this.toMM(parseFloat(coords[0]) - this.offsets.x),
-                                    "y": this.toMM(parseFloat(coords[1]) - this.offsets.y),
-                                    "z": this.toMM(parseFloat(coords[2]) - this.offsets.z),
+                                    "x": that.toMM(parseFloat(coords[0]) - that.offsets.x),
+                                    "y": that.toMM(parseFloat(coords[1]) - that.offsets.y),
+                                    "z": that.toMM(parseFloat(coords[2]) - that.offsets.z),
                                     status: probeSuccess
                                 });
                             }
                         }
                         break;
                     case 'version':
-                        this.version = result[1];
+                        that.version = result[1];
                         break;
                     case 'options':
                         var opt;
                         var tmp = new Array;
-                        this.compileOptions = "";
+                        that.compileOptions = "";
                         for (var i = 0; i < result[1].length; i++) {
                             opt = result[1].substr(i, 1);
                             if (optionCodes[opt]) {
                                 tmp.push(optionCodes[opt]);
                             }
                         }
-                        this.compileOptions = tmp.join("\n");
+                        that.compileOptions = tmp.join("\n");
                         break;
                     case 'startupLineExecution':
                         //ignore
                         break;
                 }
-            },this);
+            });
 
         },
         grblResponse: function(recvline) {
