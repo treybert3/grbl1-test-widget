@@ -1236,9 +1236,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         this.publishAxisStatus(this.machine);
                     else //as failsafe send NAN so user knows that the coordinates are not displaying properly -- could handle this error on the receiving widget side.
                         this.publishAxisStatus({
-                        "x": "x",
-                        "y": "y",
-                        "z": "z"
+                        "x": 0.000,
+                        "y": 0.000,
+                        "z": 0.000
                     });
 
                 }
@@ -1337,9 +1337,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             this.publishAxisStatus(this.last_machine);
                         else
                             this.publishAxisStatus({
-                                "x": "x",
-                                "y": "y",
-                                "z": "z"
+                                "x": 0.000,
+                                "y": 0.000,
+                                "z": 0.000
                             });
                     }
                     else if ((this.controller_units !== "inch" && msg_array[3] === "G20")) {
@@ -1354,9 +1354,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             this.publishAxisStatus(this.last_machine);
                         else
                             this.publishAxisStatus({
-                                "x": "x",
-                                "y": "y",
-                                "z": "z"
+                                "x": 0.000,
+                                "y": 0.000,
+                                "z": 0.000
                             });
                     }
 
