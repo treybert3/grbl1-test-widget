@@ -35,7 +35,7 @@
 
 
 .v1Show{
-   /* display: none; */
+    display: none; 
 }
 .com-chilipeppr-widget-grbl-realtime-commands .well{
     padding: 5px;

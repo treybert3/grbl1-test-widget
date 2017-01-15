@@ -409,7 +409,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
 
             $('#com-chilipeppr-widget-grbl .hide-overrides').click(function(evt) {
-                $(this).toggleClass(".active");
+                $(this).toggleClass("active");
                 $(".com-chilipeppr-widget-grbl-realtime-commands").toggle();
             });
 
@@ -486,6 +486,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     if (that.version.substring(0, 1) == '1') {
                         $('.v1Suppress').hide();
                         $('.v1Show').show();
+                        // hide the new override btns 
+                        $('.com-chilipeppr-widget-grbl-realtime-commands').hide();
                     }
                     else {
                         $('.v1Suppress').show();
@@ -850,7 +852,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "ov":
                                     //reports overrides	
-                                    var _bits = result[1].split(',');
+                                    var _bits = bit[1].split(',');
                                     that.overrides = {
                                         feedRate: parseInt(_bits[0], 10),
                                         rapids: parseInt(_bits[1], 10),
