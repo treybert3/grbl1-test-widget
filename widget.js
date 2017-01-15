@@ -853,15 +853,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "ov":
                                     //reports overrides	
                                     var _bits = bit[1].split(',');
-                                    console.log("GRBL WIDGET: FOOTPRINT "+ _bits);
                                     that.overrides = {
                                         feedRate: parseInt(_bits[0], 10),
                                         rapids: parseInt(_bits[1], 10),
                                         spindleSpeed: parseInt(_bits[2], 10)
                                     };
-                                    $('.com-chilipeppr-widget-grbl-realtime-commands .ov-1').html(that.overrides.feedRate);
-                                    $('.com-chilipeppr-widget-grbl-realtime-commands .ov-2').html(that.overrides.rapids);
-                                    $('.com-chilipeppr-widget-grbl-realtime-commands .ov-3').html(that.overrides.spindleSpeed);
+                                    $('#com-chilipeppr-widget-grbl .ov-1').html(_bits[0]);
+                                    $('#com-chilipeppr-widget-grbl .ov-2').html(_bits[1]);
+                                    $('#com-chilipeppr-widget-grbl .ov-3').html(_bits[2]);
                                     break;
                                 case "a":
                                     //reports accessories
