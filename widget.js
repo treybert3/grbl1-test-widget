@@ -1093,8 +1093,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //not a very helpful response.  so ignore
                         break;
                     case 'hashQuery':
-                        
-                        if (result[0] == 'PRB') {
+                        if (result[1] == 'PRB') {
                             console.log("GRBL WIDGET: received probe info", result);
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
