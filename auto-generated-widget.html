@@ -339,8 +339,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
 
 	        //grab config options.
-            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
-            this.sendCode(String.fromCharCode(36) + 'I');
+            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+            this.sendCode(String.fromCharCode(36) + 'I' + "\n");
             
             
         },
@@ -408,14 +408,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
             $('#com-chilipeppr-widget-grbl .grbl-feedhold').click(function() {
                 //console.log("GRBL: feedhold");
-                that.sendCode('!');
+                that.sendCode('!' + "\n");
                 // announce to other widgets that user hit e-stop
                 chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
             });
             $('#com-chilipeppr-widget-grbl .grbl-cyclestart').click(function() {
                 //console.log("GRBL: cyclestart");
-                that.sendCode('~');
+                that.sendCode('~' + "\n");
                 //may want to check if buffer queue is >128 before resuming planner.
                 chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
             });
