@@ -289,6 +289,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
             this.sendCode(String.fromCharCode(36) + 'I');
             
+            
         },
         options: null,
         setupUiFromCookie: function() {
