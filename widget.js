@@ -840,7 +840,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 						switch(codes){
 							case 'G21':
 								if(that.controller_units !== 'mm'){
-									that.controller_units == 'mm';
+									that.controller_units = 'mm';
 									console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
 									chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                         			//resend coordinates
@@ -869,8 +869,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 							
 							case 'G20':
 								if(that.controller_units !== 'inch'){
-									console.log("GRBL WIDGET: we have a unit change. publish it. units:", this.controller_units);
-									chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", this.controller_units);
+								    that.controller_units = "inch";
+									console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
+									chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
 								}
 
 								if (that.last_work.x !== null){
@@ -1000,11 +1001,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 						                result[2], 
 						                val
                         );
-						/*
+						
                         that.config[configCode] = [ val, 
                                                     that.configStrings[result[1]]
                                                 ]; //save config value and description
-                                                */
                         break;
                     case 'message':
                         //not all messages are implemented
