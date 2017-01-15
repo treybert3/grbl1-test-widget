@@ -571,13 +571,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     context.updateReportUnits();
                     if (context.version.substring(0, 1) == '1') {
                         $('.v1Suppress').hide();
-                          $('.v1Show').show();
+                        $('.v1Show').show();
                         // hide the new override btns 
                         $('.com-chilipeppr-widget-grbl-realtime-commands').hide();
                     }
                     else {
                         $('.v1Suppress').show();
-                         $('.v1Show').hide();
+                        $('.v1Show').hide();
                     }
                 }, 1000, that);
 
@@ -1768,13 +1768,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 <div id="com-chilipeppr-widget-grbl" class="panel panel-default">
     <div class="panel-heading">
         <div class="btn-toolbar pull-right" role="toolbar" >
-            
-            <!--
-            
-            we can use v1Show class to match all items to show only with version >= 1  
-            add to css .v1Show{ display:none; } and then in the .js  if we match version >=1 $(".v1Show").show();
-            
-            -->
+    
             <div class="btn-group v1Show">
                 <button type="button" class="btn btn-xs btn-default btn-warning grbl-safety-door"
                     data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" 
