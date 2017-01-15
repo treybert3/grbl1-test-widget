@@ -338,11 +338,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     });
             });
 
-	        //grab config options.
-            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-            this.sendCode(String.fromCharCode(36) + 'I' + "\n");
-            
-            
+	       
         },
         options: null,
         setupUiFromCookie: function() {
@@ -969,7 +965,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         }
                         that.version = result[1];
                         $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + that.version + ")"); //update ui  
-                        that.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
+                        that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                         break;
                     case 'alarm':
                         
