@@ -845,7 +845,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 									chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                         			//resend coordinates
 									if (that.last_work.x !== null){
-									    console.log("GRBL WIDGET: FOOTPRINT at line 848")
+									    console.log("GRBL WIDGET: FOOTPRINT at line 848");
 										that.publishAxisStatus({
 												x: 	that.toMM(that.last_work.x),
 												y: 	that.toMM(that.last_work.y),
@@ -853,14 +853,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 										});
 									} else 
 									if (that.last_machine.x !== null) {
-									    console.log("GRBL WIDGET: FOOTPRINT at line 856")
+									    console.log("GRBL WIDGET: FOOTPRINT at line 856");
 										that.publishAxisStatus({
 												x: 	that.toMM(that.last_machine.x),
 												y: 	that.toMM(that.last_machine.y),
 												z: 	that.toMM(that.last_machine.z)
 										});
 									} else {
-									    console.log("GRBL WIDGET: FOOTPRINT at line 863")
+									    console.log("GRBL WIDGET: FOOTPRINT at line 863");
 										that.publishAxisStatus({
 											"x": 0.00,
 											"y": 0.00,
@@ -878,7 +878,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 								}
 
 								if (that.last_work.x !== null){
-								    console.log("GRBL WIDGET: FOOTPRINT at line 881")
+								    console.log("GRBL WIDGET: FOOTPRINT at line 881");
 										that.publishAxisStatus({
 													x: 	that.toInch(that.last_work.x),
 													y: 	that.toInch(that.last_work.y),
@@ -886,14 +886,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 												});
 									} else 
 									if (that.last_machine.x !== null) {
-									    console.log("GRBL WIDGET: FOOTPRINT at line 889")
+									    console.log("GRBL WIDGET: FOOTPRINT at line 889");
 											that.publishAxisStatus({
 													x: 	that.toInch(that.last_machine.x),
 													y: 	that.toInch(that.last_machine.y),
 													z: 	that.toInch(that.last_machine.z)
 												});
 									} else {
-									    console.log("GRBL WIDGET: FOOTPRINT at line 896")
+									    console.log("GRBL WIDGET: FOOTPRINT at line 896");
 										that.publishAxisStatus({
 											"x": 0.00,
 											"y": 0.00,
