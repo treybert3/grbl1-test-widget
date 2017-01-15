@@ -278,9 +278,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         "z": "z"
                     });
             });
-            this.last_machine = this.last_work = this.offsets = {
-                x: 0.000,y:0.000,z:0.000
-            };
         },
         options: null,
         setupUiFromCookie: function() {
@@ -650,7 +647,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             
             var msg = recvline.dataline;
             var parsing = true;
-            $.each(pushMessages, function(key, value) {
+            pushMessages.forEach(function(value,key) {
                 console.log("GRBL WIDGET: testing regex", key, value);
                 if (!parsing){
                     console.log("GRBL WIDGET: not checking because line already parsed");
@@ -783,13 +780,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui  
                         break;
                     case 'alarm':
-                        chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", alarmCodes[parseInt(result[1]), 10]);
+                        chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", alarmCodes[parseInt(result[1], 10)]);
                         if (parseInt(result[1], 10) == 4 || parseInt(result[1], 10) == 5) {
                             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", "alarm");
                         }
                         break;
                     case 'error':
-                        chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorMessages[parseInt(result[1]), 10]);
+                        chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorMessages[parseInt(result[1], 10)]);
                         //should we stop now?
                         break;
                     case 'setting':
@@ -864,8 +861,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         this.compileOptions = "";
                         for (var i = 0; i < result[1].length; i++) {
                             opt = result[1].substr(i, 1);
-                            if (configStrings[opt]) {
-                                tmp.push(configStrings[opt]);
+                            if (optionCodes[opt]) {
+                                tmp.push(optionCodes[opt]);
                             }
                         }
                         this.compileOptions = tmp.join("\n");
@@ -874,7 +871,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //ignore
                         break;
                 }
-            });
+            },this);
 
         },
         grblResponse: function(recvline) {
@@ -1189,6 +1186,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             return (inch * 25.4).toFixed(3);
         },
         addError: function(line, msg) {
+            var i;
             if (this.err_log.length === 0)
                 i = 0;
             else
