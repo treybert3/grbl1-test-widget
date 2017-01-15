@@ -431,7 +431,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     this.report_mode = 1;
                     this.controller_units = "inch";
                 }
-                $(".stat_units").html(this.controller_units);
+                $(".stat-units").html(this.controller_units);
             } 
             
             console.log("GRBL WIDGET: Updated Report Units - " + this.report_mode);
