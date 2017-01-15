@@ -1093,7 +1093,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //not a very helpful response.  so ignore
                         break;
                     case 'hashQuery':
+                        
                         if (result[0] == 'PRB') {
+                            console.log("GRBL WIDGET: received probe info", result);
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
@@ -1102,6 +1104,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     "y": parseFloat(coords[1]) - that.offsets.y,
                                     "z": parseFloat(coords[2]) - that.offsets.z
                             };
+                            /* se */
                             obj.x = obj.x.toFixed(3);
                             obj.y = obj.y.toFixed(3);
                             obj.z = obj.z.toFixed(3);
