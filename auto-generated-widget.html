@@ -1411,7 +1411,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     if (WPos_flag === true)
                         this.publishAxisStatus(this.last_work);
                     else if (MPos_flag === true)
-                        this.publishAxisStatus(this.machine);
+                        this.publishAxisStatus(this.last_machine);
                     else //as failsafe send NAN so user knows that the coordinates are not displaying properly -- could handle this error on the receiving widget side.
                         this.publishAxisStatus({
                         "x": 0.000,
