@@ -58,6 +58,9 @@ cprequire_test(["inline:com-chilipeppr-widget-grbl"], function(grbl) {
     chilipeppr.publish("/com-chilipeppr-widget-serialport/recvSingleSelectPort", {
         BufferAlgorithm: "grbl"
     }); //error not grbl buffer
+	
+	//grab config options.
+	sendCode(String.fromCharCode(36) + String.fromCharCode(36));
 
 } /*end_test*/ );
 
@@ -278,6 +281,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         "z": "z"
                     });
             });
+			
+			
         },
         options: null,
         setupUiFromCookie: function() {
@@ -791,6 +796,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //should we stop now?
                         break;
                     case 'setting':
+						config.log("GRBL WIDGET: parsing settings", result[1], parseInt(result[1],10), result[2], parseFloat(result[2]), configStrings[result[1]]);
                         that.config[parseInt(result[1], 10)] = [parseFloat(result[2]), configStrings[result[1]]]; //save config value and description
                         break;
                     case 'message':
