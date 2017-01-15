@@ -502,6 +502,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 if (that.version === ""){
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
                     that.sendCode(String.fromCharCode(36) + "I\n");
+                } else {
+                    if(that.version.substring(0,1) == '1'){
+                        $('.v1Suppress').hide();
+                    } else {
+                        $('.v1Suppress').show();
+                    }
                 }
                 that.sendCode("*status*\n"); //send request for initial status response.
                 that.sendCode("$\n"); //get grbl params
@@ -1144,27 +1150,31 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
-                            if (that.work_mode === that.report_mode) {
-                                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
+                            var obj = {
                                     "x": parseFloat(coords[0]) - that.offsets.x,
                                     "y": parseFloat(coords[1]) - that.offsets.y,
-                                    "z": parseFloat(coords[2]) - that.offsets.z,
-                                    status: probeSuccess
-                                });
+                                    "z": parseFloat(coords[2]) - that.offsets.z
+                            };
+                            obj.x = obj.x.toFixed(3);
+                            obj.y = obj.y.toFixed(3);
+                            obj.z = obj.z.toFixed(3);
+                            obj.status = probeSuccess;
+                            if (that.work_mode === that.report_mode) {
+                                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", obj);
                             }
                             else if (that.work_mode === 1 && that.report_mode === 0) { //work is inch, reporting in mm
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": that.toInch(parseFloat(coords[0]) - that.offsets.x),
-                                    "y": that.toInch(parseFloat(coords[1]) - that.offsets.y),
-                                    "z": that.toInch(parseFloat(coords[2]) - that.offsets.z),
+                                    "x": that.toInch(obj.x).toFixed(3),
+                                    "y": that.toInch(obj.y).toFixed(3),
+                                    "z": that.toInch(obj.z).toFixed(3),
                                     status: probeSuccess
                                 });
                             }
                             else if (that.work_mode === 0 && that.report_mode === 1) { //work is mm, reporting in inches
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": that.toMM(parseFloat(coords[0]) - that.offsets.x),
-                                    "y": that.toMM(parseFloat(coords[1]) - that.offsets.y),
-                                    "z": that.toMM(parseFloat(coords[2]) - that.offsets.z),
+                                    "x": that.toMM(obj.x).toFixed(3),
+                                    "y": that.toMM(obj.y).toFixed(3),
+                                    "z": that.toMM(obj.z).toFixed(3),
                                     status: probeSuccess
                                 });
                             }
