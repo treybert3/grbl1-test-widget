@@ -763,7 +763,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         if (that.alarm !== true || that.status !== "Alarm") {
                             that.alarm = false;
                             $('.stat-state').unbind("click");
-                            $('.stat-state').text(that.status.charAt(0).toUpperCase() + that.status.slice(1)); //Update UI
+                            $('.stat-state').text(that.status); //Update UI
                             $('#stat-state-background-box').css('background-color', '#f5f5f5');
                         }
 						
@@ -804,7 +804,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "bf":
 									//typically disabled in grbl 1.1
-									var bits = result[1].split(',');
+									var _bits = result[1].split(',');
 									//available planner buffer, //bytes available in serial buffer
                                     break;
                                 case "ln":
@@ -812,21 +812,22 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 									var currentlyExecutingLineNumber = result[1];
                                     break;
                                 case "f":
-									//feed rate	
+									//feed rate
+									
 									var feedRate = 	that.controller_units === "inch"?
-													that.toMM(parseFloat(result[1])) :
-													parseFloat(result[1]);
+													that.toMM(parseFloat(bit[1])) :
+													parseFloat(bit[1]);
 									$('.stat-feedrate').html(feedRate.toFixed(2));
 								
                                     break;
                                 case "fs":
 									//feed rate and spindle speed
-									var bits = result[1].split(',');
+									var _bits = bit[1].split(',');
 									var feedRate = 	that.controller_units === "inch"?
-													that.toMM(parseFloat(bits[0])) :
-													parseFloat(bits[0]);
+													that.toMM(parseFloat(_bits[0])) :
+													parseFloat(_bits[0]);
 									$('.stat-feedrate').html(feedRate.toFixed(2));
-									var spindleSpeed = parseInt(bits[1],10);
+									var spindleSpeed = parseInt(_bits[1],10);
 									$('.stat-spindle').html(spindleSpeed);
                                     break;
                                 case "pn":
@@ -834,11 +835,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "ov":
 									//reports overrides	
-									var bits = result[1].split(',');
+									var _bits = result[1].split(',');
 									that.overrides={
-										feedRate: parseInt(bits[0], 10),
-										rapids:	parseInt(bits[1], 10),
-										spindleSpeed: parseInt(bits[2],10)
+										feedRate: parseInt(_bits[0], 10),
+										rapids:	parseInt(_bits[1], 10),
+										spindleSpeed: parseInt(_bits[2],10)
 									};
 									
                                     break;
