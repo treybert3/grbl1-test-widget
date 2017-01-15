@@ -853,6 +853,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "ov":
                                     //reports overrides	
                                     var _bits = bit[1].split(',');
+                                    console.log("GRBL WIDGET: FOOTPRINT "+ _bits);
                                     that.overrides = {
                                         feedRate: parseInt(_bits[0], 10),
                                         rapids: parseInt(_bits[1], 10),
