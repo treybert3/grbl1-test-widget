@@ -1387,6 +1387,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         //    that.sendCode('?\n'); //request status/coordinates
         //},
         publishAxisStatus: function(axes) {
+			axes.forEach(function (val, index, axes){
+				axes[index] = val.toFixed(3);
+			});
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", axes);
         },
         plannerLastEvent: "resume",
