@@ -990,9 +990,17 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 							default:
 								var val = parseInt(result[2], 10);
 						}
-						console.log("GRBL WIDGET: parsing settings", result[1], configCode, result[2], val, configStrings[result[1]]);
+						console.log(    "GRBL WIDGET: parsing settings", 
+						                result[1], 
+						                configCode, 
+						                result[2], 
+						                val, 
+						                that.configStrings[result[1]]
+                        );
 						
-                        that.config[configCode] = [val, that.configStrings[result[1]]]; //save config value and description
+                        that.config[configCode] = [ val, 
+                                                    that.configStrings[result[1]]
+                                                ]; //save config value and description
                         break;
                     case 'message':
                         //not all messages are implemented
