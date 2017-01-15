@@ -837,13 +837,17 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 "z": that.toMM(parseFloat(that.last_work.z))
                             });
                         }
+                        $('.stat-mcoords').html("X:" + this.last_machine.x.toFixed(3) + " Y:" + this.last_machine.y.toFixed(3) + " Z:" + this.last_machine.z.toFixed(3));
+                        
                         break;
                     case 'gCodeState':
 						var codes = result[1].split(' ');
 						switch(codes){
 							case 'G21':
+							    
 								if(that.controller_units !== 'mm'){
 									that.controller_units = 'mm';
+									$('.stat-units').html(that.controller_units);
 									console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
 									chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                         			//resend coordinates
@@ -874,8 +878,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 							break;
 							
 							case 'G20':
-								if(that.controller_units !== 'inch'){
+							    if(that.controller_units !== 'inch'){
 								    that.controller_units = "inch";
+								    $('.stat-units').html(that.controller_units);
 									console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
 									chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
 								}
