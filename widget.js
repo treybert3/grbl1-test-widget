@@ -59,8 +59,6 @@ cprequire_test(["inline:com-chilipeppr-widget-grbl"], function(grbl) {
         BufferAlgorithm: "grbl"
     }); //error not grbl buffer
 	
-	//grab config options.
-	sendCode(String.fromCharCode(36) + String.fromCharCode(36));
 
 } /*end_test*/ );
 
@@ -106,6 +104,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         url: "(auto fill by runme.js)", // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
         githuburl: "(auto fill by runme.js)", // The backing github repo
         testurl: "(auto fill by runme.js)", // The standalone working widget so can view it working by itself
+        fiddleurl:  "(auto fill by runme.js)",
         name: "Widget / GRBL 1.1 compatibility test",
         desc: "This widget shows the GRBL Buffer so other widgets can limit their flow of sending commands and other specific GRBL features.",
         publish: {
@@ -285,8 +284,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         "z": 0.000
                     });
             });
-			
-			
+
+	        //grab config options.
+            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
+            this.sendCode(String.fromCharCode(36) + 'I');
+            
         },
         options: null,
         setupUiFromCookie: function() {
