@@ -1125,7 +1125,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var tmp = new Array;
                         that.compileOptions = "";
                         for (var i = 0; i < result[1].length; i++) {
-                            opt = result[1].substr(i, 1);
+                            opt = result[1].substring(i, 1);
                             if (optionCodes[opt]) {
                                 tmp.push(optionCodes[opt]);
                             }
