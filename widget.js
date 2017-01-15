@@ -476,9 +476,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 "z": 0.000
             };
             this.publishAxisStatus({
-                "posx": 0.000,
-                "posy": 0.000,
-                "posz": 0.000
+                "x": 0.000,
+                "y": 0.000,
+                "z": 0.000
             });
         },
         getControllerInfo: function() {
@@ -756,23 +756,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         //send axis updates
                         if (that.work_mode === that.report_mode) {
                             that.publishAxisStatus({
-                                "posx": parseFloat(that.last_work.x),
-                                "posy": parseFloat(that.last_work.y),
-                                "posz": parseFloat(that.last_work.z)
+                                "x": parseFloat(that.last_work.x),
+                                "y": parseFloat(that.last_work.y),
+                                "z": parseFloat(that.last_work.z)
                             });
                         }
                         else if (that.work_mode === 1 && that.report_mode === 0) { //work is inch, reporting in mm
                             that.publishAxisStatus({
-                                "posx": that.toInch(parseFloat(that.last_work.x)),
-                                "posy": that.toInch(parseFloat(that.last_work.y)),
-                                "posz": that.toInch(parseFloat(that.last_work.z))
+                                "x": that.toInch(parseFloat(that.last_work.x)),
+                                "y": that.toInch(parseFloat(that.last_work.y)),
+                                "z": that.toInch(parseFloat(that.last_work.z))
                             });
                         }
                         else if (that.work_mode === 0 && that.report_mode === 1) { //work is mm, reporting in inch
                             that.publishAxisStatus({
-                                "posx": that.toMM(parseFloat(that.last_work.x)),
-                                "posy": that.toMM(parseFloat(that.last_work.y)),
-                                "posz": that.toMM(parseFloat(that.last_work.z))
+                                "x": that.toMM(parseFloat(that.last_work.x)),
+                                "y": that.toMM(parseFloat(that.last_work.y)),
+                                "z": that.toMM(parseFloat(that.last_work.z))
                             });
                         }
                         break;
