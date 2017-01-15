@@ -1264,6 +1264,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     chilipeppr.publish("/com-chilipeppr-widget-gcode/stop", true); //stops gcode widget since grbl just reset.
                     this.version = msg.split(" ")[1];
                     $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui  
+                    
+                    this.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
+                    this.sendCode(String.fromCharCode(36) + "I");
                 }
                 else if (msg.search(/^\$[0-9][0-9]*=/g) >= 0) { //is a config report ($0=,$1=...etc)
                     var tmp = msg.split(/ (.+)/); //break out config and description
