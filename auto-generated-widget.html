@@ -509,6 +509,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 //wait one additional second before checking for what reporting units grbl is configured for.
                 setTimeout(function(context) {
                     context.updateReportUnits();
+                    
+                    if(substr(context.version,0,1) == '1'){
+                        $('.v1Suppress').hide();
+                    } else {
+                        $('.v1Suppress').show();
+                    }
                 }, 1000, that);
 
                 that.restartStatusInterval(); //Start the $G tracking loop
@@ -1733,7 +1739,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     <span class="stat-feedrate">0</span>                   
                 </div>
             </div><!-- row -->
-            <div class="row stat-row">
+            <div class="row stat-row v1Suppress">
                 <div class="col col-xs-3" id="ttl-distance">
                     Distance
                 </div>
@@ -1747,7 +1753,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     <span class="stat-sm stat-motion">-</span>
                 </div>
             </div><!-- row -->
-            <div class="row stat-row">
+            <div class="row stat-row v1Suppress">
                 <div class="col col-xs-3" id="ttl-wcs">
                     WCS
                 </div>

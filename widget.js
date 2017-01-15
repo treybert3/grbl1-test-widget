@@ -456,6 +456,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 //wait one additional second before checking for what reporting units grbl is configured for.
                 setTimeout(function(context) {
                     context.updateReportUnits();
+                    
+                    if(substr(context.version,0,1) == '1'){
+                        $('.v1Suppress').hide();
+                    } else {
+                        $('.v1Suppress').show();
+                    }
                 }, 1000, that);
 
                 that.restartStatusInterval(); //Start the $G tracking loop
