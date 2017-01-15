@@ -802,7 +802,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var offset = bit[1].split(',');
                                     console.log("GRBL WIDGET: offset information: ",offset);
                                     ['x','y','z'].forEach(function(val, index){
-                                        this.offsets[val] = parseFloat(coords[index]);
+                                        this.offsets[val] = parseFloat(offset[index]);
                                     },that);
                                     break;
                                 case "bf":
