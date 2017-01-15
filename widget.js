@@ -710,7 +710,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         if (that.alarm !== true || that.status !== "Alarm") {
                             that.alarm = false;
                             $('.stat-state').unbind("click");
-                            $('.stat-state').text(that.status.charAt(0).toUpperCase() + this.status.slice(1)); //Update UI
+                            $('.stat-state').text(that.status.charAt(0).toUpperCase() + that.status.slice(1)); //Update UI
                             $('#stat-state-background-box').css('background-color', '#f5f5f5');
                         }
 						
@@ -1046,7 +1046,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         if (result[0] == 'PRB') {
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
-                            var coords = bits[1].split(',');
+                            var coords = bits[0].split(',');
                             if (that.work_mode === that.report_mode) {
                                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
                                     "x": parseFloat(coords[0]) - that.offsets.x,
