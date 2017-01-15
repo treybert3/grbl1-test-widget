@@ -389,6 +389,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
         },
         showConfigModal: function() {
+            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             $('#grbl-config-div').empty();
 
             this.config.forEach(function(config_element, index_num) {
