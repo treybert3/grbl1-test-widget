@@ -571,9 +571,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     context.updateReportUnits();
                     if (context.version.substring(0, 1) == '1') {
                         $('.v1Suppress').hide();
+                          $('.v1Show').show();
+                        // hide the new override btns 
+                        $('.com-chilipeppr-widget-grbl-realtime-commands').hide();
                     }
                     else {
                         $('.v1Suppress').show();
+                         $('.v1Show').hide();
                     }
                 }, 1000, that);
 
