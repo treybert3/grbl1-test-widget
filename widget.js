@@ -842,17 +842,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         			//resend coordinates
 									if (that.last_work.x !== null){
 										that.publishAxisStatus({
-													x: 	that.toMM(that.last_work.x),
-													y: 	that.toMM(that.last_work.y),
-													z: 	that.toMM(that.last_work.z)
-												});
+												x: 	that.toMM(that.last_work.x),
+												y: 	that.toMM(that.last_work.y),
+												z: 	that.toMM(that.last_work.z)
+										});
 									} else 
 									if (this.last_machine.x !== null) {
-									
 										that.publishAxisStatus({
-											x: 	that.toMM(that.last_machine.x),
-											y: 	that.toMM(that.last_machine.y),
-				    						z: 	that.toMM(that.last_machine.z)
+												x: 	that.toMM(that.last_machine.x),
+												y: 	that.toMM(that.last_machine.y),
+												z: 	that.toMM(that.last_machine.z)
 										});
 									} else {
 										that.publishAxisStatus({
@@ -878,12 +877,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 												});
 									} else 
 									if (this.last_machine.x !== null) {
-					
-										that.publishAxisStatus({
-											x: 	that.toInch(that.last_machine.x),
-											y: 	that.toInch(that.last_machine.y),	
-											z: 	that.toInch(that.last_machine.z)
-										});
+											that.publishAxisStatus({
+													x: 	that.toInch(that.last_machine.x),
+													y: 	that.toInch(that.last_machine.y),
+													z: 	that.toInch(that.last_machine.z)
+												});
 									} else {
 										that.publishAxisStatus({
 											"x": 0.00,
@@ -991,7 +989,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 							default:
 								var val = parseInt(result[2], 10);
 						}
-						config.log("GRBL WIDGET: parsing settings", result[1], configCode, result[2], val, configStrings[result[1]]);
+						console.log("GRBL WIDGET: parsing settings", result[1], configCode, result[2], val, configStrings[result[1]]);
 						
                         that.config[configCode] = [val, that.configStrings[result[1]]]; //save config value and description
                         break;
