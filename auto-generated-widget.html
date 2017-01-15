@@ -1576,9 +1576,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         //    that.sendCode('?\n'); //request status/coordinates
         //},
         publishAxisStatus: function(axes) {
-            console.log("GRBL WIDGET: axis footprint", axes);
+            console.log("GRBL WIDGET: axis data received", axes);
             var _axes = {};
             $.each(axes, function(index, val) {
+                if(isNaN(val)){
+                    val = 0.000;
+                }
                 _axes[index] = val.toFixed(3);
             });
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", _axes);
