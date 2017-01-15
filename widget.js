@@ -1513,7 +1513,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 if(isNaN(val)){
                     val = 0.000;
                 }
-                _axes[index] = val.toFixed(3);
+                
+                _axes[index] = parseFloat(val).toFixed(3);
             });
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", _axes);
         },
