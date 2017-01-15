@@ -292,7 +292,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         options: null,
         setVersion: function(ver){
             this.version = ver;
-            chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', this.version);
+            chilipeppr.publish( "/com-chilipeppr-interface-cnccontroller/status", 
+                                this.version);
         },
         setupUiFromCookie: function() {
             // read vals from cookies
