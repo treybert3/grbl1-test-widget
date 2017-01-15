@@ -909,7 +909,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var codes = result[1].split(' ');
                         codes.forEach(function(value) {
                             var that = this;
-                            switch (codes) {
+                            switch (value) {
+                                case 'G54':
+                                case 'G55':
+                                case 'G56':
+                                case 'G57':
+                                case 'G58':
+                                case 'G59':
+                                    that.WCS = value;
+                                break;
+                                
                                 case 'G21':
 
                                     if (that.controller_units !== 'mm') {

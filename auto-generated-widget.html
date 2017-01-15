@@ -17,7 +17,7 @@
 #com-chilipeppr-widget-grbl-body {
     /*padding:0; */
 }
-.com-chilipeppr-interface-cnccontroller-stat .col {
+.com-chilipeppr-interface-cnccontroller-stat .col{
     padding:0 10px 0 0;
 }
 #com-chilipeppr-widget-grbl-body{
@@ -32,11 +32,11 @@
 .com-chilipeppr-interface-cnccontroller-stat .stat-row {
     padding-top:2px;
 }
-.com-chilipeppr-interface-cnccontroller-stat div.col.lblpad {
+.com-chilipeppr-interface-cnccontroller-stat .col.lblpad {
     padding-left:10px;
 }
   
-.com-chilipeppr-interface-cnccontroller-stat  div.col.well {
+.com-chilipeppr-interface-cnccontroller-stat  .col.well {
     margin-bottom:0px;
     padding-left:5px;
 }
@@ -46,6 +46,19 @@
 
 #com-chilipeppr-widget-grbl .enabled{
     background-color: #CCFF99;
+}
+
+
+
+.v1Show{
+   /* display: none; */
+}
+.com-chilipeppr-widget-grbl-realtime-commands .well{
+    padding: 5px;
+
+}
+.com-chilipeppr-widget-grbl-realtime-commands .overrides-btn{
+    margin-bottom: 10px;
 }
     </style>
 
@@ -962,7 +975,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var codes = result[1].split(' ');
                         codes.forEach(function(value) {
                             var that = this;
-                            switch (codes) {
+                            switch (value) {
+                                case 'G54':
+                                case 'G55':
+                                case 'G56':
+                                case 'G57':
+                                case 'G58':
+                                case 'G59':
+                                    that.WCS = value;
+                                break;
+                                
                                 case 'G21':
 
                                     if (that.controller_units !== 'mm') {
@@ -1754,7 +1776,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             </div>
             
             <div class="btn-group">
-                <button type="button" class="btn btn-xs btn-default btn-danger grbl-feedhold" data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Feedhold" data-content="Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X."><span class="glyphicon glyphicon-stop"></span></button>
+                <button type="button" class="btn btn-xs btn-default btn-danger grbl-feedhold" data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Feedhold" data-content="Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.">
+                    <!-- span class="glyphicon glyphicon-stop"></span -->
+                    Hold !
+                </button>
                 <button type="button" class="btn btn-xs btn-default grbl-cyclestart"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Cycle Start" data-content="Resume movement from stopping point"><span class="">~</span></button>
                 <button type="button" class="btn btn-xs btn-default grbl-verbose"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Toggle Verbose Output" data-content="Toggle verbose mode to show query responses in console - defaults to disabled, green when enabled"><span class="">v</span></button>
                 <!--<button type="button" class="btn btn-xs btn-default grbl-queueflush"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Queue Flush" data-content="Empty planner buffer. Used for jogging and other cycles"><span class="">%</span></button>-->
@@ -1782,17 +1807,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         <div id="grbl-buffer-warning" style="color:red;font-size:12px;text-align:center;">
             You must connect to your GRBL device using the GRBL buffer algorithm in this workspace.  Connecting to any other buffer (default, tinyg, etc) will cause unpredictable behavior.<br/><br/>
         </div>
+        
+        
         <!-- start new buttons -->
-        
-        
+    
         <div class="com-chilipeppr-widget-grbl-realtime-commands"> 
           <!-- new commands fpr the 1.1 version -->
           <div class="row overrides-btn">
                <div class="col col-xs-3">
-                      Feed Overrides
-                      <span class="ov-1 status">100</span>
+                      Feed Overrides 
+                      <span class="ov-1" title="Current status">100</span>
                </div>
                <div class="col col-xs-9">
+                   
                    <div class="btn-group">
                         <button type="button" class="btn btn-xs btn-primary feed-overrides-normal"  data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Feed Overrides" data-content="Immediately alters the feed override value. An active feed motion is altered within tens of milliseconds. Does not alter rapid rates, which include G0, G28, and G30, or jog motions." data-send-code="90">
                            100%
@@ -1817,57 +1844,65 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                </div>
             
               </div>
-          <hr/>
+       
           <div class="row overrides-btn">
                <div class="col col-xs-3">
                       Rapid Overrides 
-                      <span class="ov-2"></span>
+                      <span class="ov-2" title="Current status">100</span>
                </div>
                <div class="col col-xs-9">
                    <div class="btn-group">
-                     <button type="button" class="btn btn-sm btn-primary"  data-delay="500" data-animation="true" data-placement="auto" 
+                     <button type="button" class="btn btn-xs btn-primary"  data-delay="500" data-animation="true" data-placement="auto" 
                      data-container="body" data-trigger="hover" data-title="Rapid Overrides" 
                      data-content="Immediately alters the rapid override value. An active rapid motion is altered within tens of milliseconds. Only effects rapid motions, which include G0, G28, and G30" 
                      data-send-code="95">
                         100%
                      </button>
-                     <button type="button" class="btn btn-sm btn-default" data-send-code="96">
+                    </div>
+                    <div class="btn-group">
+                     <button type="button" class="btn btn-xs btn-default" data-send-code="96">
                        50%
                      </button>
-                     <button type="button" class="btn btn-sm btn-default" data-send-code="97">
+                     <button type="button" class="btn btn-xs btn-default" data-send-code="97">
                        25%
                      </button> 
                    </div>
                </div>
             
               </div>
-          <hr/>
+        
           <div class="row overrides-btn">
                <div class="col col-xs-3">
-                      Spindle Speed Overrides
-                      <span class="ov-3"></span>
+                      Spindle Overrides<br/>
+                      <span class="ov-3" title="Current status">100</span>
                </div>
                <div class="col col-xs-9">
                    <div class="btn-group">
-                     <button type="button" class="btn btn-sm btn-primary"  data-delay="500" data-animation="true" data-placement="auto" 
+                     <button type="button" class="btn btn-xs btn-primary"  data-delay="500" data-animation="true" data-placement="auto" 
                      data-container="body" data-trigger="hover" data-title="Spindle speed Overrides" 
                      data-content="mmediately alters the spindle speed override value. An active spindle speed is altered within tens of milliseconds. Override values may be changed at any time, regardless of if the spindle is enabled or disabled." 
                      data-send-code="99">
                        100%
                      </button>
-                     <button type="button" class="btn btn-sm btn-default" data-send-code="9A">
+                    </div>
+                    <div class="btn-group">
+                     <button type="button" class="btn btn-xs btn-default" data-send-code="9A">
                        +10%
                      </button>
-                     <button type="button" class="btn btn-sm btn-default" data-send-code="9B">
+                     <button type="button" class="btn btn-xs btn-default" data-send-code="9B">
                        -10%
                      </button>
-                     <button type="button" class="btn btn-sm btn-default" data-send-code="9C">
+                     </div>
+                    <div class="btn-group">
+                     <button type="button" class="btn btn-xs btn-default" data-send-code="9C">
                        +1%
                      </button>
-                     <button type="button" class="btn btn-sm btn-default" data-send-code="9D">
+                     <button type="button" class="btn btn-xs btn-default" data-send-code="9D">
                        -1%
                      </button>
-                     <button type="button" class="btn btn-sm btn-warning" data-send-code="9E" 
+                     </div>
+                    <div class="btn-group">
+                     <button type="button" class="btn btn-xs btn-warning" data-send-code="9E" 
                      data-title="Toggle Spindle Stop" data-content="Toggles spindle enable or disable state immediately, but only while in the HOLD state. The command is otherwise ignored, especially while in motion. This prevents accidental disabling during a job that can either destroy the part/machine or cause personal injury. Industrial machines handle the spindle stop override similarly. When motion restarts via cycle start, the last spindle state will be restored and wait 4.0 seconds (configurable) before resuming the tool path. This ensures the user doesn't forget to turn it back on. While disabled, spindle speed override values may still be altered and will be in effect once the spindle is re-enabled. If a safety door is opened, the DOOR state will supersede the spindle stop override, where it will manage the spindle re-energizing itself upon closing the door and resuming. The prior spindle stop override state is cleared and reset.">
                       STOP
                      </button>
@@ -1876,22 +1911,21 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                </div>
             
               </div>
-          <hr/>
+          
           <div class="row overrides-btn">
             <div class="col col-xs-3">
                       Coolant
                </div>
                <div class="col col-xs-9">
-            <button type="button" class="btn btn-sm btn-default" data-send-code="A0">
+            <button type="button" class="btn btn-xs btn-default" data-send-code="A0">
               Flood
             </button>
            
-             <button type="button" class="btn btn-sm btn-default" data-send-code="A1">
+             <button type="button" class="btn btn-xs btn-default" data-send-code="A1">
               Mist
             </button>
             </div>
           </div>
-          <hr/>
         </div>
         
         
