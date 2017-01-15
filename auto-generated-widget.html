@@ -477,12 +477,17 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         updateReportUnits: function() {
             if (this.config[13] !== undefined) {
-                if (this.config[13][0] === 0)
+                if (this.config[13][0] === 0){
                     this.report_mode = 0;
-                else if (this.config[13][0] === 1)
+                    this.controller_units = "mm";
+                } else if (this.config[13][0] === 1) {
                     this.report_mode = 1;
-            }
-            console.log("GRBL: Updated Report Units - " + this.report_mode);
+                    this.controller_units = "inch";
+                }
+                $(".stat_units").html(this.controller_units);
+            } 
+            
+            console.log("GRBL WIDGET: Updated Report Units - " + this.report_mode);
         },
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
@@ -491,10 +496,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             //wait three second for arduino initialization before requesting the grbl config variables.
             setTimeout(function() {
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", ""); //Request port info
-                if (that.version === "")
+                if (that.version === ""){
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
-                that.sendCode("*status*\n"); //send request for initial status response.
-                that.sendCode("$\n"); //get grbl params
+                    that.sendCode(String.fromCharCode(36) + "I\n");
+                    that.sendCode("*status*\n"); //send request for initial status response.
+                    that.sendCode("$\n"); //get grbl params
+                }
                 //wait one additional second before checking for what reporting units grbl is configured for.
                 setTimeout(function() {
                     that.updateReportUnits();
