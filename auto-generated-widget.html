@@ -507,9 +507,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 that.sendCode("$\n"); //get grbl params
                 that.sendCode("$G\n");
                 //wait one additional second before checking for what reporting units grbl is configured for.
-                setTimeout(function() {
-                    that.updateReportUnits();
-                }, 1000);
+                setTimeout(function(context) {
+                    context.updateReportUnits();
+                }, 1000, that);
 
                 that.restartStatusInterval(); //Start the $G tracking loop
 
