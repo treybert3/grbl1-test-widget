@@ -389,7 +389,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
             $('#com-chilipeppr-widget-grbl-btnoptions').click(this.showConfigModal.bind(this));
 
-            $('#com-chilipeppr-widget-grbl .btn-toolbar .btn').popover({
+            $('#com-chilipeppr-widget-grbl .btn-toolbar .btn, .com-chilipeppr-widget-grbl-realtime-commands .btn').popover({
                 delay: 500,
                 animation: true,
                 placement: "auto",
