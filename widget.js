@@ -1497,14 +1497,17 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         wsSendCode: function(sendline){
             
             
-            if (this.singleSelectPort.Name !== undefined){
-                var send = "send " + this.singleSelectPort.Name + " '" + sendline + "'\n";
-                chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); //send to serial port 
+            if (this.singleSelectPort.Name !== undefined && sendline != ''){
+                var send = "send " + this.singleSelectPort.Name + " " + sendline + "\n";
+                // send to serial port 
+                // seems that messages goes to queue as the same command send
+                chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); 
+                
                 console.log("GRBL WIDGET: wsSendCode try sending outside the buffer.", send);    
             }
             else{
                 // chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
-                console.log("GRBL WIDGET: wsSendCode port not selected", send);    
+                console.log("GRBL WIDGET: wsSendCode port not selected or sendlile empty", send, sendline);    
             }
             
             
