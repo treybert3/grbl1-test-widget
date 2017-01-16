@@ -468,12 +468,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons start
             // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
             $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
-                that.sendCode('\x84' + "\n");
+                that.wsSendCode('\x84' + "\n");
             });
 
             $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
                 // send ascii code from data-send-code html tag
-                that.sendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)));
+                that.wsSendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)));
             });
 
             $('#com-chilipeppr-widget-grbl .hide-overrides').click(function(evt) {
@@ -1559,6 +1559,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
         },
 
+        wsSendCode: function(sendline){
+            chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", sendline); //send to serial port 
+            console.log("GRBL WIDGET: try sending outside the buffer.");
+            
+        },
         sendCode: function(sendline) {
             //chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/send", this, this.bufferPush); //unsubscribe before publishing to serial port
             chilipeppr.publish("/com-chilipeppr-widget-serialport/send", sendline); //send to serial port 
