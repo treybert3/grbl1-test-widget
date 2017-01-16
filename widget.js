@@ -234,6 +234,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvSingleSelectPort", this, function(port) {
                 if (port !== null) {
                     this.singleSelectPort = port;
+                    console.log("GRBL WIDGET: GOT PORT", port);
                     this.buffer_name = port.BufferAlgorithm;
                     if (this.buffer_name !== "grbl") {
                         $("#grbl-buffer-warning").show();
