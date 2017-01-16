@@ -1494,9 +1494,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
 
         wsSendCode: function(sendline){
-            var that = this;
-            if (that.singleSelectPort.name !== undefined){
-                var send = "send " + that.singleSelectPort.name + " " + sendline + "\n";
+            console.log("GRBL WIDGET: wsSendCode requesting port info");
+            chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
+            if (this.singleSelectPort.name !== undefined){
+                var send = "send " + this.singleSelectPort.name + " " + sendline + "\n";
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); //send to serial port 
                 console.log("GRBL WIDGET: wsSendCode try sending outside the buffer.", send);    
             }
