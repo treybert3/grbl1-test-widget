@@ -203,6 +203,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             rapids: 0,
             spindleSpeed: 0
         },
+        singleSelectPort : {}, // set up singleSelectPort
         init: function() {
             this.uiHover(); //set up the data elements for all UI
 
@@ -232,6 +233,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvSingleSelectPort", this, function(port) {
                 if (port !== null) {
+                    this.singleSelectPort = port;
                     this.buffer_name = port.BufferAlgorithm;
                     if (this.buffer_name !== "grbl") {
                         $("#grbl-buffer-warning").show();
@@ -1491,7 +1493,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
 
         wsSendCode: function(sendline){
-            chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", sendline); //send to serial port 
+            
+            // send + this.singleSelectPort + sendline + \n
+            var send = "send " + this.singleSelectPort + sendline + "\n";
+            chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); //send to serial port 
+            
             console.log("GRBL WIDGET: try sending outside the buffer.");
             
         },
