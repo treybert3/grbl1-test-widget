@@ -829,8 +829,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         if (status.exec(fields[0])) {
                             if (fields[0].indexOf('Hold:') >= 0 || fields[0].indexOf('Door:') >= 0) {
                                 that.status = subStates[fields[0]];
+                                // adding correct button status
+                                $('#com-chilipeppr-widget-grbl .grbl-feedhold').html("!");
+                                $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
                             }
-
                             else {
                                 that.status = fields[0];
                             }
