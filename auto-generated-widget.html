@@ -1564,7 +1564,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         wsSendCode: function(sendline){
             
             // send + singleSelectPort + sendline + \n
-            var send = "send " + this.singleSelectPort + sendline + "\n";
+            var send = "send " + this.singleSelectPort.name + sendline + "\n";
             
             chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); //send to serial port 
             
