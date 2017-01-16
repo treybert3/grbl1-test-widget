@@ -401,7 +401,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons start
             // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
             $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
-                that.wsSendCode('\x84' + "\n");
+                that.wsSendCode('\x84');
             });
 
             $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
@@ -1494,11 +1494,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
         wsSendCode: function(sendline){
             
-            // send + this.singleSelectPort + sendline + \n
+            // send + singleSelectPort + sendline + \n
             var send = "send " + this.singleSelectPort + sendline + "\n";
+            
             chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); //send to serial port 
             
-            console.log("GRBL WIDGET: try sending outside the buffer.");
+            console.log("GRBL WIDGET: WSSEND try sending outside the buffer.", send);
             
         },
         sendCode: function(sendline) {
