@@ -303,7 +303,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvSingleSelectPort", this, function(port) {
                 if (port !== null) {
                     this.singleSelectPort = port;
-                    console.log("GRBL WIDGET: wsSend GOT PORT", port);
+                    console.log("GRBL WIDGET: wsSend GOT PORT", this.singleSelectPort, port);
                     this.buffer_name = port.BufferAlgorithm;
                     if (this.buffer_name !== "grbl") {
                         $("#grbl-buffer-warning").show();
@@ -1565,8 +1565,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         wsSendCode: function(sendline){
             console.log("GRBL WIDGET: wsSendCode requesting port info");
             chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
-            if (this.singleSelectPort.name !== undefined){
-                var send = "send " + this.singleSelectPort.name + " " + sendline + "\n";
+            if (this.singleSelectPort.Name !== undefined){
+                var send = "send " + this.singleSelectPort.Name + " " + sendline + "\n";
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); //send to serial port 
                 console.log("GRBL WIDGET: wsSendCode try sending outside the buffer.", send);    
             }
