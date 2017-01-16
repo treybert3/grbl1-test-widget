@@ -97,6 +97,7 @@ function Queue() {
 
 cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie"], function() {
     return {
+        widgetDebug: false,
         id: "com-chilipeppr-widget-grbl",
         implements: {
             "com-chilipeppr-interface-cnccontroller": "The CNC Controller interface is a loosely defined set of publish/subscribe signals. The notion of an interface is taken from object-oriented programming like Java where an interface is defined and then specific implementations of the interface are created. For the sake of a Javascript mashup like what ChiliPeppr is, the interface is just a rule to follow to publish signals and subscribe to signals by different top-level names than the ID of the widget or element implementing the interface. Most widgets/elements will publish and subscribe on their own ID. In this widget we are publishing/subscribing on an interface name. If another controller like Grbl is defined by a member of the community beyond this widget for GRBL, this widget can be forked and used without other widgets needing to be changed and the user could pick a Grbl or GRBL implementation of the interface."
@@ -234,7 +235,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvSingleSelectPort", this, function(port) {
                 if (port !== null) {
                     this.singleSelectPort = port;
-                    // console.log("GRBL WIDGET: wsSend GOT PORT", this.singleSelectPort, port);
+                    // if(that.widgetDebug) console.log("GRBL WIDGET: wsSend GOT PORT", this.singleSelectPort, port);
                     this.buffer_name = port.BufferAlgorithm;
                     if (this.buffer_name !== "grbl") {
                         $("#grbl-buffer-warning").show();
@@ -294,6 +295,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         options: null,
         setVersion: function(ver) {
+        	console.log('GRBL WIDGET: setting version to ' + ver);
             this.version = ver;
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion",this.version);
         },
@@ -420,7 +422,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons end
         },
         showConfigModal: function() {
-            console.log("GRBL WIDGET: SJPS sending config request");
+            if(this.widgetDebug) console.log("GRBL WIDGET: SJPS sending config request");
             this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             setTimeout(function(context) {
                 var that = context;
@@ -445,7 +447,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
                 this.sendCode(command);
             }, this);
-            console.log(this.config);
+            console.log("GRBL WIDGET: " + this.config);
             return true;
         },
         updateWorkUnits: function(units) {
@@ -467,19 +469,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     this.report_mode = 1;
                     this.controller_units = "inch";
                 }
-                console.log("GRBL WIDGET: update report units", this.controller_units);
+                if(this.widgetDebug) console.log("GRBL WIDGET: update report units", this.controller_units);
                 $(".stat-units").html(this.controller_units);
             }
 
-            console.log("GRBL WIDGET: Updated Report Units - " + this.report_mode);
+            if(this.widgetDebug) console.log("GRBL WIDGET: Updated Report Units - " + this.report_mode);
         },
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
             var that = this;
-            console.log("GRBL WIDGET: opening controller");
+            if(this.widgetDebug) console.log("GRBL WIDGET: opening controller");
             //wait three second for arduino initialization before requesting the grbl config variables.
             setTimeout(function() {
-                console.log("GRBL WIDGET: opening controller timeout");
+                if(this.widgetDebug) console.log("GRBL WIDGET: opening controller timeout");
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", ""); //Request port info
                 if (that.version === "") {
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
@@ -719,30 +721,30 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
 
             if (!(recvline.dataline) || recvline.dataline == '\n') {
-                console.log("GRBL WIDGET: got recvline but it's not a dataline, so returning.");
+                if(this.widgetDebug) console.log("GRBL WIDGET: got recvline but it's not a dataline, so returning.");
                 return true;
             }
 
-            console.log("GRBL WIDGET: received 1.1 line");
-            console.log("GRBL WIDGET: line is: ", recvline.dataline);
+            if(this.widgetDebug) console.log("GRBL WIDGET: received 1.1 line");
+            if(this.widgetDebug) console.log("GRBL WIDGET: line is: ", recvline.dataline);
 
             var msg = recvline.dataline;
             var parsing = true;
             var that = this;
             $.each(pushMessages, function(key, value) {
-                console.log("GRBL WIDGET: testing regex", key, value);
+                if(that.widgetDebug) console.log("GRBL WIDGET: testing regex", key, value);
                 if (!parsing) {
-                    console.log("GRBL WIDGET: not checking because line already parsed");
+                    if(that.widgetDebug) console.log("GRBL WIDGET: not checking because line already parsed");
                     return;
                 }
                 var result = value.exec(msg);
-                console.log("GRBL WIDGET: result of primary regex", result);
+                if(that.widgetDebug) console.log("GRBL WIDGET: result of primary regex", result);
                 if (result) {
                     parsing = false;
-                    console.log("GRBL WIDGET: got a match");
+                    if(that.widgetDebug) console.log("GRBL WIDGET: got a match");
                 }
                 else {
-                    console.log("GRBL WIDGET: not got a match");
+                    if(that.widgetDebug) console.log("GRBL WIDGET: not got a match");
                     return;
                 }
                 switch (key) {
@@ -750,7 +752,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
                         //we need the bits
                         var fields = result[1].split("|");
-                        console.log("GRBL WIDGET: status information: ", fields);
+                        if(that.widgetDebug) console.log("GRBL WIDGET: status information: ", fields);
                         //0 is always the machine state
                         var status = new RegExp("^(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
                         if (status.exec(fields[0])) {
@@ -787,7 +789,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             $('#stat-state-background-box').css('background-color', '#f5f5f5');
                         }
 
-                        console.log("GRBL WIDGET:setting status to " + that.status);
+                        if(that.widgetDebug) console.log("GRBL WIDGET:setting status to " + that.status);
                         //UI updates
                         chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
                         $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
@@ -797,11 +799,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         for (i = 1; i < fields.length; i++) {
                             console.log('GRBL WIDGET: checking item ' + i + " of " + fields.length);
                             var bit = fields[i].split(":");
-                            console.log("GRBL WIDGET: status part information: ", fields[i], bit);
+                            if(that.widgetDebug) console.log("GRBL WIDGET: status part information: ", fields[i], bit);
                             switch (bit[0].toLowerCase()) {
                                 case "mpos":
                                     var coords = bit[1].split(',');
-                                    console.log("GRBL WIDGET: machine coords: ", coords);
+                                    if(that.widgetDebug) console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
                                         this.last_machine[val] = parseFloat(coords[index]);
                                     }, that);
@@ -809,7 +811,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "wpos":
                                     var coords = bit[1].split(',');
-                                    console.log("GRBL WIDGET: work coords: ", coords);
+                                    if(that.widgetDebug) console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
                                         this.last_work[val] = parseFloat(coords[index]);
                                     }, that);
@@ -817,7 +819,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "wco":
                                     var offset = bit[1].split(',');
-                                    console.log("GRBL WIDGET: offset information: ", offset);
+                                    if(that.widgetDebug) console.log("GRBL WIDGET: offset information: ", offset);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
                                         this.offsets[val] = parseFloat(offset[index]);
                                     }, that);
@@ -873,11 +875,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     //reports accessories
                                     break;
                             }
-                            console.log("GRBL WIDGET: finished switch statement.  i = " + i);
+                            if(that.widgetDebug) console.log("GRBL WIDGET: finished switch statement.  i = " + i);
                         }
                         //end of status
 
-                        console.log("GRBL WIDGET: FOOTPRINT received status update", "machine", that.last_machine, "work", that.last_work, "offset", that.offsets, "receivedMachine", receivedMachineCoords, 'receivedWork', receivedWorkCoords);
+                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT received status update", "machine", that.last_machine, "work", that.last_work, "offset", that.offsets, "receivedMachine", receivedMachineCoords, 'receivedWork', receivedWorkCoords);
                         if (receivedMachineCoords && !receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
                                 this.last_work[val] = this.last_machine[val] - this.offsets[val];
@@ -889,7 +891,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 this.last_machine[val] = this.last_work[val] + this.offsets[val];
                             }, that);
                         }
-                        console.log("GRBL WIDGET: FOOTPRINT at line 816.  current values", "machine", that.last_machine, "work", that.last_work, "offsets", that.offsets);
+                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 816.  current values", "machine", that.last_machine, "work", that.last_work, "offsets", that.offsets);
                         //send axis updates
                         if (that.work_mode === that.report_mode) {
                             that.publishAxisStatus({
@@ -934,11 +936,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     if (that.controller_units !== 'mm') {
                                         that.controller_units = 'mm';
                                         $('.stat-units').html(that.controller_units);
-                                        console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
+                                        if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                                         //resend coordinates
                                         if (that.last_work.x !== null) {
-                                            console.log("GRBL WIDGET: FOOTPRINT at line 848");
+                                            if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 848");
                                             that.publishAxisStatus({
                                                 x: that.toMM(that.last_work.x),
                                                 y: that.toMM(that.last_work.y),
@@ -947,7 +949,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         }
                                         else
                                         if (that.last_machine.x !== null) {
-                                            console.log("GRBL WIDGET: FOOTPRINT at line 856");
+                                            if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 856");
                                             that.publishAxisStatus({
                                                 x: that.toMM(that.last_machine.x),
                                                 y: that.toMM(that.last_machine.y),
@@ -955,7 +957,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                             });
                                         }
                                         else {
-                                            console.log("GRBL WIDGET: FOOTPRINT at line 863");
+                                            if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 863");
                                             that.publishAxisStatus({
                                                 "x": 0.00,
                                                 "y": 0.00,
@@ -969,12 +971,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     if (that.controller_units !== 'inch') {
                                         that.controller_units = "inch";
                                         $('.stat-units').html(that.controller_units);
-                                        console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
+                                        if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                                     }
 
                                     if (that.last_work.x !== null) {
-                                        console.log("GRBL WIDGET: FOOTPRINT at line 881");
+                                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 881");
                                         that.publishAxisStatus({
                                             x: that.toInch(that.last_work.x),
                                             y: that.toInch(that.last_work.y),
@@ -983,7 +985,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     }
                                     else
                                     if (that.last_machine.x !== null) {
-                                        console.log("GRBL WIDGET: FOOTPRINT at line 889");
+                                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 889");
                                         that.publishAxisStatus({
                                             x: that.toInch(that.last_machine.x),
                                             y: that.toInch(that.last_machine.y),
@@ -991,7 +993,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         });
                                     }
                                     else {
-                                        console.log("GRBL WIDGET: FOOTPRINT at line 896");
+                                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 896");
                                         that.publishAxisStatus({
                                             "x": 0.00,
                                             "y": 0.00,
@@ -1076,7 +1078,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
                         break;
                     case 'setting':
-                        console.log("GRBL WIDGET: parsing settings.  Data:", result);
+                        if(that.widgetDebug) console.log("GRBL WIDGET: parsing settings.  Data:", result);
                         var configCode = parseInt(result[1], 10);
                         switch (configCode) {
                             case 11:
@@ -1101,7 +1103,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             default:
                                 var val = parseInt(result[2], 10);
                         }
-                        console.log("GRBL WIDGET: parsing settings",
+                        if(that.widgetDebug) console.log("GRBL WIDGET: parsing settings",
                             result[1],
                             configCode,
                             result[2],
@@ -1163,7 +1165,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         break;
                     case 'hashQuery':
                         if (result[1] == 'PRB') {
-                            console.log("GRBL WIDGET: received probe info", result);
+                            if(that.widgetDebug) console.log("GRBL WIDGET: received probe info", result);
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
@@ -1443,7 +1445,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     //check for units change, save new units state and publish units to other widgets
                     if ((this.controller_units !== "mm" && msg_array[3] === "G21")) {
                         this.controller_units = "mm";
-                        console.log("we have a unit change. publish it. units:", this.controller_units);
+                        if(this.widgetDebug) console.log("we have a unit change. publish it. units:", this.controller_units);
                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", this.controller_units);
                         //resend coordinates
                         if (this.last_work.x !== null)
@@ -1459,7 +1461,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     }
                     else if ((this.controller_units !== "inch" && msg_array[3] === "G20")) {
                         this.controller_units = "inch";
-                        console.log("we have a unit change. publish it. units:", this.controller_units);
+                        if(this.widgetDebug) console.log("we have a unit change. publish it. units:", this.controller_units);
                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", this.controller_units);
 
                         //resend coordinates
@@ -1503,11 +1505,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 // seems that messages goes to queue as the same command send
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); 
                 
-                console.log("GRBL WIDGET: wsSendCode try sending outside the buffer.", send);    
+                if(this.widgetDebug) console.log("GRBL WIDGET: wsSendCode try sending outside the buffer.", send);    
             }
             else{
                 // chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
-                console.log("GRBL WIDGET: wsSendCode port not selected or sendlile empty", send, sendline);    
+                if(that.widgetDebug) console.log("GRBL WIDGET: wsSendCode port not selected or sendlile empty", send, sendline);    
             }
             
             
@@ -1528,7 +1530,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         //    that.sendCode('?\n'); //request status/coordinates
         //},
         publishAxisStatus: function(axes) {
-            console.log("GRBL WIDGET: axis data received", axes);
+            if(this.widgetDebug) console.log("GRBL WIDGET: axis data received", axes);
             var _axes = {};
             $.each(axes, function(index, val) {
                 if(isNaN(val)){
