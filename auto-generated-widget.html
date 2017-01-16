@@ -303,7 +303,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvSingleSelectPort", this, function(port) {
                 if (port !== null) {
                     this.singleSelectPort = port;
-                    console.log("GRBL WIDGET: wsSend GOT PORT", this.singleSelectPort, port);
+                    // console.log("GRBL WIDGET: wsSend GOT PORT", this.singleSelectPort, port);
                     this.buffer_name = port.BufferAlgorithm;
                     if (this.buffer_name !== "grbl") {
                         $("#grbl-buffer-warning").show();
@@ -471,7 +471,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons start
             // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
             $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
-                that.wsSendCode('\x84');
+               // that.wsSendCode('\x84');
+                that.wsSendCode(String.fromCharCode(132));
             });
 
             $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
