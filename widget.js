@@ -448,6 +448,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.sendCode(command);
             }, this);
             console.log("GRBL WIDGET: " + this.config);
+            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
+            this.hideConfigModal();
             return true;
         },
         updateWorkUnits: function(units) {
@@ -1509,7 +1511,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
             else{
                 // chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
-                if(that.widgetDebug) console.log("GRBL WIDGET: wsSendCode port not selected or sendlile empty", send, sendline);    
+                if(this.widgetDebug) console.log("GRBL WIDGET: wsSendCode port not selected or sendlile empty", send, sendline);    
             }
             
             
