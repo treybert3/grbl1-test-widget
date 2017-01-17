@@ -426,7 +426,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.config.forEach(function(config_element, index_num) {
                 var command = "$" + index_num + '=' + $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
                 this.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
-                this.sendCode(command + "\n");
+                
+                setTimeout(function(context){
+                    var that = context;
+                    that.sendCode(command + "\n");
+                    
+                }, 100, this);
+                
+                // this.sendCode(command + "\n");
+                
+                
             }, this);
             console.log("GRBL WIDGET: " + this.config);
             this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
