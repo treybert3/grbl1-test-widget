@@ -445,8 +445,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     that.commandQueue.push(cmd);
                 }
             });
-            
-            that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+            // we need to re-send $$ ??
+            // that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             that.doQueue();
             this.hideConfigModal();
             return true;
