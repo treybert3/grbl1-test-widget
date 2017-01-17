@@ -503,11 +503,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.sendCode(command + "\n");
             }, this);
             */
+            var that=this;
             
             $.each($("#grbl-config-div input"), function(k,inp){
                 
-               this.config[k][0] = $(inp).val();
-               this.sendCode("$" + $(inp).data("index") + "=" + $(inp).val() + "\n")
+               that.config[k][0] = $(inp).val();
+               that.sendCode("$" + $(inp).data("index") + "=" + $(inp).val() + "\n")
                 
             });
             
