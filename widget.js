@@ -422,18 +422,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         saveConfigModal: function() {
             console.log("GRBL: Save Settings");
-            var that = this;
-            that.config.forEach(function(config_element, index_num) {
-                var command = "$" + index_num + '=' + $('#com-chilipeppr-widget-grbl-config-' + index_num).val() + "\n";
-                that.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
-                // this.sendCode(command);
-                
-                setTimeout(function(){  that.sendCode(command); }, 500);
-                
+
+            this.config.forEach(function(config_element, index_num) {
+                var command = "$" + index_num + '=' + $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
+                this.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
+                this.sendCode(command + "\n");
             }, this);
             console.log("GRBL WIDGET: " + this.config);
-            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
-            that.hideConfigModal();
+            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
+            this.hideConfigModal();
             return true;
         },
         updateWorkUnits: function(units) {
