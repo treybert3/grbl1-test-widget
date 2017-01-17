@@ -510,19 +510,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         saveConfigModal: function() {
             console.log("GRBL: Save Settings");
-            /*
-            this.config.forEach(function(config_element, index_num) {
-                var command = "$" + index_num + '=' + $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
-                this.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
-                this.sendCode(command + "\n");
-            }, this);
-            */
-            var that=this;
             
+            var that=this;
             $.each($("#grbl-config-div input"), function(k,inp){
-                var start = 0;
                 var val = $(inp).val();
                 var index = $(inp).data("index");
+                console.log("GRBL WIDGET: FOOTPRINT 438", val, that.config[index]);
                 if( val != that.config[index]){
                     var bits = val.split('.');
                     if(bits[1] && bits[1].length > 3){
@@ -1610,26 +1603,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 }
             }
         },
-
-       /* wsSendCode: function(sendline){
-            
-            
-            if (this.singleSelectPort.Name !== undefined && sendline != ''){
-                var send = "send " + this.singleSelectPort.Name + " " + sendline + "\n";
-                // send to serial port 
-                // seems that messages goes to queue as the same command send
-                chilipeppr.publish("/com-chilipeppr-widget-serialport/ws/send", send); 
-                
-                if(this.widgetDebug) console.log("GRBL WIDGET: wsSendCode try sending outside the buffer.", send);    
-            }
-            else{
-                // chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
-                if(this.widgetDebug) console.log("GRBL WIDGET: wsSendCode port not selected or sendlile empty", send, sendline);    
-            }
-            
-            
-        },
-        */
         sendCode: function(sendline) {
             //chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/send", this, this.bufferPush); //unsubscribe before publishing to serial port
             chilipeppr.publish("/com-chilipeppr-widget-serialport/send", sendline); //send to serial port 
