@@ -451,8 +451,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     var cmd = String.fromCharCode(36) + $(inp).data("index") + "=" + val + "\n";
                     that.commandQueue.push(cmd);
                // }
-                that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             });
+            that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             that.doQueue();
             this.hideConfigModal();
             return true;
