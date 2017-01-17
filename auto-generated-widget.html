@@ -516,7 +516,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 var val = $(inp).val();
                 var index = $(inp).data("index");
                 console.log("GRBL WIDGET: FOOTPRINT 438", val, that.config[index]);
-                if( val != that.config[index]){
+                if( val != that.config[index][0]){
                     var bits = val.split('.');
                     if(bits[1] && bits[1].length > 3){
                         val = parseFloat(val).toFixed(3);
