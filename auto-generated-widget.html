@@ -63,6 +63,21 @@
 .com-chilipeppr-widget-grbl-realtime-commands .col:last-child{
     padding:0;
 }
+
+#grbl-config-div .input-group {
+    
+    margin-bottom: 2px;
+}
+#grbl-config-div .input-group-addon {
+    width:40px;
+    padding:0px 6px;
+}
+#grbl-config-div input{
+    height:20px;padding:0px 6px;width:100px
+}
+#grbl-config-div span{
+    margin-left:10px;
+}
     </style>
 
     <script type='text/javascript'>
@@ -479,10 +494,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 $('#grbl-config-div').empty();
                 that.config.forEach(function(config_element, index_num) {
                     $('#grbl-config-div').append('\
-                    <div class="input-group" style="margin-bottom:2px;">\
-                        <div class="input-group-addon" style="width:40px;padding:0px 6px;">&#36;' + index_num + '</div>\
-                        <input class="form-control" style="height:20px;padding:0px 6px;width:100px;" data-index="'+index_num+'" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
-                        <span style="margin-left:10px;">' + config_element[1] + '</span>\
+                    <div class="input-group">\
+                        <div class="input-group-addon">&#36;' + index_num + '</div>\
+                        <input class="form-control" data-index="'+index_num+'" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
+                        <span>' + config_element[1] + '</span>\
                     </div>');
                 }, that);
 
@@ -2067,8 +2082,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 <div class="col col-xs-3 well">
                     <span class="stat-sm stat-queue">0</span>
                 </div>
-                <span style="font-size:0.8em;">(These parameters may not update in real time)</span>
             </div><!-- row -->
+            <span style="font-size:0.8em;">(These parameters may not update in real time)</span>
         </div>
     </div>
     <div id="com-chilipeppr-widget-grbl-ftr" class="panel-footer" style="font-size:10px;">To report issues please visit the <a href='https://plus.google.com/communities/104346367498010042037'>Chilipeppr Community</a> (v3)</div>

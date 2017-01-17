@@ -410,10 +410,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 $('#grbl-config-div').empty();
                 that.config.forEach(function(config_element, index_num) {
                     $('#grbl-config-div').append('\
-                    <div class="input-group" style="margin-bottom:2px;">\
-                        <div class="input-group-addon" style="width:40px;padding:0px 6px;">&#36;' + index_num + '</div>\
-                        <input class="form-control" style="height:20px;padding:0px 6px;width:100px;" data-index="'+index_num+'" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
-                        <span style="margin-left:10px;">' + config_element[1] + '</span>\
+                    <div class="input-group">\
+                        <div class="input-group-addon">&#36;' + index_num + '</div>\
+                        <input class="form-control" data-index="'+index_num+'" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
+                        <span>' + config_element[1] + '</span>\
                     </div>');
                 }, that);
 
