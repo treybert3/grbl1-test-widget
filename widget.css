@@ -52,7 +52,7 @@
     
     margin-bottom: 2px;
 }
-#grbl-config-div .input-group-addon {
+#grbl-config-div .input-group-addon:first{
     width:40px;
     padding:0px 6px;
 }

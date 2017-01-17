@@ -411,9 +411,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 that.config.forEach(function(config_element, index_num) {
                     $('#grbl-config-div').append('\
                     <div class="input-group">\
-                        <div class="input-group-addon">&#36;' + index_num + '</div>\
+                        <span class="input-group-addon">&#36;' + index_num + '</span>\
                         <input class="form-control" data-index="'+index_num+'" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
-                        <span>' + config_element[1] + '</span>\
+                        <span class="input-group-addon">' + config_element[1] + '</span>\
                     </div>');
                 }, that);
 
