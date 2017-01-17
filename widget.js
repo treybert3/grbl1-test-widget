@@ -438,7 +438,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             
             $.each($("#grbl-config-div input"), function(k,inp){
                 
-               that.config[k][0] = $(inp).val();
+               that.config[$(inp).data("index")][0] = $(inp).val();
                that.sendCode("$" + $(inp).data("index") + "=" + $(inp).val() + "\n")
                 
             });
