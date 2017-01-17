@@ -405,12 +405,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
             $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
                that.sendCode('\x84');
-               //  that.wsSendCode(String.fromCharCode(132));
             });
 
             $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
                 // send ascii code from data-send-code html tag
-                that.wsSendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)));
+                that.sendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)));
             });
 
             $('#com-chilipeppr-widget-grbl .hide-overrides').click(function(evt) {
@@ -443,7 +442,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             console.log("GRBL: Save Settings");
 
             this.config.forEach(function(config_element, index_num) {
-                var command = "$" + index_num + '=' + $('#com-chilipeppr-widget-grbl-config-' + index_num).val() + '\n';
+                var command = "$" + index_num + '=' + $('#com-chilipeppr-widget-grbl-config-' + index_num).val(); // + '\n';
                 this.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
                 this.sendCode(command);
             }, this);
@@ -1062,7 +1061,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     case 'error':
                         var errorCode = parseInt(result[1], 10);
                         switch (errorCode) {
-                            case 9:
+                            case 9:  // G-code locked out during alarm or jog state
                                 that.alarm = true;
                                 that.restartStatusInterval();
                                 chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "GRBL is locked - $X to unlock");
@@ -1508,7 +1507,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
         },
 
-        wsSendCode: function(sendline){
+       /* wsSendCode: function(sendline){
             
             
             if (this.singleSelectPort.Name !== undefined && sendline != ''){
@@ -1526,6 +1525,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             
             
         },
+        */
         sendCode: function(sendline) {
             //chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/send", this, this.bufferPush); //unsubscribe before publishing to serial port
             chilipeppr.publish("/com-chilipeppr-widget-serialport/send", sendline); //send to serial port 
