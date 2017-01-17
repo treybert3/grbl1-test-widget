@@ -499,8 +499,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 setTimeout(function(context){
                     var that = context;
                     that.sendCode(command + "\n");
+                    console.log("SENDING COMMAND!",command);
                     
-                }, 100, this);
+                }, 1000, this);
                 
                 // this.sendCode(command + "\n");
                 
