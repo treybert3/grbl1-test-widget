@@ -495,7 +495,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         <span class="input-group-addon">' + config_element[1] + '</span>\
                     </div>');
                 }, that);
-
                 $('#grbl-config-div').after('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
                 $('.save-config').click(that.saveConfigModal.bind(that));
                 $('#com-chilipeppr-widget-grbl-modal').modal('show');
