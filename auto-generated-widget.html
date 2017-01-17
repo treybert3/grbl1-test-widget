@@ -831,10 +831,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 that.status = subStates[fields[0]];
                                 
                                 // adding correct button status
-                                if (fields[0].indexOf('Hold:') == 0 || fields[0].indexOf('Door:') == 0) {
-                                    $('#com-chilipeppr-widget-grbl .grbl-feedhold').html("!");
+                                if (fields[0].indexOf('Hold:') == 0 ||fields[0].indexOf('Door:') == 0) {
                                     $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
                                 }
+                                if (fields[0].indexOf('Door:') == 3) {
+                                    $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
+                                }
+                                
                             }
                             else {
                                 that.status = fields[0];
