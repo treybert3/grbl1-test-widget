@@ -473,8 +473,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons start
             // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
             $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
-               // that.wsSendCode('\x84');
-                that.wsSendCode(String.fromCharCode(132));
+               that.sendCode('\x84');
+               //  that.wsSendCode(String.fromCharCode(132));
             });
 
             $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
@@ -830,7 +830,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             if (fields[0].indexOf('Hold:') >= 0 || fields[0].indexOf('Door:') >= 0) {
                                 that.status = subStates[fields[0]];
                                 
-                                // adding correct button status
+                                // adding some button status
                                 var bit = fields[0].split(':');
                                 if (( bit[0] == 'Hold' && bit[1] == '0') || ( bit[0] == 'Door' && bit[1] == '0')) {
                                     $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
