@@ -443,18 +443,26 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     if(bits[1] && bits[1].length > 3){
                         val = parseFloat(val).toFixed(3);
                     }
-                    var cmd = "$" + $(inp).data("index") + "=" + val + "\n";
+                 //   var cmd = "$" + $(inp).data("index") + "=" + val + "\n";
                     var cmd = String.fromCharCode(36) + $(inp).data("index") + "=" + val + "\n";
-                    setTimeout(that.sendCode(cmd), 50 * start);
-                    start++;
+                    that.commandQueue.push(cmd);
                 }
+                that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             });
-            
-            console.log("GRBL WIDGET: " + this.config);
-            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
             this.hideConfigModal();
             return true;
         },
+        commandQueue: [],
+        doQueue: function(){
+            if(this.commandQueue.length > 0){
+                if(this.availableBuffer > this.commandQueue[0].length + 1){
+                    var cmd = this.shift(this.commandQueue);
+                    this.sendCode(cmd);
+                    this.availableBuffer -= cmd.length;
+                }
+            }
+        },
+        availableBuffer: 0,
         updateWorkUnits: function(units) {
             if (units === "mm")
                 this.work_mode = 0;
@@ -729,7 +737,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 if(this.widgetDebug) console.log("GRBL WIDGET: got recvline but it's not a dataline, so returning.");
                 return true;
             }
-
+            if(recvline.dataline.substring(0,2) == "ok"){
+                this.doQueue();
+                return;
+            }
             if(this.widgetDebug) console.log("GRBL WIDGET: received 1.1 line");
             if(this.widgetDebug) console.log("GRBL WIDGET: line is: ", recvline.dataline);
 
@@ -841,6 +852,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "bf":
                                     //typically disabled in grbl 1.1
                                     var _bits = result[1].split(',');
+                                    that.rxAvailable = parseInt(_bits[1], 10);
                                     //available planner buffer, //bytes available in serial buffer
                                     break;
                                 case "ln":
@@ -1090,7 +1102,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorMessages[errorCode]);
 
                         }
-
+                        that.doQueue();
                         break;
                     case 'setting':
                         if(that.widgetDebug) console.log("GRBL WIDGET: parsing settings.  Data:", result);
