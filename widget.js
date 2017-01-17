@@ -443,7 +443,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     if(bits[1] && bits[1].length > 3){
                         val = parseFloat(val).toFixed(3);
                     }
-                    var cmd = "$" + $(inp).data("index") + "=" + val + "\n";
+                    var cmd = String.fromCharCode(36) + $(inp).data("index") + "=" + val + "\n";
                     setTimeout(that.sendCode(cmd), 50 * start);
                     start++;
                 }
