@@ -329,7 +329,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
         },
         showBody: function(evt) {
-            $('#com-chilipeppr-widget-grbl .panel-body .stat-row').removeClass('hidden');
+            $('#com-chilipeppr-widget-grbl .panel-body, #com-chilipeppr-widget-grbl .panel-footer').removeClass('hidden');
             $('#com-chilipeppr-widget-grbl .hidebody span').addClass('glyphicon-chevron-up');
             $('#com-chilipeppr-widget-grbl .hidebody span').removeClass('glyphicon-chevron-down');
             if ((evt !== null)) {
@@ -338,9 +338,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
         },
         hideBody: function(evt) {
-            $('#com-chilipeppr-widget-grbl .panel-body .stat-row').addClass('hidden');
+            $('#com-chilipeppr-widget-grbl .panel-body, #com-chilipeppr-widget-grbl .panel-footer').addClass('hidden');
             $('#com-chilipeppr-widget-grbl .hidebody span').removeClass('glyphicon-chevron-up');
             $('#com-chilipeppr-widget-grbl .hidebody span').addClass('glyphicon-chevron-down');
+            
             if ((evt !== null)) {
                 this.options.showBody = false;
                 this.saveOptionsCookie();
