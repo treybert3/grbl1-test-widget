@@ -47,20 +47,12 @@
 .com-chilipeppr-widget-grbl-realtime-commands .col:last-child{
     padding:0;
 }
-
 #grbl-config-div .input-group {
-    
     margin-bottom: 2px;
 }
 #grbl-config-div .input-group-addon:first-child{
-    width:50px;
+    width:15%;
 }
 #grbl-config-div .input-group-addon:last-child{
-    width:550px;
-}
-#grbl-config-div input{
-  width:100px;
-}
-#grbl-config-div span{
-    margin-left:10px;
+    width:60%;
 }
