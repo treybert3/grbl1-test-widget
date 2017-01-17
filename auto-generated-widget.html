@@ -378,7 +378,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         	console.log('GRBL WIDGET: setting version to ' + ver);
             this.version = ver;
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion",this.version);
-            if(this.version.substring(0,1) == 1 && this.config[10] && this.config[10] != 2){
+            if(this.version.substring(0,1) == '1' && this.config[10] && parseInt(this.config[10],10) != 2){
                 this.config[10] = 2;
                 this.sendCode(String.fromCharCode(36) + "10=2\n");
             }
@@ -948,19 +948,21 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     //feed rate
 
                                     var feedRate = that.controller_units === "inch" ?
-                                        that.toMM(parseFloat(bit[1])) :
-                                        parseFloat(bit[1]);
-                                    $('.stat-feedrate').html(feedRate.toFixed(2));
+                                        that.toMM(bit[1]) :
+                                        bit[1];
+                                    feedRate = parseInt(feedRate,10);
+                                    $('.stat-feedrate').html(feedRate);
 
                                     break;
                                 case "fs":
                                     //feed rate and spindle speed
                                     var _bits = bit[1].split(',');
                                     var feedRate = that.controller_units === "inch" ?
-                                        that.toMM(parseFloat(_bits[0])) :
-                                        parseFloat(_bits[0]);
+                                        that.toMM(_bits[0]) :
+                                        _bits[0];
+                                    feedRate = parseInt(feedRate,10);
                                     // Why floating feedrate? is not integer?
-                                    $('.stat-feedrate').html(feedRate.toFixed(2));
+                                    $('.stat-feedrate').html(feedRate);
                                     var spindleSpeed = parseInt(_bits[1], 10);
                                     $('.stat-spindle').html(spindleSpeed);
                                     break;
