@@ -409,10 +409,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 var that = context;
                 $('#grbl-config-div').empty();
                 that.config.forEach(function(config_element, index_num) {
-                    $('#grbl-config-div').append('<div class="input-group"  style="width:400px;margin-bottom:2px;"><div class="input-group-addon" style="width:40px;padding:0px 6px;">&#36;' + index_num + '</div><input class="form-control" style="height:20px;padding:0px 6px;width:100px;" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/><span style="margin-left:10px;">' + config_element[1] + '</span></div>');
+                    $('#grbl-config-div').append('\
+                    <div class="input-group" style="margin-bottom:2px;">\
+                        <div class="input-group-addon" style="width:40px;padding:0px 6px;">&#36;' + index_num + '</div>\
+                        <input class="form-control" style="height:20px;padding:0px 6px;width:100px;" data-index="'+index_num+'" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
+                        <span style="margin-left:10px;">' + config_element[1] + '</span>\
+                    </div>');
                 }, that);
 
-                $('#grbl-config-div').append('<br/><button class="btn btn-xs btn-default save-config">Save Settings To GRBL</button>');
+                $('#grbl-config-div').after('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
                 $('.save-config').click(that.saveConfigModal.bind(that));
                 $('#com-chilipeppr-widget-grbl-modal').modal('show');
             }, 1000, this);
@@ -422,22 +427,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         saveConfigModal: function() {
             console.log("GRBL: Save Settings");
-
+            /*
             this.config.forEach(function(config_element, index_num) {
                 var command = "$" + index_num + '=' + $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
                 this.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
-                
-                setTimeout(function(context){
-                    var that = context;
-                    that.sendCode(command + "\n");
-                    console.log("SENDING COMMAND!",command);
-                    
-                }, 1000, this);
-                
-                // this.sendCode(command + "\n");
-                
-                
+                this.sendCode(command + "\n");
             }, this);
+            */
+            
+            $.each($("#grbl-config-div input"), function(k,inp){
+                
+               this.config[k][0] = $(inp).val();
+               this.sendCode("$" + $(inp).data("index") + "=" + $(inp).val() + "\n")
+                
+            });
+            
+            
+            
             console.log("GRBL WIDGET: " + this.config);
             this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
             this.hideConfigModal();
