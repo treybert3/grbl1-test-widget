@@ -523,7 +523,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 var start = 0;
                 var val = $(inp).val();
                 var index = $(inp).data("index");
-                if( val != that.config[index][0]){
+                if( val != that.config[index]){
                     var bits = val.split('.');
                     if(bits[1] && bits[1].length > 3){
                         val = parseFloat(val).toFixed(3);
