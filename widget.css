@@ -55,4 +55,5 @@
 }
 #grbl-config-div .input-group-addon:last-child{
     width:60%;
+    text-align: left;
 }
