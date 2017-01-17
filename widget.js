@@ -428,7 +428,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 that.config[index_num][0] = $('#com-chilipeppr-widget-grbl-config-' + index_num).val();
                 // this.sendCode(command);
                 
-                setTimeout(function(){  that.sendCode(command); }, 50);
+                setTimeout(function(){  that.sendCode(command); }, 200);
                 
             }, this);
             console.log("GRBL WIDGET: " + this.config);
