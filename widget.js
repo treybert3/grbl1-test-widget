@@ -441,7 +441,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             
             $.each($("#grbl-config-div input"), function(k,inp){
                 var start = 0;
-                if($(inp).val() != that.config[$(inp).data("index")][0]){
+               // if($(inp).val() != that.config[$(inp).data("index")][0]){
                     var val = $(inp).val();
                     var bits = val.split('.');
                     if(bits[1] && bits[1].length > 3){
@@ -450,7 +450,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                  //   var cmd = "$" + $(inp).data("index") + "=" + val + "\n";
                     var cmd = String.fromCharCode(36) + $(inp).data("index") + "=" + val + "\n";
                     that.commandQueue.push(cmd);
-                }
+               // }
                 that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             });
             that.doQueue();
