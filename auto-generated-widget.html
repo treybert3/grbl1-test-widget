@@ -541,7 +541,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         doQueue: function(){
             if(this.commandQueue.length > 0){
                 if(this.availableBuffer > this.commandQueue[0].length + 1){
-                    var cmd = this.shift(this.commandQueue);
+                    // var cmd = this.commandQueue.shift(); 
+                    var cmd = this.commandQueue.shift();
                     this.sendCode(cmd);
                     this.availableBuffer -= cmd.length;
                 }
