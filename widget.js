@@ -856,7 +856,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "bf":
                                     //typically disabled in grbl 1.1
-                                    var _bits = result[1].split(',');
+                                    var _bits = bit[1].split(',');
                                     that.availableBuffer = parseInt(_bits[1], 10);
                                     //available planner buffer, //bytes available in serial buffer
                                     break;
