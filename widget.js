@@ -591,7 +591,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         restartStatusInterval: function() {
             //stop tracking the jsonSend, file is finished.
             //chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/jsonSend", this.trackGcodeLines);
-
+           
+            // WHY WE NEED THAT I TRY TO COMMENT 
+            /*
             var that = this;
             if (this.g_status_reports === null) { //confirm no setInterval is currently running.
                 that.g_status_reports = setInterval(function() {
@@ -599,6 +601,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         that.getControllerInfo(); //send a $G every 2 seconds
                 }, 2000);
             }
+            */
         },
         grblResponseV1: function(recvline) {
             var pushMessages = {
