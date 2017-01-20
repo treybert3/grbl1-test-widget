@@ -469,7 +469,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.work_mode = 1;
             console.log("GRBL: Updated Work Units - " + this.work_mode);
             //update report units if they have changed
-            this.updateReportUnits();
+            // LUCA -> commented
+           //  this.updateReportUnits();
         },
         updateReportUnits: function() {
             if (this.config[13] !== undefined) {
