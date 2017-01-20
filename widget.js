@@ -940,7 +940,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 "z": that.toMM(parseFloat(that.last_work.z))
                             });
                         }
-                        $('.stat-mcoords').html("X:" + that.last_machine.x.toFixed(3) + " Y:" + that.last_machine.y.toFixed(3) + " Z:" + that.last_machine.z.toFixed(3) + ' mm');
+                        $('.stat-mcoords').html("X:" + that.last_machine.x.toFixed(3) + " Y:" + that.last_machine.y.toFixed(3) + " Z:" + that.last_machine.z.toFixed(3)); //  + ' mm');
 
                         break;
                     case 'gCodeState':
@@ -965,7 +965,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
                                         // this publish doesn't work anymore
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        chilipeppr.publish('/com-chilipeppr-widget-3dviewer/setunits', that.controller_units);
+                                        
                                         
                                     
                                         //resend coordinates
@@ -1003,7 +1003,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         $('.stat-units').html(that.controller_units);
                                         if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        chilipeppr.publish('/com-chilipeppr-widget-3dviewer/setunits', that.controller_units);
+                                        
                                     
 
                                     if (that.last_work.x !== null) {
@@ -1342,7 +1342,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             else
                                 this.last_machine.unit = "mm";
 
-                            $('.stat-mcoords').html("X:" + this.last_machine.x.toFixed(3) + " Y:" + this.last_machine.y.toFixed(3) + " Z:" + this.last_machine.z.toFixed(3) + " (mm)");
+                            $('.stat-mcoords').html("X:" + this.last_machine.x.toFixed(3) + " Y:" + this.last_machine.y.toFixed(3) + " Z:" + this.last_machine.z.toFixed(3)  + " (mm)");
 
 
                             MPos_flag = true;
