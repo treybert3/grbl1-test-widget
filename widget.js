@@ -531,9 +531,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
                 that.restartStatusInterval(); //Start the $G tracking loop
 
-                that.g_status_reports = setInterval(function(){
-                    that.getControllerInfo(); //send a $G every 2 seconds
-                }, 2000);
             }, 3000);
         },
         closeController: function(isWithDelay) {
@@ -590,7 +587,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         restartStatusInterval: function() {
             //stop tracking the jsonSend, file is finished.
-            chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/jsonSend", this.trackGcodeLines);
+            // chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/jsonSend", this.trackGcodeLines);
           
             var that = this;
             if (this.g_status_reports === null) { //confirm no setInterval is currently running.
