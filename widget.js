@@ -962,7 +962,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         that.controller_units = 'mm';
                                         $('.stat-units').html(that.controller_units);
                                         if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
-                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
+                                        // this publish doesn't work anymore
+                                        //chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
+                                        chilipeppr.publish('/com-chilipeppr-widget-3dviewer/unitsChanged', that.controller_units);
                                         //resend coordinates
                                         if (that.last_work.x !== null) {
                                             if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 848");
