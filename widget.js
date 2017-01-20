@@ -274,7 +274,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 }
             });
 
-            //call to find out what current work units are
+            //call to find out what current work units are 
             chilipeppr.publish("/com-chilipeppr-widget-3dviewer/requestUnits", "");
 
             //watch for a 3d viewer /sceneReloaded and pass back axes info
@@ -958,13 +958,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 
                                 case 'G21':
 
-                                    if (that.controller_units !== 'mm') {
+                                    //if (that.controller_units !== 'mm') {
                                         that.controller_units = 'mm';
                                         $('.stat-units').html(that.controller_units);
                                         if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
                                         // this publish doesn't work anymore
-                                        //chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
+                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                                         chilipeppr.publish('/com-chilipeppr-widget-3dviewer/unitsChanged', that.controller_units);
+                                        
+                                    //}
                                         //resend coordinates
                                         if (that.last_work.x !== null) {
                                             if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 848");
@@ -991,16 +993,17 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                                 "z": 0.00
                                             });
                                         }
-                                    }
+                                    
                                     break;
 
                                 case 'G20':
-                                    if (that.controller_units !== 'inch') {
+                                    //if (that.controller_units !== 'inch') {
                                         that.controller_units = "inch";
                                         $('.stat-units').html(that.controller_units);
                                         if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                    }
+                                        chilipeppr.publish('/com-chilipeppr-widget-3dviewer/unitsChanged', that.controller_units);
+                                    //}
 
                                     if (that.last_work.x !== null) {
                                         if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 881");
