@@ -582,7 +582,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.g_status_reports = null; //clear status report interval flag
             }
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/jsonSend", this, function(msg){
-                if(msg.Id.slice(1) % 5 === 0)
+                if(msg.Id !== undefined && msg.Id.slice(1) % 5 === 0)
                     this.getControllerInfo(); //send a $G every 5 lines of the gcode file.
             });
         },

@@ -662,7 +662,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.g_status_reports = null; //clear status report interval flag
             }
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/jsonSend", this, function(msg){
-                if(msg.Id.slice(1) % 5 === 0)
+                if(msg.Id !== undefined && msg.Id.slice(1) % 5 === 0)
                     this.getControllerInfo(); //send a $G every 5 lines of the gcode file.
             });
         },
@@ -1866,7 +1866,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 </div>
             </div>
         </div>
-        <span class="panel-title" data-toggle="popover">GRBL (1.1)</span> <span style="font-size:9px;" class="fb-build">v1.0.9</span>
+        <span class="panel-title" data-toggle="popover">GRBL (1.1)</span> <span style="font-size:9px;" class="fb-build">v1.0.10</span>
     </div>
     <div id="com-chilipeppr-widget-grbl-body" class="panel-body" >
         <div id="grbl-buffer-warning" style="color:red;font-size:12px;text-align:center;">
