@@ -257,10 +257,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             //listen for whether a gcode file is playing - if so, cancel our $G interval and start sending each 25 lines of gcode file sent.
             chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onplay", this, this.trackGcodeLines);
             chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onstop", this, this.restartStatusInterval);
-            //chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onpause",this, function(state, metadata){
-            //    if(state === false){ this.restartStatusInterval(); } //when gcode widget pauses, go back to interval querying $G
-            //    else if(state === true){ this.trackGcodeLines(); }   //when gcode widget resumes, begin tracking line count to embed $G into buffer.
-            //});
+            chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onpause",this, function(state, metadata){
+                if(state === false){ this.restartStatusInterval(); } //when gcode widget pauses, go back to interval querying $G
+                else if(state === true){ this.trackGcodeLines(); }   //when gcode widget resumes, begin tracking line count to embed $G into buffer.
+            });
             chilipeppr.subscribe("/com-chilipeppr-widget-gcode/done", this, this.restartStatusInterval);
 
             //call to determine the current serialport configuration
@@ -531,9 +531,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
                 that.restartStatusInterval(); //Start the $G tracking loop
 
-                //that.g_status_reports = setInterval(function(){
-                //    that.getControllerInfo(); //send a $G every 2 seconds
-                //}, 2000);
+                that.g_status_reports = setInterval(function(){
+                    that.getControllerInfo(); //send a $G every 2 seconds
+                }, 2000);
             }, 3000);
         },
         closeController: function(isWithDelay) {
@@ -583,17 +583,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 clearInterval(this.g_status_reports);
                 this.g_status_reports = null; //clear status report interval flag
             }
-            /*chilipeppr.subscribe("/com-chilipeppr-widget-serialport/jsonSend", this, function(msg){
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/jsonSend", this, function(msg){
                 if(msg.Id.slice(1) % 5 === 0)
                     this.getControllerInfo(); //send a $G every 5 lines of the gcode file.
-            });*/
+            });
         },
         restartStatusInterval: function() {
             //stop tracking the jsonSend, file is finished.
-            //chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/jsonSend", this.trackGcodeLines);
-           
-            // WHY WE NEED THAT I TRY TO COMMENT 
-            /*
+            chilipeppr.unsubscribe("/com-chilipeppr-widget-serialport/jsonSend", this.trackGcodeLines);
+          
             var that = this;
             if (this.g_status_reports === null) { //confirm no setInterval is currently running.
                 that.g_status_reports = setInterval(function() {
@@ -601,7 +599,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         that.getControllerInfo(); //send a $G every 2 seconds
                 }, 2000);
             }
-            */
+            
         },
         grblResponseV1: function(recvline) {
             var pushMessages = {
