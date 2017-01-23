@@ -413,12 +413,28 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 var that = context;
                 $('#grbl-config-div').empty();
                 that.config.forEach(function(config_element, index_num) {
-                    $('#grbl-config-div').append('\
+                    var elem = $('\
                     <div class="input-group input-group-sm">\
                         <span class="input-group-addon">&#36;' + index_num + '</span>\
                         <input class="form-control" data-index="'+index_num+'" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
                         <span class="input-group-addon">' + config_element[1] + '</span>\
                     </div>');
+                    
+                    //this should speed up the save event materially.  
+                    $(elem).on('blur', function(e, that){
+                        var val = $(this).val();
+                        var index = $(this).data("index");
+                        if( val != that.config[index][0]){
+                            var bits = val.split('.');
+                            if(bits[1] && bits[1].length > 3){
+                                val = parseFloat(val).toFixed(3);
+                            }
+                            var cmd = String.fromCharCode(36) + index + "=" + val + "\n";
+                            that.commandQueue.push(cmd);
+                            that.doQueue();
+                            that.config[index][0] = val;
+                        }
+                    }, that).appendTo('#grbl-config-div');
                 }, that);
                 $('#grbl-config-div').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
                 $('.save-config').click(that.saveConfigModal.bind(that));
@@ -447,8 +463,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
             // we need to re-send $$ ??
             // that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-            that.doQueue();
-            this.hideConfigModal();
+            if(this.commandQueue.length == 0){
+                this.hideConfigModal();
+                return true;
+            }
+            this.doQueue();
+            //changed this to hold the window in modal state until the config changes are made.  
+            //it would probably be better to write each change on change of the input value rather than wait for a commit
+            //then the human interaction time would be greater than the eeprom delay and we'd not have this trouble.  
+            var configInterval = setInterval(function(){
+                if(this.commandQueue.length == 0){
+                    this.hideConfigModal();
+                    clearInterval(configInterval);
+                } else {
+                     chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Please wait - saving new config");
+                }
+            }, 500, this);
+            
             return true;
         },
         commandQueue: [],
@@ -582,6 +613,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.g_status_reports = null; //clear status report interval flag
             }
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/jsonSend", this, function(msg){
+                // ERROR: msg.Id could be undefined
                 if(msg.Id !== undefined && msg.Id.slice(1) % 5 === 0)
                     this.getControllerInfo(); //send a $G every 5 lines of the gcode file.
             });
