@@ -375,6 +375,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 //console.log("GRBL: reset");
                 that.sendCode(String.fromCharCode(24));
                 chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
+                $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
             });
 
             $('#com-chilipeppr-widget-grbl-btnoptions').click(this.showConfigModal.bind(this));

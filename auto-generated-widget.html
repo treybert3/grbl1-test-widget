@@ -455,6 +455,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 //console.log("GRBL: reset");
                 that.sendCode(String.fromCharCode(24));
                 chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
+                $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
             });
 
             $('#com-chilipeppr-widget-grbl-btnoptions').click(this.showConfigModal.bind(this));
@@ -1898,7 +1899,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 </div>
             </div>
         </div>
-        <span class="panel-title" data-toggle="popover">GRBL (1.1)</span> <span style="font-size:9px;" class="fb-build">v1.0.10</span>
+        <span class="panel-title" data-toggle="popover">GRBL (1.1)</span> <!-- span style="font-size:9px;" class="fb-build">v1.0.10</span-->
     </div>
     <div id="com-chilipeppr-widget-grbl-body" class="panel-body" >
         <div id="grbl-buffer-warning" style="color:red;font-size:12px;text-align:center;">
