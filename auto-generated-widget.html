@@ -552,12 +552,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             //changed this to hold the window in modal state until the config changes are made.  
             //it would probably be better to write each change on change of the input value rather than wait for a commit
             //then the human interaction time would be greater than the eeprom delay and we'd not have this trouble.  
-            var configInterval = setInterval(function(){
-                if(this.commandQueue.length == 0){
-                    this.hideConfigModal();
+            var configInterval = setInterval(function(that){
+                if(that.commandQueue.length == 0){
+                    that.hideConfigModal();
                     clearInterval(configInterval);
                 } else {
                      chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Please wait - saving new config");
+                    that.doQueue();
                 }
             }, 500, this);
             
@@ -626,6 +627,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 }
                 that.sendCode("*status*\n"); //send request for initial status response.
                 that.sendCode("$\n"); //get grbl params
+                that.sendCode("?\n");
                 that.sendCode("$G\n");
                 //wait one additional second before checking for what reporting units grbl is configured for.
                 setTimeout(function(context) {
