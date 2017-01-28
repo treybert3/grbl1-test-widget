@@ -1001,8 +1001,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         // this publish doesn't work anymore
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                                         
-                                        
-                                    
                                         //resend coordinates
                                         if (that.last_work.x !== null) {
                                             if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 848");
@@ -1079,6 +1077,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         }
                         that.setVersion(result[1]);
                         $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + that.version + ")"); //update ui  
+                        that.sendCode(String.fromCharCode(36) + "10=2\n");
                         that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                         chilipeppr.publish("/com-chilipeppr-widget-gcode/stop", true); //stops gcode widget since grbl just reset.
                         break;
