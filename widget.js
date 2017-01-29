@@ -116,7 +116,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             '/com-chilipeppr-interface-cnccontroller/units': "This widget will normalize the GRBL units to the interface object of units {units: \"mm\"} or {units: \"inch\"}. This signal will be published on load or when this widget detects a change in units so other widgets like the XYZ widget can display the units for the coordinates it is displaying.",
             '/com-chilipeppr-interface-cnccontroller/proberesponse': 'Publish a probe response with the coordinates triggered during probing, or an alarm state if the probe does not contact a surface',
             '/com-chilipeppr-interface-cnccontroller/status': 'Publish a signal each time the GRBL status changes',
-            '/com-chilipeppr-interface-cnccontroller/grblVersion': 'Publish the version number of the currently installed grbl'
+            '/com-chilipeppr-interface-cnccontroller/grblVersion': 'Publish the version number of the currently installed grbl',
+            "/com-chilipeppr-interface-cnccontroller/distance": 'publish whether we are in absolute or incremental mode'
         },
         subscribe: {
             '/com-chilipeppr-interface-cnccontroller/jogdone': 'We subscribe to a jogdone event so that we can fire off an exclamation point (!) to the GRBL to force it to drop all planner buffer items to stop the jog immediately.',
@@ -136,6 +137,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         //g_count: 0,
         //l_count: 0,
         //interval_id: 0,
+        distance: '',
         config: [],
         err_log: [],
         //config_index: [],
@@ -992,6 +994,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     that.WCS = value;
                                 break;
                                 
+                                case 'G90':
+                                case 'G91':
+                                    var distance = value == 'G90' ? 'Absolute' : 'Incremental';
+                                    if(distance != that.distance){
+                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/distance", that.distance);
+                                        $('.stat-distance').html(that.distance);
+                                    }
+                                    break;
+                                
                                 case 'G21':
 
                                     if (that.controller_units !== 'mm') {
@@ -1036,11 +1047,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         $('.stat-units').html(that.controller_units);
                                         if(that.widgetDebug) console.log("GRBL WIDGET: we have a unit change. publish it. units:", that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        
-                                    
-
+                                       
                                     if (that.last_work.x !== null) {
-                                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 881");
                                         that.publishAxisStatus({
                                             x: that.toInch(that.last_work.x),
                                             y: that.toInch(that.last_work.y),
@@ -1049,7 +1057,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     }
                                     else
                                     if (that.last_machine.x !== null) {
-                                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 889");
                                         that.publishAxisStatus({
                                             x: that.toInch(that.last_machine.x),
                                             y: that.toInch(that.last_machine.y),
@@ -1057,7 +1064,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         });
                                     }
                                     else {
-                                        if(that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 896");
                                         that.publishAxisStatus({
                                             "x": 0.00,
                                             "y": 0.00,
