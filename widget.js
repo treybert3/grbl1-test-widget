@@ -9,7 +9,7 @@ requirejs.config({
     },
     shim: {
         jqueryuiWidget: ['jqueryui'],
-        jqueryTabs: ['jqueryWidget'],
+        jqueryTabs: ['jqueryuiWidget'],
         jQueryUIButtonSlider: ['jqueryui'],
     }
 });
@@ -247,7 +247,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             "code": "2",
             "setting": "Step pulse invert",
             "units": "mask",
-            "explanation": "Inverts the step signal. Set axis bit to invert (00000ZYX).",
+            "explanation": "Inverts the step signal.",
             "tab": "Inversions",
             "fieldType": "axisMask",
             "minimum": 0
@@ -255,7 +255,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             "code": "3",
             "setting": "Step direction invert",
             "units": "mask",
-            "explanation": "Inverts the direction signal. Set axis bit to invert (00000ZYX).",
+            "explanation": "Inverts the direction signal.",
             "tab": "Inversions",
             "fieldType": "axisMask",
             "minimum": 0
