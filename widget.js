@@ -295,6 +295,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
 
         },
+        spindleEnabled: false,
+        spindleDirection: null,
+        coolant: "Off",
         options: null,
         setVersion: function(ver) {
         	console.log('GRBL WIDGET: setting version to ' + ver);
@@ -537,7 +540,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 }
                 else {
                     if (that.version.substring(0, 1) == '1') {
-                        $('.v1Suppress').hide();
                         $('.v1Show').show();
                         // hide the new override btns 
                         $('.com-chilipeppr-widget-grbl-realtime-commands').hide();
@@ -936,6 +938,52 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
                                 case "a":
                                     //reports accessories
+                                    var _bits = bit[1].split('');
+                                    var spindleEnabled = false;
+                                    var spindleDirection = '';
+                                    var mistCoolant = false;
+                                    var floodCoolant = false;
+                                    $.each(bit[1],function(index,value){
+                                        switch(value){
+                                            case 'S':
+                                                spindleEnabled = true;
+                                                spindleDirection = "CW";
+                                                break;
+                                            case 'C':
+                                                spindleEnabled = true;
+                                                spindleDirection = "CCW";
+                                                break;
+                                            case 'F':
+                                                floodCoolant = true;
+                                                break;
+                                            case 'M':
+                                                mistCoolant = true;
+                                                break;
+                                        }
+                                    });
+                                    if(that.spindleEnabled != spindleEnabled){
+                                        that.spindleEnabled = spindleEnabled;
+                                        if(spindleEnabled){
+                                            $('.stat-spindle').html(spindleDirection == "CW" ? 'Clockwise' : 'Counterclockwise');
+                                        } else {
+                                            $('.stat-spindle').html("Off");
+                                        }
+                                    }
+                                    if(floodCoolant || mistCoolant){
+                                        if(floodCoolant && that.coolant != 'Flood'){
+                                            that.coolant = 'Flood';
+                                        } else if(mistCoolant && that.coolant!= 'Mist'){
+                                            that.coolant = 'Mist';
+                                        }
+                                    } else {
+                                        if(that.coolant != "Off"){
+                                            that.coolant = 'Off';
+                                        }
+                                    }
+                                    if($('.stat-coolant').html() != that.coolant){
+                                        $('.stat-coolant').html(that.coolant);
+                                    }
+                                    
                                     break;
                             }
                             if(that.widgetDebug) console.log("GRBL WIDGET: finished switch statement.  i = " + i);
@@ -994,6 +1042,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     that.WCS = value;
                                 break;
                                 
+                                case 'G17':
+                                case 'G18':
+                                case 'G19':
+                                    var plane = that.gcode_lookup[value];
+                                    if(that.plane !== plane){
+                                        that.plane = plane;
+                                        $('.stat-plane').html(that.plane);
+                                    }
+                                    break;
                                 case 'G90':
                                 case 'G91':
                                     var distance = value == 'G90' ? 'Absolute' : 'Incremental';
