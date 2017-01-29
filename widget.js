@@ -96,6 +96,7 @@ function Queue() {
 }
 
 cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie"], function() {
+    
     return {
         widgetDebug: false,
         id: "com-chilipeppr-widget-grbl",
@@ -501,10 +502,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         availableBuffer: 0,
         updateWorkUnits: function(units) {
-            if (units === "mm")
-                this.work_mode = 0;
-            else if (units === "inch")
-                this.work_mode = 1;
+            var wm;
+            if (units === "mm"){
+                wm = 0;
+            } else if (units === "inch"){
+                wm = 1;
+            }
+            if(this.work_mode != wm){
+                this.work_mode = wm;
+                this.updateReportUnits();
+            }
             console.log("GRBL: Updated Work Units - " + this.work_mode);
             //update report units if they have changed
             // LUCA -> commented
@@ -1096,6 +1103,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                             });
                                         }
                                     }
+                                    that.updateWorkUnits('mm');
                                     break;
 
                                 case 'G20':
@@ -1127,11 +1135,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                             "z": 0.00
                                         });
                                     }
-
+                                    that.updateWorkUnits('inch');
                                     break;
                                 }
                             }
                         }, that);
+                        
 
                         break;
                     case 'welcome':
@@ -1242,6 +1251,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         that.config[configCode] = [val,
                             configStrings[configCode]
                         ]; //save config value and description
+                        that.updateReportUnits();
                         break;
                     case 'message':
                         //not all messages are implemented
