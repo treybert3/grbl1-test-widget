@@ -4,8 +4,8 @@ requirejs.config({
     paths: {
         jqueryui: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.core',
         jqueryuiWidget: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.widget',
-        jqueryTabs: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.tabs.js',
-        jQueryUIButtonSlider: 'https://raw.githubusercontent.com/jpadie/jQuery-switchButton/master/jquery.switchButton.js'
+        jqueryTabs: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.tabs',
+        jQueryUIButtonSlider: 'https://raw.githubusercontent.com/jpadie/jQuery-switchButton/master/jquery.switchButton'
     },
     shim: {
         jqueryuiWidget: ['jqueryui'],
