@@ -852,7 +852,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             }).attr({
                                     name: 'setting_' + data.code
                             });
-                            node.switchButton({
+                            $(node).switchButton({
                                 show_labels: true,
                                 on_label: data.values[1],
                                 off_label: data.values[0],
@@ -862,7 +862,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 clear: true,
                                 checked: that.config[data.code][1] == 1 ? true : false
                             });
-                            node.on('blur', null, that, function(that){
+                            $(node).on('blur', null, that, function(that){
                                 var val = $(this).is(':checked') ? 1 : 0;
                                 if(that.config[$(this).data('id')][1] != val){
                                     that.commandQueue.push(String.fromCharCode(36) + $(this).data('id') + '=' + val  + "\n");
