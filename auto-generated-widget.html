@@ -1010,6 +1010,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         tabList.append(_tL);
                     }
                     tabs[data.tab].append(node);
+                    console.log("html",node.html());
                 });
                 $('#grbl-config-div').append(tabList).append(tabs);
                 console.log('html', $('#grbl-config-div').html());
