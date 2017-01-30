@@ -807,7 +807,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 
                             });
                             node.find('label:first').attr('for', 'setting_' + data.code).html(data.setting + " (" + data.units + ")");
-                            console.log('html',node.html());
+                            console.log('html nodeItem',node.html());
                             break;
                         case 'axisMask':
                             node = axisMaskNode.clone(true);
@@ -846,7 +846,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 });
                             });
                             node.find(':checkbox:first').trigger('blur');
-                            console.log('html',node.html());
+                            console.log('html nodeItem',node.html());
                             break;
                         case 'switch':
                             node = switchNode.clone(true);
@@ -876,7 +876,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     that.doQueue();
                                 }
                             });
-                            console.log('html',node.html());
+                            console.log('html nodeItem',node.html());
                             break;
                     }
                     if (configtabs[data.tab] != 'undefined') {
@@ -893,10 +893,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 console.log('html tablist',configtabList.html());
                 $('#grbl-config-div').append(configtabList);
                 $.each(configtabs, function(index, element){
-                    console.log('html tab', element);
-                    $('#grbl-config-div').append(element);    
+                    console.log('html tabHolder', element);
+                    $('#grbl-config-div').append($(element));    
                 });
-                $('#grbl-config-div').tabs();
+               // $('#grbl-config-div').tabs();
                 /*
 
                 that.config.forEach(function(config_element, index_num) {
