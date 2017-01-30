@@ -891,9 +891,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     
                 });
                 console.log('html tablist',configtabList.html());
-                console.log('html tabs', configtabs.html())
                 $('#grbl-config-div').append(configtabList);
                 $.each(configtabs, function(index, element){
+                    console.log('html tab', element);
                     $('#grbl-config-div').append(element);    
                 });
                 $('#grbl-config-div').tabs();
