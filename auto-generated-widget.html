@@ -887,7 +887,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 $('#grbl-config-div').empty();
                 var tabList = $('ul');
                 var tabListItem = $('<li><a></a></li>');
-                var tabHolder = $('<div></div');
+                var tabHolder = $('<div class="tabHolder"></div');
                 var tabs = {};
                 var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class='input-group input-group-sm'></label></div>");
                 var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class='input-group input-group-sm'</label><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'></div>");
@@ -946,7 +946,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 var elem = node.find(':checkbox:eq(' + index + ')').data({
                                     id: data.code,
                                     axis: item,
-                                    tooltip: data.explanation
+                                    tooltip: data.explanation,
+                                    skip: true
                                 }).attr({
                                     name: 'setting_' + data.code + '_' + item,
                                     placeholder: item,
@@ -1010,7 +1011,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     }
                     tabs[data.tab].append(node);
                 });
-                $('#grbl-config-div').append(tabList).append(tabs).tabs();
+                $('#grbl-config-div').append(tabList).append(tabs);
+                $('#grbl-config-div').tabs();
                 /*
 
                 that.config.forEach(function(config_element, index_num) {
@@ -1038,7 +1040,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     }, that).appendTo('#grbl-config-div');
                 }, that
                 */
-                $('#grbl-config-div').find('.configItemHolder').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
+                $('#grbl-config-div').find('.tabHolder').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
                 $('.save-config').click(that.saveConfigModal.bind(that));
                 $('#com-chilipeppr-widget-grbl-modal').modal('show');
             }, 1000, this);
@@ -1051,8 +1053,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
 
             var that = this;
             $.each($("#grbl-config-div input"), function(k, inp) {
-                var val = $(inp).val();
-                var index = $(inp).data("index");
+                var val;
+                if($(inp).data('skip') == true) return;
+                if($(inp).is(':text')){
+                    val = $(inp).val();
+                } else if ($(inp).is(':checkbox')){
+                    val = $(inp).is(':checked') ? 1 : 0;
+                }
+                var index;
+                if(this.version.substring(0,1) == '1'){
+                     index = $(inp).data("id");
+                } else {
+                     index = $(inp).data("index");
+                }
                 console.log("GRBL WIDGET: FOOTPRINT 438", val, that.config[index]);
                 if (val != that.config[index][0]) {
                     var bits = val.split('.');
