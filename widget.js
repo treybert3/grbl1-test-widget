@@ -1426,7 +1426,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var floodCoolant = false;
                                     $.each(bit[1], function(index, value) {
                                         switch (value) {
-                                            case 'S':
+                                           /* case 'S':
                                                 spindleEnabled = true;
                                                 spindleDirection = "CW";
                                                 break;
@@ -1434,7 +1434,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                                 spindleEnabled = true;
                                                 spindleDirection = "CCW";
                                                 break;
-                                            case 'F':
+                                          */  case 'F':
                                                 floodCoolant = true;
                                                 break;
                                             case 'M':
