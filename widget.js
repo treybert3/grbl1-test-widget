@@ -752,6 +752,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             setTimeout(function(context) {
                 var that = context;
+                if(that.config[0] == 'undefined'){
+                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Sorry, cannot load config from the controller.<br/>Is it properly connected");
+                    return false;                                 
+                }
                 $('#grbl-config-div').empty();
                 var tabList = $('ul');
                 var tabListItem = $('<li><a></a></li>');
@@ -856,7 +860,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 height:11,
                                 button_width:12,
                                 clear: true,
-                                checked: this.config[data.code][1] == 1 ? true : false
+                                checked: that.config[data.code][1] == 1 ? true : false
                             });
                             node.on('blur', null, that, function(that){
                                 var val = $(this).is(':checked') ? 1 : 0;
