@@ -874,11 +874,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         showConfigModal: function() {
             if (this.widgetDebug) console.log("GRBL WIDGET: SJPS sending config request");
             this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-            setTimeout(function(context) {
+            var interval = setInterval(function(context) {
                 var that = context;
-                if(that.config[0] == 'undefined'){
+                if(that.config[0] == undefined){
                     chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Sorry, cannot load config from the controller.<br/>Is it properly connected");
                     return false;                                 
+                } else {
+                    clearInterval(interval);
                 }
                 $('#grbl-config-div').empty();
                 var tabList = $('ul');
