@@ -891,7 +891,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 var tabs = {};
                 var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class='input-group input-group-sm'></label></div>");
                 var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class='input-group input-group-sm'</label><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'></div>");
-                var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checbox' /><label class='input-group input-group-sm'></label></div>");
+                var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' /><label class='input-group input-group-sm'></label></div>");
                 $.each(that.configFormatData, function(index, data) {
                     /* code setting units explanation tab fieldType values readonly minimum maximum */
                     var node = '';
@@ -1014,8 +1014,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     tabs[data.tab].append(node);
                     
                 });
+                console.log('html tablist',tabList.html());
+                console.log('html tabs', tabs.html())
                 $('#grbl-config-div').append(tabList).append(tabs);
-                console.log('html', $('#grbl-config-div').html());
                 $('#grbl-config-div').tabs();
                 /*
 
