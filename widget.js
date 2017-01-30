@@ -888,6 +888,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     tabs[data.tab].append(node);
                 });
                 $('#grbl-config-div').append(tabList).append(tabs);
+                console.log('html', $('#grbl-config-div').html());
                 $('#grbl-config-div').tabs();
                 /*
 
