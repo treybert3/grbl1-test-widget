@@ -894,10 +894,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checbox' /><label class='input-group input-group-sm'></label></div>");
                 $.each(that.configFormatData, function(index, data) {
                     /* code setting units explanation tab fieldType values readonly minimum maximum */
-
+                    var node = '';
                     switch (data.fieldType) {
                         case 'integer':
-                            var node = integerNode.clone(true);
+                            node = integerNode.clone(true);
                             node.data('id', data.code);
                             node.find(':input:first').data({
                                 'id': data.code,
@@ -931,10 +931,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 
                             });
                             node.find('label:first').attr('for', 'setting_' + data.code).html(data.setting + " (" + data.units + ")");
-                            
+                            console.log('html',node.html());
                             break;
                         case 'axisMask':
-                            var node = axisMaskNode.clone(true);
+                            node = axisMaskNode.clone(true);
                             node.data('id', data.code);
                             node.find('label').html(data.setting);
                             node.find(':text:first').data({
@@ -970,9 +970,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 });
                             });
                             node.find(':checkbox:first').trigger('blur');
+                            console.log('html',node.html());
                             break;
                         case 'switch':
-                            var node = switchNode.clone(true);
+                            node = switchNode.clone(true);
                             node.data('id', data.code);
                             node.find('label').html(data.setting);
                             var elem = node.find(':checkbox:first').data({
@@ -999,6 +1000,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     that.doQueue();
                                 }
                             });
+                            console.log('html',node.html());
                             break;
                     }
                     if (tabs[data.tab] != 'undefined') {
@@ -1010,7 +1012,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         tabList.append(_tL);
                     }
                     tabs[data.tab].append(node);
-                    console.log("html",node.html());
+                    
                 });
                 $('#grbl-config-div').append(tabList).append(tabs);
                 console.log('html', $('#grbl-config-div').html());
