@@ -1005,7 +1005,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     }
                     if (configtabs[data.tab] != 'undefined') {
                         var _tH = configtabHolder.clone(true);
-                        _tH.prop('id', 'holder_' + data.tab);
+                        _tH.prop('id', 'holder_setting_' + data.tab);
                         configtabs[data.tab] = _tH;
                         var _tL = configtabListItem.clone(true);
                         _tL.find('a:first').attr('href', '#holder_setting_' + data.tab);
