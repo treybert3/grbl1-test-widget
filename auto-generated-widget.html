@@ -885,7 +885,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     clearInterval(interval);
                 }
                 $('#grbl-config-div').empty();
-                var configtabList = $('ul');
+                var configtabList = $('<ul></ul>');
                 var configtabListItem = $('<li><a></a></li>');
                 var configtabHolder = $('<div class="tabHolder"></div');
                 var configtabs = {};
@@ -1009,6 +1009,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         configtabs[data.tab] = _tH;
                         var _tL = configtabListItem.clone(true);
                         _tL.find('a:first').attr('href', '#holder_setting_' + data.tab);
+                        console.log('html tL', _tL.html());
                         configtabList.append(_tL);
                     }
                     configtabs[data.tab].append(node);
@@ -1020,7 +1021,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     console.log('html tabHolder', element);
                     $('#grbl-config-div').append($(element));    
                 });
-               // $('#grbl-config-div').tabs();
+               $('#grbl-config-div').tabs();
                 /*
 
                 that.config.forEach(function(config_element, index_num) {
