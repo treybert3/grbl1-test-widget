@@ -1003,16 +1003,17 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             console.log('html nodeItem',node.html());
                             break;
                     }
-                    if (configtabs[data.tab] != 'undefined') {
+                    var dT = data.tab.replace(' ', '_');
+                    if (configtabs[dT] != undefined) {
                         var _tH = configtabHolder.clone(true);
                         _tH.prop('id', 'holder_setting_' + data.tab);
-                        configtabs[data.tab] = _tH;
+                        configtabs[dT] = _tH;
                         var _tL = configtabListItem.clone(true);
-                        _tL.find('a:first').attr('href', '#holder_setting_' + data.tab);
+                        _tL.find('a:first').attr('href', '#holder_setting_' + dT).text(data.tab);
                         console.log('html tL', _tL.html());
                         configtabList.append(_tL);
                     }
-                    configtabs[data.tab].append(node);
+                    configtabs[dT].append(node);
                     
                 });
                 console.log('html tablist',configtabList.html());
