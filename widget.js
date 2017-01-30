@@ -10,7 +10,7 @@ requirejs.config({
     shim: {
         jqueryuiWidget: ['jqueryui'],
         jqueryTabs: ['jqueryuiWidget'],
-        jQueryUIButtonSlider: ['jqueryui'],
+        jQueryUIButtonSlider: ['jqueryuiWidget'],
     }
 });
 
