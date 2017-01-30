@@ -2,15 +2,15 @@
 
 requirejs.config({
     paths: {
-        jqueryui: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.core',
+        jqueryui: '/jquery.ui.core',
         jqueryuiWidget: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.widget',
-        jqueryTabs: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.tabs',
-        jQueryUIButtonSlider: '//cdn.rawgit.com/jpadie/jQuery-switchButton/master/jquery.switchButton'
+        jquerytabs: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.tabs',
+        jQueryuibuttonslider: '//cdn.rawgit.com/jpadie/jQuery-switchButton/master/jquery.switchButton'
     },
     shim: {
         jqueryuiWidget: ['jqueryui'],
-        jqueryTabs: ['jqueryuiWidget'],
-        jQueryUIButtonSlider: ['jqueryuiWidget'],
+        jquerytabs: ['jqueryuiWidget'],
+        jQueryuibuttonslider: ['jqueryuiWidget'],
     }
 });
 
@@ -111,7 +111,7 @@ function Queue() {
     };
 }
 
-cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie", "jQueryUIButtonSlider", "jqueryTabs"], function() {
+cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidget", "jqueryui", "jquerycookie", "jQueryuibuttonslider", "jquerytabs"], function() {
 
     return {
         widgetDebug: false,
