@@ -885,10 +885,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     clearInterval(interval);
                 }
                 $('#grbl-config-div').empty();
-                var tabList = $('ul');
-                var tabListItem = $('<li><a></a></li>');
-                var tabHolder = $('<div class="tabHolder"></div');
-                var tabs = {};
+                var configtabList = $('ul');
+                var configtabListItem = $('<li><a></a></li>');
+                var configtabHolder = $('<div class="tabHolder"></div');
+                var configtabs = {};
                 var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class='input-group input-group-sm'></label></div>");
                 var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class='input-group input-group-sm'</label><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'></div>");
                 var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' /><label class='input-group input-group-sm'></label></div>");
@@ -1003,20 +1003,20 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             console.log('html',node.html());
                             break;
                     }
-                    if (tabs[data.tab] != 'undefined') {
-                        var _tH = tabHolder.clone(true);
+                    if (configtabs[data.tab] != 'undefined') {
+                        var _tH = configtabHolder.clone(true);
                         _tH.prop('id', 'holder_' + data.tab);
-                        tabs[data.tab] = _tH;
-                        var _tL = tabListItem.clone(true);
+                        configtabs[data.tab] = _tH;
+                        var _tL = configtabListItem.clone(true);
                         _tL.find('a:first').attr('href', '#holder_setting_' + data.tab);
-                        tabList.append(_tL);
+                        configtabList.append(_tL);
                     }
-                    tabs[data.tab].append(node);
+                    configtabs[data.tab].append(node);
                     
                 });
-                console.log('html tablist',tabList.html());
-                console.log('html tabs', tabs.html())
-                $('#grbl-config-div').append(tabList).append(tabs);
+                console.log('html tablist',configtabList.html());
+                console.log('html tabs', configtabs.html())
+                $('#grbl-config-div').append(configtabList).append(configtabs);
                 $('#grbl-config-div').tabs();
                 /*
 
