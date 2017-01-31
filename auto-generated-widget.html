@@ -1216,9 +1216,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 var configtabListItem = $('<li><a></a></li>');
                 var configtabHolder = $('<div class="tabHolder"></div');
                 var configtabs = {};
-                var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class='input-group input-group-sm'></label></div>");
-                var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class='input-group input-group-sm'</label><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'></div>");
-                var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' /><label class='input-group input-group-sm'></label></div>");
+                var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class=''></label></div>");
+                var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class=''</label><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'></div>");
+                var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' class='boolean'/><label class=''></label></div>");
                 $.each(that.configFormatData, function(index, data) {
                     /* code setting units explanation tab fieldType values readonly minimum maximum */
                     var node = '';
@@ -1305,19 +1305,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             node.find('label').html(data.setting);
                             var elem = node.find(':checkbox:first').data({
                                     index: data.code,
-                                    tooltip: data.explanation
+                                    tooltip: data.explanation,
+                                    on_label: data.values[1],
+                                    off_label: data.values[0]
                             }).attr({
-                                    name: 'setting_' + data.code
-                            });
-                            $(node).switchButton({
-                                show_labels: true,
-                                on_label: data.values[1],
-                                off_label: data.values[0],
-                                width:25,
-                                height:11,
-                                button_width:12,
-                                clear: true,
-                                checked: that.config[data.code][1] == 1 ? true : false
+                                    name: 'setting_' + data.code,
+                                    checked: that.config[data.code][1] == 1 ? true : false
                             });
                             $(node).on('blur', null, {context:that}, function(event){
                                 var that = event.data.context;
@@ -1351,6 +1344,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     $('#grbl-config-div').append($(element));    
                 });
                $('#grbl-config-div').tabs();
+               
                 /*
 
                 that.config.forEach(function(config_element, index_num) {
@@ -1381,6 +1375,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 $('#grbl-config-div').find('.tabHolder').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
                 $('.save-config').click(that.saveConfigModal.bind(that));
                 $('#com-chilipeppr-widget-grbl-modal').modal('show');
+                $('#grbl-config-div').find('.boolean').each(function(){
+                   $(this).switchButton({
+                                show_labels: true,
+                                on_label: $(this).data('on_label') ,
+                                off_label: $(this).data('off_label'),
+                                width:25,
+                                height:11,
+                                button_width:12,
+                                clear: true,
+                                checked: $(this).attr('checked')
+                            });
+ 
+                });
             }, 1000, this);
         },
         hideConfigModal: function() {
