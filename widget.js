@@ -1215,7 +1215,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     console.log('html tabHolder', element);
                     $('#grbl-config-div').append($(element));    
                 });
-               $('#grbl-config-div').tabs();
+               //$('#grbl-config-div').tabs();
                
                 /*
 
