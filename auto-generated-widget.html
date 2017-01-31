@@ -939,7 +939,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 
                             });
                             node.find('label:first').attr('for', 'setting_' + data.code).html(data.setting + " (" + data.units + ")");
-                            console.log('html nodeItem',node.html());
                             break;
                         case 'axisMask':
                             node = axisMaskNode.clone(true);
@@ -978,7 +977,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 });
                             });
                             node.find(':checkbox:first').trigger('blur');
-                            console.log('html nodeItem',node.html());
                             break;
                         case 'switch':
                             node = switchNode.clone(true);
@@ -1008,23 +1006,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     that.doQueue();
                                 }
                             });
-                            console.log('html nodeItem',node.html());
                             break;
                     }
                     var dT = data.tab.replace(' ', '_');
                     if (configtabs[dT] == undefined) {
                         var _tH = configtabHolder.clone(true);
-                        _tH.prop('id', 'holder_setting_' + data.tab);
+                        _tH.prop('id', 'holder_setting_' + dT);
                         configtabs[dT] = _tH;
                         var _tL = configtabListItem.clone(true);
                         _tL.find('a:first').attr('href', '#holder_setting_' + dT).text(data.tab);
                         console.log('html tL', _tL.html());
                         configtabList.append(_tL);
                     }
-                    configtabs[dT].append(node);
+                    $(configtabs[dT]).append(node);
+                    console.log("html node", node);
                     
                 });
-                console.log('html tablist',configtabList.html());
+                console.log('html tablist',configtabList);
                 $('#grbl-config-div').append(configtabList);
                 $.each(configtabs, function(index, element){
                     console.log('html tabHolder', element);
