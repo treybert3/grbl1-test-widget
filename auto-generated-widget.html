@@ -762,11 +762,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         options: null,
         setVersion: function(ver) {
             console.log('GRBL WIDGET: setting version to ' + ver);
-            this.version = ver;
-            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion", this.version);
-            if (this.version.substring(0, 1) == '1' && this.config[10] && parseInt(this.config[10], 10) != 2) {
-                this.config[10] = 2;
-                this.sendCode(String.fromCharCode(36) + "10=2\n");
+            if (ver !== "") {
+                if(this.version != ver){
+                    this.version = ver;
+                    $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui 
+                    chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion", this.version);
+                    if (this.version.substring(0, 1) == '1' && this.config[10] != undefined && parseInt(this.config[10], 10) != 2) {
+                        this.config[10] = 2;
+                        this.commandQueue.push(String.fromCharCode(36) + "10=2\n");
+                        this.doQueue();
+                    }
+                }
+            } else {
+                this.sendCode(String.fromCharCode(36) + "I\n");
             }
         },
         setupUiFromCookie: function() {
@@ -1004,7 +1012,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             break;
                     }
                     var dT = data.tab.replace(' ', '_');
-                    if (configtabs[dT] != undefined) {
+                    if (configtabs[dT] == undefined) {
                         var _tH = configtabHolder.clone(true);
                         _tH.prop('id', 'holder_setting_' + data.tab);
                         configtabs[dT] = _tH;
@@ -1716,13 +1724,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
 
                         break;
                     case 'welcome':
-                        if (that.version !== "") {
-                            chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "GRBL has been reset - temporary work coordinate and tool offsets have been lost.");
-                        }
                         that.setVersion(result[1]);
-                        $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + that.version + ")"); //update ui  
-                        that.sendCode(String.fromCharCode(36) + "10=2\n");
-                        that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                         chilipeppr.publish("/com-chilipeppr-widget-gcode/stop", true); //stops gcode widget since grbl just reset.
                         break;
                     case 'alarm':
