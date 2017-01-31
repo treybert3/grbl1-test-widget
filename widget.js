@@ -954,6 +954,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         setVersion: function(ver) {
             console.log('GRBL WIDGET: setting version to ' + ver);
             if (ver !== "") {
+                var pattern = /([0-9.]+[a-z]?)/i;
+                var match = pattern.exec(ver);
+                ver = match[1] == undefined ? ver : match[1];
                 if(this.version != ver){
                     this.version = ver;
                     $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui 
