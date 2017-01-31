@@ -910,9 +910,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     switch (data.fieldType) {
                         case 'integer':
                             node = integerNode.clone(true);
-                            node.data('id', data.code);
+                            node.data('index', data.code);
                             node.find(':input:first').data({
-                                'id': data.code,
+                                'index': data.code,
                                 'tooltip': data.explanation,
                                 'minimum': data.minimum,
                                 'maximum' : data.maximum == 'undefined' ? null : data.maximum
@@ -921,23 +921,24 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             .prop('id', 'setting_' + data.code)
                             .prop('readonly', data.readonly)
                             .css({width: '4rem'})
-                            .on('blur', null, that, function( that ){
+                            .on('blur', null, {context:that}, function( event ){
+                                var that = event.data.context;
                                 var val = parseInt($(this).val());
                                 
                                 if($(this).data('minimum') > val){
-                                    $(this).val( that.config[$(this).data('id')][1]);
+                                    $(this).val( that.config[$(this).data('index')][1]);
                                     chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Value needs to be over "  +$(this).data('minimum'));
                                     return;
                                 }
                                 
                                 if($(this).data('maximum') != null && $(this).data('maximum') < val){
-                                    $(this).val( that.config[$(this).data('id')][1]);
+                                    $(this).val( that.config[$(this).data('index')][1]);
                                     chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Value needs to be below "  +$(this).data('maximum'));
                                     return;
                                 }
-                                if(that.config[$(this).data('id')][1] != $(this).val()){
-                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('id') + '=' + $(this).val()  + "\n");
-                                    that.config[$(this).data('id')][1] = $(this).val();
+                                if(that.config[$(this).data('index')][1] != $(this).val()){
+                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + $(this).val()  + "\n");
+                                    that.config[$(this).data('index')][1] = $(this).val();
                                     that.doQueue();
                                 }
                                 
@@ -946,7 +947,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             break;
                         case 'axisMask':
                             node = axisMaskNode.clone(true);
-                            node.data('id', data.code);
+                            node.data('index', data.code);
                             node.find('label').html(data.setting);
                             node.find(':text:first').data({
                                 id:data.code
@@ -955,7 +956,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 var mask = 1 << index;
                                 var checked = (that.config[data.code] & mask) ? true : false;
                                 var elem = node.find(':checkbox:eq(' + index + ')').data({
-                                    id: data.code,
+                                    index: data.code,
                                     axis: item,
                                     tooltip: data.explanation,
                                     skip: true
@@ -964,7 +965,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     placeholder: item,
                                     checked: checked
                                 });
-                                elem.on('blur', null, that, function( that ){
+                                elem.on('blur', null, {context:that}, function( event ){
+                                    var that = event.data.context;
                                     var val = 0;
                                     $(this).closest('div').find(':checkbox').each(function(index,element){
                                         if($(element).is(':checked')){
@@ -973,10 +975,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     });
                                     
                                     $(this).closest('div').find(':text:first').val(val);
-                                    if(that.config[$(this).data('id')][1] != val){
-                                        that.commandQueue.push(String.fromCharCode(36) + $(this).data('id') + '=' + val + "\n");
+                                    if(that.config[$(this).data('index')][1] != val){
+                                        that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + val + "\n");
                                         that.doQueue();
-                                        that.config[$(this).data('id')][1] = val;
+                                        that.config[$(this).data('index')][1] = val;
                                     }
                                 });
                             });
@@ -987,7 +989,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             node.data('id', data.code);
                             node.find('label').html(data.setting);
                             var elem = node.find(':checkbox:first').data({
-                                    id: data.code,
+                                    index: data.code,
                                     tooltip: data.explanation
                             }).attr({
                                     name: 'setting_' + data.code
@@ -1002,17 +1004,18 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 clear: true,
                                 checked: that.config[data.code][1] == 1 ? true : false
                             });
-                            $(node).on('blur', null, that, function(that){
+                            $(node).on('blur', null, {context:that}, function(event){
+                                var that = event.data.context;
                                 var val = $(this).is(':checked') ? 1 : 0;
-                                if(that.config[$(this).data('id')][1] != val){
-                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('id') + '=' + val  + "\n");
-                                    that.config[$(this).data('id')][1] = val;
+                                if(that.config[$(this).data('index')][1] != val){
+                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + val  + "\n");
+                                    that.config[$(this).data('index')][1] = val;
                                     that.doQueue();
                                 }
                             });
                             break;
                     }
-                    var dT = data.tab.replace(' ', '_');
+                    var dT = data.tab.split(' ').join('_');
                     if (configtabs[dT] == undefined) {
                         var _tH = configtabHolder.clone(true);
                         _tH.prop('id', 'holder_setting_' + dT);
@@ -1080,12 +1083,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 } else if ($(inp).is(':checkbox')){
                     val = $(inp).is(':checked') ? 1 : 0;
                 }
-                var index;
-                if(this.version.substring(0,1) == '1'){
-                     index = $(inp).data("id");
-                } else {
-                     index = $(inp).data("index");
-                }
+                var index = $(inp).data("index");
+                
                 console.log("GRBL WIDGET: FOOTPRINT 438", val, that.config[index]);
                 if (val != that.config[index][0]) {
                     var bits = val.split('.');
