@@ -1089,7 +1089,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 var configtabs = {};
                 var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class=''></label></div>");
                 var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class=''</label><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'></div>");
-                var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' class='boolean'/><label class=''></label></div>");
+                var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' class='boolean'/><span class='checkboxLabel'></span></div>");
                 $.each(that.configFormatData, function(index, data) {
                     /* code setting units explanation tab fieldType values readonly minimum maximum */
                     var node = '';
@@ -1255,7 +1255,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 width:25,
                                 height:11,
                                 button_width:12,
-                                checked: $(this).prop('checked')
+                                checked: $(this).prop('checked'),
+                                on_callback: $(this).prop('checked',true).trigger('blur'),
+                                off_callback: $(this).prop('checked',false).trigger('blur')
                             });
  
                 });
