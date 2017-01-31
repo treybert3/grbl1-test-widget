@@ -4,16 +4,11 @@ requirejs.config({
     paths: {
         jqueryui_entire: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery-ui',
         jquerytabs: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.tabs',
-     //   jQueryuibuttonslider: '//cdn.rawgit.com/jpadie/jQuery-switchButton/master/jquery.switchButton'
     },
     shim: {
         jquerytabs: {
             deps: ['jqueryui_entire']
         },
-    /*    jQueryuibuttonslider: {
-            deps: ['jqueryui_entire']
-        }
-    */
     }
 });
 
@@ -1259,7 +1254,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 width:25,
                                 height:11,
                                 button_width:12,
-                                clear: true,
                                 checked: $(this).attr('checked')
                             });
  
