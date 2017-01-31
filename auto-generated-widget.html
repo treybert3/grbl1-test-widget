@@ -292,6 +292,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         version: "",
         q_count: 0,
         alarm: false,
+        spindleSpeed: 'Off',
+        spindleDirection: 'CW',
+        feedRate: 0,
+        coolant: '-',
         offsets: {
             "x": 0.000,
             "y": 0.000,
@@ -1533,26 +1537,29 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     break;
                                 case "ln":
                                     //typically disabled in grbl 1.1
-                                    var currentlyExecutingLineNumber = result[1];
+                                    that.setCurrentlyExecutingLineNumber(bit[1]);
                                     break;
                                 case "f":
                                     //feed rate
-
-                                    var feedRate = that.controller_units === "inch" ?
-                                        that.toMM(bit[1]) :
-                                        bit[1];
-                                    feedRate = parseInt(feedRate, 10);
-                                    $('.stat-feedrate').html(feedRate);
-
+                                    feedRate = parseInt(bit[1], 10);
+                                    if(feedRate != that.feedRate){
+                                        that.feedRate = feedRate;
+                                        $('.stat-feedrate').html(feedRate);    
+                                    }
                                     break;
                                 case "fs":
                                     //feed rate and spindle speed
                                     var _bits = bit[1].split(',');
-                                    var feedRate = parseInt(_bits[0], 10);
-                                    // Why floating feedrate? is not integer?
-                                    $('.stat-feedrate').html(feedRate);
-                                    var spindleSpeed = parseInt(_bits[1], 10);
-                                    $('.stat-spindle').html(spindleSpeed);
+                                    var feedRate = _bits[0];
+                                    if(feedRate != that.feedRate){
+                                        that.feedRate = feedRate;
+                                        $('.stat-feedrate').html(feedRate);    
+                                    }// Why floating feedrate? is not integer?
+                                    var spindleSpeed = _bits[1] == '0' ? "Off" : spindleSpeed;
+                                    if(spindleSpeed != that.spindleSpeed){
+                                            that.spindleSpeed = spindleSpeed;
+                                            $('.stat-spindle').html(spindleSpeed == 0 ? 'Off' : spindleSpeed);
+                                    }
                                     break;
                                 case "pn":
                                     //reports pin status
@@ -1568,9 +1575,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                         rapids: parseInt(_bits[1], 10),
                                         spindleSpeed: parseInt(_bits[2], 10)
                                     };
-                                    $('#com-chilipeppr-widget-grbl .ov-1').html(_bits[0]);
-                                    $('#com-chilipeppr-widget-grbl .ov-2').html(_bits[1]);
-                                    $('#com-chilipeppr-widget-grbl .ov-3').html(_bits[2]);
+                                    for(var j = 0; j<3; j++){
+                                        if($('#com-chilipeppr-widget-grbl .ov-' + (j+1)).html() != _bits[j]){
+                                           $('#com-chilipeppr-widget-grbl .ov-' + (j+1)).html(_bits[j]); 
+                                        }
+                                    }
                                     break;
                                 case "a":
                                     //reports accessories
@@ -1599,12 +1608,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     });
                                     if (that.spindleEnabled != spindleEnabled) {
                                         that.spindleEnabled = spindleEnabled;
-                                        if (spindleEnabled) {
-                                            $('.stat-spindle').html(spindleDirection == "CW" ? 'Clockwise' : 'Counterclockwise');
-                                        }
-                                        else {
-                                            $('.stat-spindle').html("Off");
-                                        }
+                                        that.spindleDirection = spindleDirection;
                                     }
                                     if (floodCoolant || mistCoolant) {
                                         if (floodCoolant && that.coolant != 'Flood') {
@@ -1674,6 +1678,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 case 'G91':
                                     var distance = value == 'G90' ? 'Absolute' : 'Incremental';
                                     if (distance != that.distance) {
+                                        that.distance = distance;
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/distance", that.distance);
                                         $('.stat-distance').html(that.distance);
                                     }
