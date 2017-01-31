@@ -1088,7 +1088,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 var configtabHolder = $('<div class="tabHolder"></div');
                 var configtabs = {};
                 var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class=''></label></div>");
-                var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class=''</label><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'><input class='configItem axisMask' type='checkBox' value='1'></div>");
+                var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class=''</label><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'></div>");
                 var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' class='boolean'/><label class=''></label></div>");
                 $.each(that.configFormatData, function(index, data) {
                     /* code setting units explanation tab fieldType values readonly minimum maximum */
@@ -1148,7 +1148,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     skip: true
                                 }).attr({
                                     name: 'setting_' + data.code + '_' + item,
-                                    placeholder: item,
+                                    placeholder: item
+                                }).prop({
                                     checked: checked
                                 });
                                 elem.on('blur', null, {context:that}, function( event ){
@@ -1254,7 +1255,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 width:25,
                                 height:11,
                                 button_width:12,
-                                checked: $(this).attr('checked')
+                                checked: $(this).prop('checked')
                             });
  
                 });
