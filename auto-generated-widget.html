@@ -1298,7 +1298,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         case 'switch':
                             node = switchNode.clone(true);
                             node.data('id', data.code);
-                            node.find('label').html(data.setting);
+                            node.find('span').html(data.setting);
                             var elem = node.find(':checkbox:first').data({
                                     index: data.code,
                                     tooltip: data.explanation,
@@ -1372,6 +1372,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 $('.save-config').click(that.saveConfigModal.bind(that));
                 $('#com-chilipeppr-widget-grbl-modal').modal('show');
                 $('#grbl-config-div').find('.boolean').each(function(){
+                    alert($(this).html());
                    $(this).switchButton({
                                 show_labels: true,
                                 on_label: $(this).data('on_label') ,
