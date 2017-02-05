@@ -1705,7 +1705,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_machine[val] = parseFloat(coords[index]);
+                                        this.last_machine[val] = parseFloat(coords[index]).toFixed(3);
                                     }, that);
                                     receivedMachineCoords = true;
                                     break;
@@ -1713,7 +1713,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_work[val] = parseFloat(coords[index]);
+                                        this.last_work[val] = parseFloat(coords[index]).toFixed(3);
                                     }, that);
                                     receivedWorkCoords = true;
                                     break;
@@ -1721,7 +1721,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var offset = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: offset information: ", offset);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.offsets[val] = parseFloat(offset[index]);
+                                        this.offsets[val] = parseFloat(offset[index]).toFixed(3);
                                     }, that);
                                     break;
                                 case "bf":
@@ -1831,20 +1831,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT received status update", "machine", that.last_machine, "work", that.last_work, "offset", that.offsets, "receivedMachine", receivedMachineCoords, 'receivedWork', receivedWorkCoords);
                         if (receivedMachineCoords && !receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_work[val] = this.last_machine[val] - this.offsets[val];
+                                this.last_work[val] = (this.last_machine[val] - this.offsets[val]).toFixed(3);
                             }, that);
 
                         }
                         else if (!receivedMachineCoords && receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_machine[val] = this.last_work[val] + this.offsets[val];
+                                this.last_machine[val] = (this.last_work[val] + this.offsets[val]).toFixed(3);
                             }, that);
                         }
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 816.  current values", "machine", that.last_machine, "work", that.last_work, "offsets", that.offsets);
                         //send axis updates
-
-                        $('.stat-mcoords').html("X:" + that.last_machine.x.toFixed(3) + " Y:" + that.last_machine.y.toFixed(3) + " Z:" + that.last_machine.z.toFixed(3)); //  + ' mm');
-
+                        that.publishAxisStatus(that.last_work);
+                        $('.stat-mcoords').html("X:" + that.last_machine.x.toFixed(3) + " Y:" + that.last_machine.y.toFixed(3) + " Z:" + that.last_machine.z.toFixed(3));
                         break;
                     case 'gCodeState':
                         var codes = result[1].split(' ');

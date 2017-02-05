@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+    <script>
+    /* global $ */
+    var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class=''></label></div>");
+    var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class=''></label><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'></div>");
+    var switchNode = $("<div class='checkbox'><label><input  type='checkbox'/><span class='col-md-3'>Text goes here</span></label></div>");
+    $('document').ready(function(){
+      var node = $(switchNode).clone(true);
+      node.find('input').data({
+          index: 1
+      });
+      node.appendTo('#holder_setting_Steps');
+      node.find(':checkbox').bootstrapToggle({
+          on: "enabled",
+          off: "disabled",
+          size: "mini"
+      });
+     // $('.checkbox').parent().append("<span>Steps and steps</span>");
+     
+    });  
+    </script>
+
+</head>
+<div id="grbl-config-div" class="form-horizontal" role="form">
+    <ul>
+        <li><a href="#holder_setting_Steps">Steps</a></li>
+        <li><a href="#holder_setting_Inversions">Inversions</a></li>
+        <li><a href="#holder_setting_Reporting">Reporting</a></li>
+        <li><a href="#holder_setting_Junction_Deviation">Junction Deviation</a></li>
+        <li><a href="#holder_setting_Arc_Tolerance">Arc Tolerance</a></li>
+        <li><a href="#holder_setting_Limits">Limits</a></li>
+        <li><a href="#holder_setting_Homing">Homing</a></li>
+        <li><a href="#holder_setting_Spindle">Spindle</a></li>
+        <li><a href="#holder_setting_Laser">Laser</a></li>
+        <li><a href="#holder_setting_Axis_Resolution">Axis Resolution</a></li>
+        <li><a href="#holder_setting_Axis_FeedRate">Axis FeedRate</a></li>
+        <li><a href="#holder_setting_Axis_Acceleration">Axis Acceleration</a></li>
+        <li><a href="#holder_setting_Axis_Max_Travel">Axis Max Travel</a></li>
+    </ul>
+    <div class="tabHolder container" id="holder_setting_Steps">
+        
+    </div>
+    
+    <div class="tabHolder container">
+        <div class="row">
+            <div class="col-md-2">
+                &nbsp;
+            </div>
+            <div class="col-md-2">
+                X-Axis
+            </div>
+            <div class="col-md-2">
+                Y-Axis
+            </div>
+            <div class="col-md-2">
+                Z-Axis
+            </div>
+        </div>
+        <div class="axisMaskHolder row">
+            <span class="col-md-2">Invert Axis Direction</span>
+            <span class="col-md-2">
+                <input type="checkbox" data-toggle="toggle" data-on='Inverted' data-off='Normal'/>
+            </span>
+           <span class="col-md-2">
+<input type="checkbox" data-on='Inverted' data-off='Normal' data-toggle="toggle" />
+                
+            </span>
+            <span class="col-md-2">
+                <input type="checkbox" data-on='Inverted' data-off='Normal' data-toggle="toggle"/>
+                
+            </span>
+
+        </div>
+        
+    </div>
+
+</div>
