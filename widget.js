@@ -1705,7 +1705,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_machine[val] = parseFloat(coords[index]).toFixed(3);
+                                        this.last_machine[val] = parseFloat(coords[index]);
                                     }, that);
                                     receivedMachineCoords = true;
                                     break;
@@ -1713,7 +1713,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_work[val] = parseFloat(coords[index]).toFixed(3);
+                                        this.last_work[val] = parseFloat(coords[index]);
                                     }, that);
                                     receivedWorkCoords = true;
                                     break;
@@ -1721,7 +1721,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var offset = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: offset information: ", offset);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.offsets[val] = parseFloat(offset[index]).toFixed(3);
+                                        this.offsets[val] = parseFloat(offset[index]);
                                     }, that);
                                     break;
                                 case "bf":
@@ -1831,13 +1831,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT received status update", "machine", that.last_machine, "work", that.last_work, "offset", that.offsets, "receivedMachine", receivedMachineCoords, 'receivedWork', receivedWorkCoords);
                         if (receivedMachineCoords && !receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_work[val] = (this.last_machine[val] - this.offsets[val]).toFixed(3);
+                                this.last_work[val] = (this.last_machine[val] - this.offsets[val]);
                             }, that);
 
                         }
                         else if (!receivedMachineCoords && receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_machine[val] = (this.last_work[val] + this.offsets[val]).toFixed(3);
+                                this.last_machine[val] = (this.last_work[val] + this.offsets[val]);
                             }, that);
                         }
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 816.  current values", "machine", that.last_machine, "work", that.last_work, "offsets", that.offsets);
@@ -2424,11 +2424,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             if (this.widgetDebug) console.log("GRBL WIDGET: axis data received", axes);
             var _axes = {};
             $.each(axes, function(index, val) {
-                if (isNaN(val)) {
-                    val = 0.000;
-                }
-
-                _axes[index] = parseFloat(val).toFixed(3);
+               _axes[index] = parseFloat(val).toFixed(3);
             });
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", _axes);
         },
