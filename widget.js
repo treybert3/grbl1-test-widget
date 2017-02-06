@@ -422,7 +422,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
 
 })(jQuery);  
         },
-        widgetDebug: false,
+        widgetDebug: true,
         id: "com-chilipeppr-widget-grbl",
         implements: {
             "com-chilipeppr-interface-cnccontroller": "The CNC Controller interface is a loosely defined set of publish/subscribe signals. The notion of an interface is taken from object-oriented programming like Java where an interface is defined and then specific implementations of the interface are created. For the sake of a Javascript mashup like what ChiliPeppr is, the interface is just a rule to follow to publish signals and subscribe to signals by different top-level names than the ID of the widget or element implementing the interface. Most widgets/elements will publish and subscribe on their own ID. In this widget we are publishing/subscribing on an interface name. If another controller like Grbl is defined by a member of the community beyond this widget for GRBL, this widget can be forked and used without other widgets needing to be changed and the user could pick a Grbl or GRBL implementation of the interface."
@@ -1705,7 +1705,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_machine[val] = parseFloat(coords[index]);
+                                        this.last_machine[val] = parseFloat(coords[index]).toFixed(3);
                                     }, that);
                                     receivedMachineCoords = true;
                                     break;
@@ -1713,7 +1713,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_work[val] = parseFloat(coords[index]);
+                                        this.last_work[val] = parseFloat(coords[index]).toFixed(3);
                                     }, that);
                                     receivedWorkCoords = true;
                                     break;
@@ -1721,7 +1721,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var offset = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: offset information: ", offset);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.offsets[val] = parseFloat(offset[index]);
+                                        this.offsets[val] = parseFloat(offset[index]).toFixed(3);
                                     }, that);
                                     break;
                                 case "bf":
@@ -1831,13 +1831,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT received status update", "machine", that.last_machine, "work", that.last_work, "offset", that.offsets, "receivedMachine", receivedMachineCoords, 'receivedWork', receivedWorkCoords);
                         if (receivedMachineCoords && !receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_work[val] = (this.last_machine[val] - this.offsets[val]);
+                                this.last_work[val] = (this.last_machine[val] - this.offsets[val]).toFixed(3);
                             }, that);
 
                         }
                         else if (!receivedMachineCoords && receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_machine[val] = (this.last_work[val] + this.offsets[val]);
+                                this.last_machine[val] = (this.last_work[val] + this.offsets[val]).toFixed(3);
                             }, that);
                         }
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 816.  current values", "machine", that.last_machine, "work", that.last_work, "offsets", that.offsets);
@@ -1977,11 +1977,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 });
                                 $('#stat-state-background-box').css('background-color', 'pink');
 
-                                this.addError("Error", that.errorMessages[parseInt(result[1], 10)]);
+                                that.addError("Error", that.errorMessages[errorCode]);
                                 break;
 
                             default:
-                                chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", errorMessages[errorCode]);
+                                that.addError("Error", that.errorMessages[errorCode]);
+                                chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", that.errorMessages[errorCode]);
 
                         }
                         that.doQueue();
@@ -2080,30 +2081,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
                             var obj = {
-                                "x": (parseFloat(coords[0]) - that.offsets.x).toFixed(3),
-                                "y": (parseFloat(coords[1]) - that.offsets.y).toFixed(3),
-                                "z": (parseFloat(coords[2]) - that.offsets.z).toFixed(3),
+                                "x": (parseFloat(coords[0]) - that.offsets.x),
+                                "y": (parseFloat(coords[1]) - that.offsets.y),
+                                "z": (parseFloat(coords[2]) - that.offsets.z),
                                 status: probeSuccess
                             };
-                            if (that.work_mode === that.report_mode) {
-                                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", obj);
-                            }
-                            else if (that.work_mode === 1 && that.report_mode === 0) { //work is inch, reporting in mm
-                                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": that.toInch(obj.x),
-                                    "y": that.toInch(obj.y),
-                                    "z": that.toInch(obj.z),
-                                    status: probeSuccess
-                                });
-                            }
-                            else if (that.work_mode === 0 && that.report_mode === 1) { //work is mm, reporting in inches
-                                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", {
-                                    "x": that.toMM(obj.x),
-                                    "y": that.toMM(obj.y),
-                                    "z": that.toMM(obj.z),
-                                    status: probeSuccess
-                                });
-                            }
+                            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", obj);
                         }
                         break;
                     case 'version':
@@ -2424,7 +2407,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             if (this.widgetDebug) console.log("GRBL WIDGET: axis data received", axes);
             var _axes = {};
             $.each(axes, function(index, val) {
-               _axes[index] = parseFloat(val).toFixed(3);
+                if (isNaN(val)) {
+                    val = 0.000;
+                }
+
+                _axes[index] = parseFloat(val).toFixed(3);
             });
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", _axes);
         },
@@ -2454,6 +2441,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 i = this.err_log.length - 1;
             //save error in log array
             this.err_log[i] = line.toString() + " - " + msg;
+            console.log("GRBL WIDGET ERROR: " + this.err_og[i]);
         },
         forkSetup: function() {
             var topCssSelector = '#com-chilipeppr-widget-grbl';
