@@ -278,6 +278,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
 
     return {
         widgetDebug: true,
+        probing: false,
         id: "com-chilipeppr-widget-grbl",
         implements: {
             "com-chilipeppr-interface-cnccontroller": "The CNC Controller interface is a loosely defined set of publish/subscribe signals. The notion of an interface is taken from object-oriented programming like Java where an interface is defined and then specific implementations of the interface are created. For the sake of a Javascript mashup like what ChiliPeppr is, the interface is just a rule to follow to publish signals and subscribe to signals by different top-level names than the ID of the widget or element implementing the interface. Most widgets/elements will publish and subscribe on their own ID. In this widget we are publishing/subscribing on an interface name. If another controller like Grbl is defined by a member of the community beyond this widget for GRBL, this widget can be forked and used without other widgets needing to be changed and the user could pick a Grbl or GRBL implementation of the interface."
@@ -309,7 +310,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         foreignSubscribe: {
             "/com-chilipeppr-widget-serialport/ws/onconnect": "When we see a new connect, query for status.",
             "/com-chilipeppr-widget-serialport/recvline": "When we get a dataline from serialport, process it and fire off generic CNC controller signals to the /com-chilipeppr-interface-cnccontroller channel.",
-            "/com-chilipeppr-widget-serialport/send": "Subscribe to serial send and override so no other subscriptions receive command."
+            "/com-chilipeppr-widget-serialport/send": "Subscribe to serial send and override so no other subscriptions receive command.",
+            "/com-chilipeppr-widget-grbl-autolevel/probing": "Subscribe to the autolevel widget to listen for probing commands"    
         },
         //plannerPauseAt: 128, // grbl planner buffer can handle 128 bytes of data
         //qLength: new Queue(),
@@ -317,8 +319,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         //g_count: 0,
         //l_count: 0,
         //interval_id: 0,
-        distance: '-',
-        WCS: '-',
+        distance: '',
         config: [],
         err_log: [],
         //config_index: [],
@@ -713,7 +714,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             this.btnSetup();
 
             this.forkSetup();
-            
+            this.initSwitchButton();
+
             // setup recv pubsub event
             // this is when we receive data in a per line format from the serial port
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, function(msg) {
@@ -795,9 +797,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         "z": 0.000
                     });
             });
-            
-            console.log("GRBL WIDGET INIT");
-
+            chilipeppr.subscribe("/com-chilipeppr-widget-grbl-autolevel/probing", this, function(probing){
+                this.probing = probing;
+            });
         },
         spindleEnabled: false,
         spindleDirection: null,
@@ -946,7 +948,135 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class=''></label></div>");
                 var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class=''></label><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'></div>");
                 var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' class='boolean'/><span class='checkboxLabel'></span></div>");
-                
+                $.each(that.configFormatData, function(index, data) {
+                    /* code setting units explanation tab fieldType values readonly minimum maximum */
+                    var node = '';
+                    switch (data.fieldType) {
+                        case 'integer':
+                            node = integerNode.clone(true);
+                            node.data('index', data.code);
+                            node.find(':input:first').data({
+                                'index': data.code,
+                                'tooltip': data.explanation,
+                                'minimum': data.minimum,
+                                'maximum' : data.maximum == 'undefined' ? null : data.maximum
+                            })
+                            .attr('name', "setting_" + data.code)
+                            .prop('id', 'setting_' + data.code)
+                            .prop('readonly', data.readonly)
+                            .css({width: '4rem'})
+                            .on('blur', null, {context:that}, function( event ){
+                                var that = event.data.context;
+                                var val = parseInt($(this).val());
+                                
+                                if($(this).data('minimum') > val){
+                                    $(this).val( that.config[$(this).data('index')][1]);
+                                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Value needs to be over "  +$(this).data('minimum'));
+                                    return;
+                                }
+                                
+                                if($(this).data('maximum') != null && $(this).data('maximum') < val){
+                                    $(this).val( that.config[$(this).data('index')][1]);
+                                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Value needs to be below "  +$(this).data('maximum'));
+                                    return;
+                                }
+                                if(that.config[$(this).data('index')][1] != $(this).val()){
+                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + $(this).val()  + "\n");
+                                    that.config[$(this).data('index')][1] = $(this).val();
+                                    that.doQueue();
+                                }
+                                
+                            });
+                            node.find('label:first').attr('for', 'setting_' + data.code).html(data.setting + " (" + data.units + ")");
+                            break;
+                        case 'axisMask':
+                            node = axisMaskNode.clone(true);
+                            node.data('index', data.code);
+                            node.find('label').html(data.setting);
+                            node.find(':text:first').data({
+                                id:data.code
+                            });
+                            $.each(['X', 'Y', 'Z'], function(index, item) {
+                                var mask = 1 << index;
+                                var checked = (that.config[data.code] & mask) ? true : false;
+                                var elem = node.find(':checkbox:eq(' + index + ')').data({
+                                    index: data.code,
+                                    axis: item,
+                                    tooltip: data.explanation,
+                                    skip: true
+                                }).attr({
+                                    name: 'setting_' + data.code + '_' + item,
+                                    placeholder: item
+                                }).prop({
+                                    checked: checked
+                                });
+                                elem.on('blur', null, {context:that}, function( event ){
+                                    var that = event.data.context;
+                                    var val = 0;
+                                    $(this).closest('div').find(':checkbox').each(function(index,element){
+                                        if($(element).is(':checked')){
+                                            val |= (1 << index);
+                                        }
+                                    });
+                                    
+                                    $(this).closest('div').find(':text:first').val(val);
+                                    if(that.config[$(this).data('index')][1] != val){
+                                        that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + val + "\n");
+                                        that.doQueue();
+                                        that.config[$(this).data('index')][1] = val;
+                                    }
+                                });
+                            });
+                            node.find(':checkbox:first').trigger('blur');
+                            break;
+                        case 'switch':
+                            node = switchNode.clone(true);
+                            node.data('id', data.code);
+                            node.find('span').html(data.setting);
+                            var elem = node.find(':checkbox:first').data({
+                                    index: data.code,
+                                    tooltip: data.explanation,
+                                    on_label: data.values[1],
+                                    off_label: data.values[0]
+                            }).attr({
+                                    name: 'setting_' + data.code,
+                                    checked: that.config[data.code][1] == 1 ? true : false
+                            });
+                            $(node).on('blur', null, {context:that}, function(event){
+                                var that = event.data.context;
+                                var val = $(this).is(':checked') ? 1 : 0;
+                                if(that.config[$(this).data('index')][1] != val){
+                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + val  + "\n");
+                                    that.config[$(this).data('index')][1] = val;
+                                    that.doQueue();
+                                }
+                            });
+                            break;
+                    }
+                    var dT = data.tab.split(' ').join('_');
+                    if (configtabs[dT] == undefined) {
+                        var _tH = configtabHolder.clone(true);
+                        _tH.prop('id', 'holder_setting_' + dT);
+                        configtabs[dT] = _tH;
+                        var _tL = configtabListItem.clone(true);
+                        _tL.find('a:first').attr('href', '#holder_setting_' + dT).text(data.tab);
+                        console.log('html tL', _tL.html());
+                        configtabList.append(_tL);
+                    }
+                    $(configtabs[dT]).append(node);
+                    console.log("html node", node);
+                    
+                });
+                console.log('html tablist',configtabList);
+                $('#grbl-config-div').append(configtabList);
+                $.each(configtabs, function(index, element){
+                    console.log('html tabHolder', element);
+                    $('#grbl-config-div').append($(element));    
+                });
+               //$('#grbl-config-div').tabs();
+               
+                /*
+
                 that.config.forEach(function(config_element, index_num) {
                     var elem = $('\
                     <div class="input-group input-group-sm">\
@@ -970,9 +1100,26 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             that.config[index][0] = val;
                         }
                     }, that).appendTo('#grbl-config-div');
-                });
+                }, that
+                */
+                $('#grbl-config-div').find('.tabHolder').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
                 $('.save-config').click(that.saveConfigModal.bind(that));
                 $('#com-chilipeppr-widget-grbl-modal').modal('show');
+                $('#grbl-config-div').find('.boolean').each(function(){
+                    alert($(this).html());
+                   $(this).switchButton({
+                                show_labels: true,
+                                on_label: $(this).data('on_label') ,
+                                off_label: $(this).data('off_label'),
+                                width:25,
+                                height:11,
+                                button_width:12,
+                                checked: $(this).prop('checked'),
+                                on_callback: $(this).prop('checked',true).trigger('blur'),
+                                off_callback: $(this).prop('checked',false).trigger('blur')
+                            });
+ 
+                });
             }, 1000, this);
         },
         hideConfigModal: function() {
@@ -1160,8 +1307,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 D: "$G\n",
                 Id: "status"
             };
-            if (!this.alarm) //only send if we're not in an alarm state.
+            if (!this.alarm) {//only send if we're not in an alarm state.
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/jsonSend", json);
+                if(this.probing && this.version.substring(0,1) == '1'){
+                    this.sendCode(String.fromCharCode(36) + String.fromCharCode(35) + "\n");
+                }
+            }
         },
         trackGcodeLines: function() {
             if (this.g_status_reports !== null) {
@@ -1416,7 +1567,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: machine coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_machine[val] = parseFloat(coords[index]);
+                                        this.last_machine[val] = parseFloat(coords[index]).toFixed(3);
                                     }, that);
                                     receivedMachineCoords = true;
                                     break;
@@ -1424,7 +1575,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var coords = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: work coords: ", coords);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.last_work[val] = parseFloat(coords[index]);
+                                        this.last_work[val] = parseFloat(coords[index]).toFixed(3);
                                     }, that);
                                     receivedWorkCoords = true;
                                     break;
@@ -1432,7 +1583,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                     var offset = bit[1].split(',');
                                     if (that.widgetDebug) console.log("GRBL WIDGET: offset information: ", offset);
                                     ['x', 'y', 'z'].forEach(function(val, index) {
-                                        this.offsets[val] = parseFloat(offset[index]);
+                                        this.offsets[val] = parseFloat(offset[index]).toFixed(3);
                                     }, that);
                                     break;
                                 case "bf":
@@ -1542,13 +1693,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT received status update", "machine", that.last_machine, "work", that.last_work, "offset", that.offsets, "receivedMachine", receivedMachineCoords, 'receivedWork', receivedWorkCoords);
                         if (receivedMachineCoords && !receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_work[val] = (this.last_machine[val] - this.offsets[val]);
+                                this.last_work[val] = (this.last_machine[val] - this.offsets[val]).toFixed(3);
                             }, that);
 
                         }
                         else if (!receivedMachineCoords && receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
-                                this.last_machine[val] = (this.last_work[val] + this.offsets[val]);
+                                this.last_machine[val] = (this.last_work[val] + this.offsets[val]).toFixed(3);
                             }, that);
                         }
                         if (that.widgetDebug) console.log("GRBL WIDGET: FOOTPRINT at line 816.  current values", "machine", that.last_machine, "work", that.last_work, "offsets", that.offsets);
@@ -1567,15 +1718,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 case 'G57':
                                 case 'G58':
                                 case 'G59':
-                                    if(that.WCS != value){
-                                        that.WCS = value;
-                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords", {
-                                            coord: that.WCS,
-                                            coordNum: parseInt(that.WCS.replace("G", ""))
-                                        });
-                                         $('.stat-wcs').html(that.WCS);
-                                    }
-                                    
+                                    that.WCS = value;
                                     break;
 
                                 case 'G17':
