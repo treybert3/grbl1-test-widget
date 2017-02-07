@@ -713,8 +713,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             this.btnSetup();
 
             this.forkSetup();
-            this.initSwitchButton();
-
+            
             // setup recv pubsub event
             // this is when we receive data in a per line format from the serial port
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, function(msg) {
