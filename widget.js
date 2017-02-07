@@ -2081,9 +2081,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
                             var obj = {
-                                "x": (parseFloat(coords[0]) - that.offsets.x),
-                                "y": (parseFloat(coords[1]) - that.offsets.y),
-                                "z": (parseFloat(coords[2]) - that.offsets.z),
+                                x: (parseFloat(coords[0]) - that.offsets.x),
+                                y: (parseFloat(coords[1]) - that.offsets.y),
+                                z: (parseFloat(coords[2]) - that.offsets.z),
                                 status: probeSuccess
                             };
                             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", obj);
