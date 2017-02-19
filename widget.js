@@ -1071,21 +1071,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 this.work_mode = wm;
                 this.updateReportUnits();
             }
-            console.log("GRBL: Updated Work Units - " + this.work_mode);
+            console.log("GRBL WIDGET: Updated Work Units - " + this.work_mode);
             //update report units if they have changed
             // LUCA -> commented
             //  this.updateReportUnits();
         },
         updateReportUnits: function() {
             if (this.config[13] !== undefined) {
-                if (this.config[13][0] === 0) {
+                var cU = parseInt(this.config[13][0], 10);
+                if (cU === 0) {
                     this.report_mode = 0;
                     if (this.controller_units != 'mm') {
                         this.controller_units = "mm";
                         this.sendCode("G21\n");
+                        
                     }
                 }
-                else if (this.config[13][0] === 1) {
+                else if (cU === 1) {
                     this.report_mode = 1;
                     if (this.controller_units != 'inch') {
                         this.controller_units = "inch";
@@ -1094,9 +1096,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 }
                 if (this.widgetDebug) console.log("GRBL WIDGET: update report units", this.controller_units);
                 $(".stat-units").html(this.controller_units);
+            } else {
+                this.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
             }
-
-            if (this.widgetDebug) console.log("GRBL WIDGET: Updated Report Units - " + this.report_mode);
         },
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
@@ -1208,9 +1210,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             var that = this;
             if (this.g_status_reports === null) { //confirm no setInterval is currently running.
                 that.g_status_reports = setInterval(function() {
-                    if (that.q_count === 0) //only send $G if the queue is clear
-                        that.getControllerInfo(); //send a $G every 2 seconds
-                }, 2000);
+                   // if (that.q_count === 0) //only send $G if the queue is clear
+                        that.getControllerInfo(); //send a $G every 1/2 second
+                }, 500);
             }
 
         },
@@ -1861,6 +1863,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 //console.log("GRBL: got recvline but it's not a dataline, so returning.");
                 return true;
             }
+            if(this.version == ""){
+                this.sendCode(String.fromCharCode(36) + "I\n");
+            } else 
             if (this.version.substring(0, 1) == '1') {
                 return this.grblResponseV1(recvline);
             }
