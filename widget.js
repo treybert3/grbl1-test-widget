@@ -1210,8 +1210,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             var that = this;
             if (this.g_status_reports === null) { //confirm no setInterval is currently running.
                 that.g_status_reports = setInterval(function() {
-                   // if (that.q_count === 0) //only send $G if the queue is clear
+                    if (that.q_count === 0) {//only send $G if the queue is clear
                         that.getControllerInfo(); //send a $G every 2 seconds
+                    } else {
+                        console.log("GRBL Widget: q count is " + that.q_count);
+                    }
+                    
                 }, 2000);
             }
 
