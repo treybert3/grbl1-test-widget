@@ -670,6 +670,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         spindleDirection: null,
         coolant: "Off",
         options: null,
+        isV1: function(){
+          return this.version.substring(0,1) == '1' || $('#com-chilipeppr-widget-grbl .grbl-verbose').hasClass("enabled");  
+        },
         setVersion: function(ver) {
             this.grblConsole('setting version to ' + ver);
             if (ver !== "") {
@@ -680,7 +683,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     this.version = ver;
                     $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui 
                     chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion", this.version);
-                    if (this.version.substring(0, 1) == '1' && this.config[10] != undefined && parseInt(this.config[10], 10) != 2) {
+                    if (this.isV1() && this.config[10] != undefined && parseInt(this.config[10], 10) != 2) {
                         this.config[10] = 2;
                         this.commandQueue.push(String.fromCharCode(36) + "10=2\n");
                         this.doQueue();
@@ -768,6 +771,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     $('#com-chilipeppr-widget-grbl-debug').show()
                     $('.grbl-debug').addClass("enabled");
                 }
+            });
+            
+            $('#com-chilipeppr-widget-grbl .grbl-v1mode').click(function() {
+                $('#com-chilipeppr-widget-grbl .grbl-verbose').toggleClass("enabled");
             });
 
             $('#com-chilipeppr-widget-grbl .grbl-reset').click(function() {
@@ -996,7 +1003,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     that.sendCode(String.fromCharCode(36) + "I\n");
                 }
                 else {
-                    if (that.version.substring(0, 1) == '1') {
+                    if (that.isV1()) {
                         $('.v1Show').show();
                         // hide the new override btns 
                         $('.com-chilipeppr-widget-grbl-realtime-commands').hide();
@@ -1013,7 +1020,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 //wait one additional second before checking for what reporting units grbl is configured for.
                 setTimeout(function(context) {
                     context.updateReportUnits();
-                    if (context.version.substring(0, 1) == '1') {
+                    if (context.isV1()) {
                         $('.v1Suppress').hide();
                         $('.v1Show').show();
                         // hide the new override btns 
@@ -1682,11 +1689,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 //console.log("GRBL: got recvline but it's not a dataline, so returning.");
                 return true;
             }
-            if (this.version == "") {
-                this.sendCode(String.fromCharCode(36) + "I\n");
-            }
-            else
-            if (this.version.substring(0, 1) == '1') {
+            if (this.isV1()) {
                 return this.grblResponseV1(recvline);
             }
             var msg = recvline.dataline;
