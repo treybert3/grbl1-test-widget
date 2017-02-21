@@ -697,7 +697,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             return rObj;
         },
         init: function() {
-            var query = window.location.search.subtring(1);
+            var query = window.location.search.substring(1);
             var vars = query.split("&");
             vars.forEach(function(item){
                 var bits = item.split('=');
