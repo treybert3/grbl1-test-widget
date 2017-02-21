@@ -682,8 +682,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 else {
                     $('#com-chilipeppr-widget-grbl-debug-console').append(arguments[0] + "\n");
                 }
-                arguments.unshift('GRBL WIDGET:');
-                console.info.apply(this, arguments);
+                Array.prototype.unshift.call(arguments, 'GRBL WIDGET: ');
+                console.info.apply(arguments);
             }
         },
         findConfigItem: function(index) {
