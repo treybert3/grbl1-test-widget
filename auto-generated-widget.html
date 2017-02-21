@@ -683,7 +683,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     $('#com-chilipeppr-widget-grbl-debug-console').append(arguments[0]);
                 }
                 arguments.unshift('GRBL WIDGET:');
-                console.log.apply(this, arguments);
+                console.info.apply(this, arguments);
             }
         },
         findConfigItem: function(index) {
