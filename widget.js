@@ -1290,7 +1290,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             $('#stat-state-background-box').css('background-color', '#f5f5f5');
                         }
 
-                        this.grblConsole("setting status to " + that.status);
+                        that.grblConsole("setting status to " + that.status);
                         //UI updates
                         chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
                         $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
@@ -1647,7 +1647,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                         break;
                     case 'hashQuery':
                         if (result[1] == 'PRB') {
-                            this.grblConsole("received probe info", result);
+                            that.grblConsole("received probe info", result);
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
