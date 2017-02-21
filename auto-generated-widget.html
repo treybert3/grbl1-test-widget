@@ -1372,22 +1372,21 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
 
                             }
                             else {
-                                that.status = fields[0];
-                                if (bit[0] == 'Jog') {
-                                    $('.grbl-feedhold').text('Cancel').data({
-                                        title: "Jog Cancel",
-                                        content: "Immediately cancels a jog command. This bypasses the planner buffer",
-                                        command: 0x85
-                                    });
+                                if(that.status != fields[0]){
+                                    if(that.status == 'Jog') {
+                                        $('.grbl-feedhold').text('Cancel').data({
+                                            title: "Jog Cancel",
+                                            content: "Immediately cancels a jog command. This bypasses the planner buffer",
+                                            command: 0x85
+                                        });
+                                    } else {
+                                        $('.grbl-feedhold').text('Hold!').data({
+                                            title: "FeedHold",
+                                            content: "Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.",
+                                            command: '!'
+                                        });
+                                    }
                                 }
-                                else {
-                                    $('.grbl-feedhold').text('Cancel').data({
-                                        title: "FeedHold",
-                                        content: "Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.",
-                                        command: '!'
-                                    });
-                                }
-
                             }
                         }
                         else {
