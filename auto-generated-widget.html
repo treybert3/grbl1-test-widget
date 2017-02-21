@@ -680,7 +680,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     $('#com-chilipeppr-widget-grbl-debug-console').append(a + "\n");
                 }
                 else {
-                    $('#com-chilipeppr-widget-grbl-debug-console').append(arguments[0]);
+                    $('#com-chilipeppr-widget-grbl-debug-console').append(arguments[0] + "\n");
                 }
                 arguments.unshift('GRBL WIDGET:');
                 console.info.apply(this, arguments);
