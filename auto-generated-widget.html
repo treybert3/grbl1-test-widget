@@ -1251,8 +1251,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             }
             if (this.work_mode != wm) {
                 this.work_mode = wm;
-                this.updateReportUnits();
             }
+            this.updateReportUnits();
             this.grblConsole("Updated Work Units - " + this.work_mode);
             //update report units if they have changed
             // LUCA -> commented
@@ -1260,35 +1260,39 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         },
         coordinateUnits: function(unit){
           if(unit == 'G20'){
-              this.updae
-          }  
+            this.updateWorkUnits('inch');
+          } else if (unit == 'G21'){
+            this.updateWorkUnits('mm');
+          }
         },
         updateReportUnits: function() {
-            if (this.config[13] !== undefined) {
-                var cU = parseInt(this.config[13][0], 10);
-                if (cU === 0) {
-                    this.report_mode = 0;
-                    if (this.controller_units != 'mm') {
-                        this.controller_units = "mm";
-                        this.sendCode("G21\n");
-                        this.grblConsole("update report units", this.controller_units);
-                        $(".stat-units").html(this.controller_units);
+            switch(this.work_mode){
+                case 0: //mm
+                    if(this.config[13] == undefined || this.config[13][0] == 1){
+                        this.sendCode(String.fromCharCode(36) + "13=0\n");
+                        this.grblConsole("update report units", {
+                            controller: this.controller_units,
+                            work:   this.work_mode,
+                            report: this.report_mode});
+                        this.config[13][0] = 0;
+                        $(".stat-units").html("mm");
                     }
-                }
-                else if (cU === 1) {
-                    this.report_mode = 1;
-                    if (this.controller_units != 'inch') {
-                        this.controller_units = "inch";
-                        this.sendCode("G20\n");
-                        this.grblConsole("update report units", this.controller_units);
-                        $(".stat-units").html(this.controller_units);
+                    break;
+                case 1:
+                    if(this.config[13] == undefined || this.config[13] == 0){
+                        this.sendCode(String.fromCharCode(36) + "13=1\n");
+                        this.grblConsole("update report units", {
+                            controller: this.controller_units,
+                            work:   this.work_mode,
+                            report: this.report_mode});
+                        this.config[13][0] = 1;
+                        $(".stat-units").html("inch");
                     }
-                }
-
+                    break;
             }
-            else {
-                this.sendCode(String.fromCharCode(36) + String.fromCharCode(36));
-            }
+            
+            
+           
         },
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
