@@ -575,12 +575,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
         init: function() {
             var query = window.location.search.substring(1);
             var vars = query.split("&");
-            vars.forEach(function(item){
+            vars.forEach(function(item, index){
                 var bits = item.split('=');
                 if(bits[0].toLowerCase() == 'debug' && bits[1] == 1){
-                    $('.grbl-debug').addClass('enabled');
+                    $('#com-chilipeppr-widget-grbl .grbl-debug').addClass('enabled');
                 }
-                
             },this);
             this.uiHover(); //set up the data elements for all UI
 
