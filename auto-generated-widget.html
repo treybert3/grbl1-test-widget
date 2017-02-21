@@ -1090,19 +1090,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                             work: this.work_mode,
                             report: this.report_mode
                         });
-                        this.config[13][0] = 0;
+                        this.config[13] = [0,""];
                         $(".stat-units").html("mm");
                     }
                     break;
                 case 1:
-                    if (this.config[13] == undefined || this.config[13] == 0) {
+                    if (this.config[13] == undefined || this.config[13][0] == 0) {
                         this.sendCode(String.fromCharCode(36) + "13=1\n");
                         this.grblConsole("update report units", {
                             controller: this.controller_units,
                             work: this.work_mode,
                             report: this.report_mode
                         });
-                        this.config[13][0] = 1;
+                        this.config[13] = [1,''];
                         $(".stat-units").html("inch");
                     }
                     break;
