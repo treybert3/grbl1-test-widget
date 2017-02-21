@@ -700,7 +700,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             "minimum": 0
         }],
         isDebugMode: function() {
-            return $('#com-chilipeppr-widget-grbl-debug').hasClass('enabled');
+            return $('.grbl-debug').hasClass('enabled');
         },
         grblConsole: function() {
             if (this.isDebugMode()) {
@@ -922,11 +922,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 $('#com-chilipeppr-widget-grbl .grbl-verbose').toggleClass("enabled");
             });
             $('#com-chilipeppr-widget-grbl .grbl-debug').click(function() {
-                if ($('#com-chilipeppr-widget-grbl .grbl-debug').hasClass("enabled")) {
-                    $('#com-chilipeppr-widget-grbl-debug').hide().removeClass("enabled");
+                if ($('.grbl-debug').hasClass("enabled")) {
+                    $('#com-chilipeppr-widget-grbl-debug').hide();
+                    $('.grbl-debug').removeClass("enabled");
                 }
                 else {
-                    $('#com-chilipeppr-widget-grbl-debug').show().addClass("enabled");
+                    $('#com-chilipeppr-widget-grbl-debug').show()
+                    $('.grbl-debug').addClass("enabled");
                 }
             });
 
