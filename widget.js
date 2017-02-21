@@ -774,7 +774,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             });
             
             $('#com-chilipeppr-widget-grbl .grbl-v1mode').click(function() {
-                $('#com-chilipeppr-widget-grbl .grbl-verbose').toggleClass("enabled");
+                $('#com-chilipeppr-widget-grbl .grbl-v1mode').toggleClass("enabled");
             });
 
             $('#com-chilipeppr-widget-grbl .grbl-reset').click(function() {
