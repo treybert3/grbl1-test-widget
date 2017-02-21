@@ -1,5 +1,5 @@
 /* global $, cprequire_test, cpdefine, chilipeppr requirejs */
-
+/*
 requirejs.config({
     paths: {
         jqueryui_entire: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery-ui',
@@ -11,7 +11,7 @@ requirejs.config({
         },
     }
 });
-
+*/
 
 // Test this element. This code is auto-removed by the chilipeppr.load()
 cprequire_test(["inline:com-chilipeppr-widget-grbl"], function(grbl) {
@@ -109,1067 +109,880 @@ function Queue() {
     };
 }
 
-/**
- * jquery.switchButton.js v1.0
- * jQuery iPhone-like switch button
- * @author Olivier Lance <olivier.lance@sylights.com>
- *
- * Copyright (c) Olivier Lance - released under MIT License {{{
- *
- * Permission is hereby granted, free of charge, to any person
- * obtaining a copy of this software and associated documentation
- * files (the "Software"), to deal in the Software without
- * restriction, including without limitation the rights to use,
- * copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following
- * conditions:
-
- * The above copyright notice and this permission notice shall be
- * included in all copies or substantial portions of the Software.
-
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
- * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
- * OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
- * NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
- * HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
- * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
- * OTHER DEALINGS IN THE SOFTWARE.
-
- * }}}
- */
-
-/*
- * Meant to be used on a <input type="checkbox">, this widget will replace the receiver element with an iPhone-style
- * switch button with two states: "on" and "off".
- * Labels of the states are customizable, as are their presence and position. The receiver element's "checked" attribute
- * is updated according to the state of the switch, so that it can be used in a <form>.
- *
- */
 
 
 
 cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidget", "jqueryui", "jquerycookie", "jquerytabs"], function() {
 
-            return {
+    return {
 
-                probing: false,
-                id: "com-chilipeppr-widget-grbl",
-                implements: {
-                    "com-chilipeppr-interface-cnccontroller": "The CNC Controller interface is a loosely defined set of publish/subscribe signals. The notion of an interface is taken from object-oriented programming like Java where an interface is defined and then specific implementations of the interface are created. For the sake of a Javascript mashup like what ChiliPeppr is, the interface is just a rule to follow to publish signals and subscribe to signals by different top-level names than the ID of the widget or element implementing the interface. Most widgets/elements will publish and subscribe on their own ID. In this widget we are publishing/subscribing on an interface name. If another controller like Grbl is defined by a member of the community beyond this widget for GRBL, this widget can be forked and used without other widgets needing to be changed and the user could pick a Grbl or GRBL implementation of the interface."
-                },
-                url: "(auto fill by runme.js)", // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
-                githuburl: "(auto fill by runme.js)", // The backing github repo
-                testurl: "(auto fill by runme.js)", // The standalone working widget so can view it working by itself
-                fiddleurl: "(auto fill by runme.js)",
-                name: "Widget / GRBL 1.1 compatibility test",
-                desc: "This widget shows the GRBL Buffer so other widgets can limit their flow of sending commands and other specific GRBL features.",
-                publish: {
-                    '/com-chilipeppr-interface-cnccontroller/feedhold': "Feedhold (Emergency Stop). This signal is published when user hits the Feedhold button for an emergency stop of the GRBL. Other widgets should see this and stop sending all commands such that even when the plannerresume signal is received when the user clears the queue or cycle starts again, they have to manually start sending code again. So, for example, a Gcode sender widget should place a pause on the sending but allow user to unpause.",
-                    '/com-chilipeppr-interface-cnccontroller/plannerpause': "This widget will publish this signal when it determines that the planner buffer is too full on the GRBL and all other elements/widgets need to stop sending data. You will be sent a /plannerresume when this widget determines you can start sending again. The GRBL has a buffer of 28 slots for data. You want to fill it up with around 12 commands to give the planner enough data to work on for optimizing velocities of movement. However, you can't overfill the GRBL or it will go nuts with buffer overflows. This signal helps you fire off your data and not worry about it, but simply pause the sending of the data when you see this signal. This signal does rely on the GRBL being in {qv:2} mode which means it will auto-send us a report on the planner every time it changes. This widget watches for those changes to generate the signal. The default setting is when we hit 12 remaining planner buffer slots we will publish this signal.",
-                    '/com-chilipeppr-interface-cnccontroller/plannerresume': "This widget will send this signal when it is ok to send data to the GRBL again. This widget watches the {qr:[val]} status report from the GRBL to determine when the planner buffer has enough room in it to send more data. You may not always get a 1 to 1 /plannerresume for every /plannerpause sent because we will keep sending /plannerpause signals if we're below threshold, but once back above threshold we'll only send you one /plannerresume. The default setting is to send this signal when we get back to 16 available planner buffer slots.",
-                    '/com-chilipeppr-interface-cnccontroller/axes': "This widget will normalize the GRBL status report of axis coordinates to send off to other widgets like the XYZ widget. The axes publish payload contains {x:float, y:float, z:float, a:float} If a different CNC controller is implemented, it should normalize the coordinate status reports like this model. The goal of this is to abstract away the specific controller implementation from generic CNC widgets.",
-                    '/com-chilipeppr-interface-cnccontroller/units': "This widget will normalize the GRBL units to the interface object of units {units: \"mm\"} or {units: \"inch\"}. This signal will be published on load or when this widget detects a change in units so other widgets like the XYZ widget can display the units for the coordinates it is displaying.",
-                    '/com-chilipeppr-interface-cnccontroller/proberesponse': 'Publish a probe response with the coordinates triggered during probing, or an alarm state if the probe does not contact a surface',
-                    '/com-chilipeppr-interface-cnccontroller/status': 'Publish a signal each time the GRBL status changes',
-                    '/com-chilipeppr-interface-cnccontroller/grblVersion': 'Publish the version number of the currently installed grbl',
-                    "/com-chilipeppr-interface-cnccontroller/distance": 'publish whether we are in absolute or incremental mode'
-                },
-                subscribe: {
-                    '/com-chilipeppr-interface-cnccontroller/jogdone': 'We subscribe to a jogdone event so that we can fire off an exclamation point (!) to the GRBL to force it to drop all planner buffer items to stop the jog immediately.',
-                    '/com-chilipeppr-interface-cnccontroller/recvgcode': 'Subscribe to receive gcode from other widgets for processing and passing on to serial port',
-                    '/com-chilipeppr-interface-cnccontroller/coordinateUnits': 'Subscribe to units being sent by the gcode widget'
-                },
-                foreignPublish: {
-                    "/com-chilipeppr-widget-serialport/send": "We send to the serial port certain commands like the initial configuration commands for the GRBL to be in the correct mode and to get initial statuses like planner buffers and XYZ coords. We also send the Emergency Stop and Resume of ! and ~"
-                },
-                foreignSubscribe: {
-                    "/com-chilipeppr-widget-serialport/ws/onconnect": "When we see a new connect, query for status.",
-                    "/com-chilipeppr-widget-serialport/recvline": "When we get a dataline from serialport, process it and fire off generic CNC controller signals to the /com-chilipeppr-interface-cnccontroller channel.",
-                    "/com-chilipeppr-widget-serialport/send": "Subscribe to serial send and override so no other subscriptions receive command.",
-                    "/com-chilipeppr-widget-grbl-autolevel/probing": "Subscribe to the autolevel widget to listen for probing commands"
-                },
-                //plannerPauseAt: 128, // grbl planner buffer can handle 128 bytes of data
-                //qLength: new Queue(),
-                //qLine: new Queue(),
-                //g_count: 0,
-                //l_count: 0,
-                //interval_id: 0,
-                distance: '',
-                config: [],
-                err_log: [],
-                //config_index: [],
-                buffer_name: "",
-                report_mode: 0,
-                work_mode: 0,
-                controller_units: null,
-                status: "Offline",
-                version: "",
-                q_count: 0,
-                alarm: false,
-                spindleSpeed: 'Off',
-                spindleDirection: 'CW',
-                feedRate: 0,
-                coolant: '-',
-                offsets: {
-                    "x": 0.000,
-                    "y": 0.000,
-                    "z": 0.000
-                },
-                last_work: {
-                    "x": 0.000,
-                    "y": 0.000,
-                    "z": 0.000
-                },
-                last_machine: {
-                    "x": 0.000,
-                    "y": 0.000,
-                    "z": 0.000
-                },
-                g_status_reports: null,
-                gcode_lookup: {
-                    "G0": "Rapid",
-                    "G1": "Linear",
-                    "G2": "Circular CW",
-                    "G3": "Circular CCW",
-                    "G38.2": "Probing",
-                    "G80": "Cancel Mode",
-                    "G54": "G54",
-                    "G55": "G55",
-                    "G56": "G56",
-                    "G57": "G57",
-                    "G58": "G58",
-                    "G59": "G59",
-                    "G17": "XY Plane",
-                    "G18": "ZX Plane",
-                    "G19": "YZ Plane",
-                    "G90": "Absolute",
-                    "G91": "Relative",
-                    "G93": "Inverse",
-                    "G94": "Units/Min",
-                    "G20": "Inches",
-                    "G21": "Millimetres",
-                    "G43.1": "Active Tool Offset",
-                    "G49": "No Tool Offset",
-                    "M0": "Stop",
-                    "M1": "Stop",
-                    "M2": "End",
-                    "M30": "End",
-                    "M3": "Active-CW",
-                    "M4": "Active-CCW",
-                    "M5": "Off",
-                    "M7": "Mist",
-                    "M8": "Flood",
-                    "M9": "Off"
-                },
-                //overrides stores the current state of the overrides
-                overrides: {
-                    feedRate: 0,
-                    rapids: 0,
-                    spindleSpeed: 0
-                },
-                singleSelectPort: {}, // set up singleSelectPort
-                configFormatData: [{
-                    "code": "0",
-                    "setting": "Step pulse time",
-                    "units": "microseconds",
-                    "explanation": "Sets time length per step. Minimum 3usec.",
-                    "tab": "Steps",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 3
-                }, {
-                    "code": "1",
-                    "setting": "Step idle delay",
-                    "units": "milliseconds",
-                    "explanation": "Sets a short hold delay when stopping to let dynamics settle before disabling steppers. Value 255 keeps motors enabled with no delay.",
-                    "tab": "Steps",
-                    "fieldType": "integer",
-                    "values": [],
-                    "maximum": 255,
-                    "minimum": 0
-                }, {
-                    "code": "2",
-                    "setting": "Step pulse invert",
-                    "units": "mask",
-                    "explanation": "Inverts the step signal.",
-                    "tab": "Inversions",
-                    "fieldType": "axisMask",
-                    "minimum": 0
-                }, {
-                    "code": "3",
-                    "setting": "Step direction invert",
-                    "units": "mask",
-                    "explanation": "Inverts the direction signal.",
-                    "tab": "Inversions",
-                    "fieldType": "axisMask",
-                    "minimum": 0
-                }, {
-                    "code": "4",
-                    "setting": "Invert step enable pin",
-                    "units": "boolean",
-                    "explanation": "Inverts the stepper driver enable pin signal.",
-                    "tab": "Inversions",
-                    "fieldType": "switch",
-                    "values": ["off", "on"],
-                    "minimum": 0
-                }, {
-                    "code": "5",
-                    "setting": "Invert limit pins",
-                    "units": "boolean",
-                    "explanation": "Inverts the all of the limit input pins.",
-                    "tab": "Inversions",
-                    "fieldType": "switch",
-                    "values": ["off", "on"],
-                    "minimum": 0
-                }, {
-                    "code": "6",
-                    "setting": "Invert probe pin",
-                    "units": "boolean",
-                    "explanation": "Inverts the probe input pin signal.",
-                    "tab": "Inversions",
-                    "fieldType": "switch",
-                    "values": ["off", "on"],
-                    "minimum": 0
-                }, {
-                    "code": "10",
-                    "setting": "Status report options",
-                    "units": "mask",
-                    "explanation": "Alters data included in status reports.",
-                    "tab": "Reporting",
-                    "fieldType": "switch",
-                    "values": ["standard", "full"],
-                    "minimum": 0
-                }, {
-                    "code": "11",
-                    "setting": "Junction deviation",
-                    "units": "millimeters",
-                    "explanation": "Sets how fast Grbl travels through consecutive motions. Lower value slows it down.",
-                    "tab": "Junction Deviation",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "12",
-                    "setting": "Arc tolerance",
-                    "units": "millimeters",
-                    "explanation": "Sets the G2 and G3 arc tracing accuracy based on radial error. Beware: A very small value may effect performance.",
-                    "tab": "Arc Tolerance",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "13",
-                    "setting": "Report in inches",
-                    "units": "boolean",
-                    "explanation": "Enables inch units when returning any position and rate value that is not a settings value.",
-                    "tab": "Reporting",
-                    "fieldType": "switch",
-                    "values": ["mm", "inch"],
-                    "minimum": 0
-                }, {
-                    "code": "20",
-                    "setting": "Soft limits enable",
-                    "units": "boolean",
-                    "explanation": "Enables soft limits checks within machine travel and sets alarm when exceeded. Requires homing.",
-                    "tab": "Limits",
-                    "fieldType": "switch",
-                    "values": ["off", "on"],
-                    "minimum": 0
-                }, {
-                    "code": "21",
-                    "setting": "Hard limits enable",
-                    "units": "boolean",
-                    "explanation": "Enables hard limits. Immediately halts motion and throws an alarm when switch is triggered.",
-                    "tab": "Limits",
-                    "fieldType": "switch",
-                    "values": ["off", "on"],
-                    "minimum": 0
-                }, {
-                    "code": "22",
-                    "setting": "Homing cycle enable",
-                    "units": "boolean",
-                    "explanation": "Enables homing cycle. Requires limit switches on all axes.",
-                    "tab": "Homing",
-                    "fieldType": "switch",
-                    "values": ["off", "on"],
-                    "minimum": 0
-                }, {
-                    "code": "23",
-                    "setting": "Homing direction invert",
-                    "units": "mask",
-                    "explanation": "Homing searches for a switch in the positive direction. Set axis bit (00000ZYX) to search in negative direction.",
-                    "tab": "Homing",
-                    "fieldType": "axisMask",
-                    "minimum": 0
-                }, {
-                    "code": "24",
-                    "setting": "Homing locate feed rate",
-                    "units": "mm\/min",
-                    "explanation": "Feed rate to slowly engage limit switch to determine its location accurately.",
-                    "tab": "Homing",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "25",
-                    "setting": "Homing search seek rate",
-                    "units": "mm\/min",
-                    "explanation": "Seek rate to quickly find the limit switch before the slower locating phase.",
-                    "tab": "Homing",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "26",
-                    "setting": "Homing switch debounce delay",
-                    "units": "milliseconds",
-                    "explanation": "Sets a short delay between phases of homing cycle to let a switch debounce.",
-                    "tab": "Homing",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "27",
-                    "setting": "Homing switch pull-off distance",
-                    "units": "millimeters",
-                    "explanation": "Retract distance after triggering switch to disengage it. Homing will fail if switch isn't cleared.",
-                    "tab": "Homing",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "30",
-                    "setting": "Maximum spindle speed",
-                    "units": "RPM",
-                    "explanation": "Maximum spindle speed. Sets PWM to 100% duty cycle.",
-                    "tab": "Spindle",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "31",
-                    "setting": "Minimum spindle speed",
-                    "units": "RPM",
-                    "explanation": "Minimum spindle speed. Sets PWM to 0.4% or lowest duty cycle.",
-                    "tab": "Spindle",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "32",
-                    "setting": "Laser-mode enable",
-                    "units": "boolean",
-                    "explanation": "Enables laser mode. Consecutive G1\/2\/3 commands will not halt when spindle speed is changed.",
-                    "tab": "Laser",
-                    "fieldType": "switch",
-                    "values": ["off", "on"],
-                    "minimum": 0
-                }, {
-                    "code": "100",
-                    "setting": "X-axis travel resolution",
-                    "units": "step\/mm",
-                    "explanation": "X-axis travel resolution in steps per millimeter.",
-                    "tab": "Axis Resolution",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "101",
-                    "setting": "Y-axis travel resolution",
-                    "units": "step\/mm",
-                    "explanation": "Y-axis travel resolution in steps per millimeter.",
-                    "tab": "Axis Resolution",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "102",
-                    "setting": "Z-axis travel resolution",
-                    "units": "step\/mm",
-                    "explanation": "Z-axis travel resolution in steps per millimeter.",
-                    "tab": "Axis Resolution",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "110",
-                    "setting": "X-axis maximum rate",
-                    "units": "mm\/min",
-                    "explanation": "X-axis maximum rate. Used as G0 rapid rate.",
-                    "tab": "Axis FeedRate",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "111",
-                    "setting": "Y-axis maximum rate",
-                    "units": "mm\/min",
-                    "explanation": "Y-axis maximum rate. Used as G0 rapid rate.",
-                    "tab": "Axis FeedRate",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "112",
-                    "setting": "Z-axis maximum rate",
-                    "units": "mm\/min",
-                    "explanation": "Z-axis maximum rate. Used as G0 rapid rate.",
-                    "tab": "Axis FeedRate",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "120",
-                    "setting": "X-axis acceleration",
-                    "units": "mm\/sec^2",
-                    "explanation": "X-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
-                    "tab": "Axis Acceleration",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "121",
-                    "setting": "Y-axis acceleration",
-                    "units": "mm\/sec^2",
-                    "explanation": "Y-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
-                    "tab": "Axis Acceleration",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "122",
-                    "setting": "Z-axis acceleration",
-                    "units": "mm\/sec^2",
-                    "explanation": "Z-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
-                    "tab": "Axis Acceleration",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "130",
-                    "setting": "X-axis maximum travel",
-                    "units": "millimeters",
-                    "explanation": "Maximum X-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
-                    "tab": "Axis Max Travel",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "131",
-                    "setting": "Y-axis maximum travel",
-                    "units": "millimeters",
-                    "explanation": "Maximum Y-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
-                    "tab": "Axis Max Travel",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }, {
-                    "code": "132",
-                    "setting": "Z-axis maximum travel",
-                    "units": "millimeters",
-                    "explanation": "Maximum Z-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
-                    "tab": "Axis Max Travel",
-                    "fieldType": "integer",
-                    "values": [],
-                    "minimum": 0
-                }],
-                isDebugMode: function() {
-                    return $('.grbl-debug').hasClass('enabled');
-                },
-                grblConsole: function() {
-                    if (this.isDebugMode()) {
-                        if (arguments.length == 0) return;
-                        if (arguments.length > 1) {
-                            var a;
-                            for (var i = 0; i < arguments.length; i++) {
-                                if (typeof arguments[i] == 'object') {
-                                    a = a + ", " + arguments[i].toString();
-                                }
-                                else {
-                                    a = a + ", " + arguments[i];
-                                }
-                            }
-                            $('#com-chilipeppr-widget-grbl-debug-console').append(a + "\n");
+        probing: false,
+        id: "com-chilipeppr-widget-grbl",
+        implements: {
+            "com-chilipeppr-interface-cnccontroller": "The CNC Controller interface is a loosely defined set of publish/subscribe signals. The notion of an interface is taken from object-oriented programming like Java where an interface is defined and then specific implementations of the interface are created. For the sake of a Javascript mashup like what ChiliPeppr is, the interface is just a rule to follow to publish signals and subscribe to signals by different top-level names than the ID of the widget or element implementing the interface. Most widgets/elements will publish and subscribe on their own ID. In this widget we are publishing/subscribing on an interface name. If another controller like Grbl is defined by a member of the community beyond this widget for GRBL, this widget can be forked and used without other widgets needing to be changed and the user could pick a Grbl or GRBL implementation of the interface."
+        },
+        url: "(auto fill by runme.js)", // The final URL of the working widget as a single HTML file with CSS and Javascript inlined. You can let runme.js auto fill this if you are using Cloud9.
+        githuburl: "(auto fill by runme.js)", // The backing github repo
+        testurl: "(auto fill by runme.js)", // The standalone working widget so can view it working by itself
+        fiddleurl: "(auto fill by runme.js)",
+        name: "Widget / GRBL 1.1 compatibility test",
+        desc: "This widget shows the GRBL Buffer so other widgets can limit their flow of sending commands and other specific GRBL features.",
+        publish: {
+            '/com-chilipeppr-interface-cnccontroller/feedhold': "Feedhold (Emergency Stop). This signal is published when user hits the Feedhold button for an emergency stop of the GRBL. Other widgets should see this and stop sending all commands such that even when the plannerresume signal is received when the user clears the queue or cycle starts again, they have to manually start sending code again. So, for example, a Gcode sender widget should place a pause on the sending but allow user to unpause.",
+            '/com-chilipeppr-interface-cnccontroller/plannerpause': "This widget will publish this signal when it determines that the planner buffer is too full on the GRBL and all other elements/widgets need to stop sending data. You will be sent a /plannerresume when this widget determines you can start sending again. The GRBL has a buffer of 28 slots for data. You want to fill it up with around 12 commands to give the planner enough data to work on for optimizing velocities of movement. However, you can't overfill the GRBL or it will go nuts with buffer overflows. This signal helps you fire off your data and not worry about it, but simply pause the sending of the data when you see this signal. This signal does rely on the GRBL being in {qv:2} mode which means it will auto-send us a report on the planner every time it changes. This widget watches for those changes to generate the signal. The default setting is when we hit 12 remaining planner buffer slots we will publish this signal.",
+            '/com-chilipeppr-interface-cnccontroller/plannerresume': "This widget will send this signal when it is ok to send data to the GRBL again. This widget watches the {qr:[val]} status report from the GRBL to determine when the planner buffer has enough room in it to send more data. You may not always get a 1 to 1 /plannerresume for every /plannerpause sent because we will keep sending /plannerpause signals if we're below threshold, but once back above threshold we'll only send you one /plannerresume. The default setting is to send this signal when we get back to 16 available planner buffer slots.",
+            '/com-chilipeppr-interface-cnccontroller/axes': "This widget will normalize the GRBL status report of axis coordinates to send off to other widgets like the XYZ widget. The axes publish payload contains {x:float, y:float, z:float, a:float} If a different CNC controller is implemented, it should normalize the coordinate status reports like this model. The goal of this is to abstract away the specific controller implementation from generic CNC widgets.",
+            '/com-chilipeppr-interface-cnccontroller/units': "This widget will normalize the GRBL units to the interface object of units {units: \"mm\"} or {units: \"inch\"}. This signal will be published on load or when this widget detects a change in units so other widgets like the XYZ widget can display the units for the coordinates it is displaying.",
+            '/com-chilipeppr-interface-cnccontroller/proberesponse': 'Publish a probe response with the coordinates triggered during probing, or an alarm state if the probe does not contact a surface',
+            '/com-chilipeppr-interface-cnccontroller/status': 'Publish a signal each time the GRBL status changes',
+            '/com-chilipeppr-interface-cnccontroller/grblVersion': 'Publish the version number of the currently installed grbl',
+            "/com-chilipeppr-interface-cnccontroller/distance": 'publish whether we are in absolute or incremental mode'
+        },
+        subscribe: {
+            '/com-chilipeppr-interface-cnccontroller/jogdone': 'We subscribe to a jogdone event so that we can fire off an exclamation point (!) to the GRBL to force it to drop all planner buffer items to stop the jog immediately.',
+            '/com-chilipeppr-interface-cnccontroller/recvgcode': 'Subscribe to receive gcode from other widgets for processing and passing on to serial port',
+            '/com-chilipeppr-interface-cnccontroller/coordinateUnits': 'Subscribe to units being sent by the gcode widget'
+        },
+        foreignPublish: {
+            "/com-chilipeppr-widget-serialport/send": "We send to the serial port certain commands like the initial configuration commands for the GRBL to be in the correct mode and to get initial statuses like planner buffers and XYZ coords. We also send the Emergency Stop and Resume of ! and ~"
+        },
+        foreignSubscribe: {
+            "/com-chilipeppr-widget-serialport/ws/onconnect": "When we see a new connect, query for status.",
+            "/com-chilipeppr-widget-serialport/recvline": "When we get a dataline from serialport, process it and fire off generic CNC controller signals to the /com-chilipeppr-interface-cnccontroller channel.",
+            "/com-chilipeppr-widget-serialport/send": "Subscribe to serial send and override so no other subscriptions receive command.",
+            "/com-chilipeppr-widget-grbl-autolevel/probing": "Subscribe to the autolevel widget to listen for probing commands"
+        },
+        //plannerPauseAt: 128, // grbl planner buffer can handle 128 bytes of data
+        //qLength: new Queue(),
+        //qLine: new Queue(),
+        //g_count: 0,
+        //l_count: 0,
+        //interval_id: 0,
+        distance: '',
+        config: [],
+        err_log: [],
+        //config_index: [],
+        buffer_name: "",
+        report_mode: 0,
+        work_mode: 0,
+        controller_units: null,
+        status: "Offline",
+        version: "",
+        q_count: 0,
+        alarm: false,
+        spindleSpeed: 'Off',
+        spindleDirection: 'CW',
+        feedRate: 0,
+        coolant: '-',
+        offsets: {
+            "x": 0.000,
+            "y": 0.000,
+            "z": 0.000
+        },
+        last_work: {
+            "x": 0.000,
+            "y": 0.000,
+            "z": 0.000
+        },
+        last_machine: {
+            "x": 0.000,
+            "y": 0.000,
+            "z": 0.000
+        },
+        g_status_reports: null,
+        gcode_lookup: {
+            "G0": "Rapid",
+            "G1": "Linear",
+            "G2": "Circular CW",
+            "G3": "Circular CCW",
+            "G38.2": "Probing",
+            "G80": "Cancel Mode",
+            "G54": "G54",
+            "G55": "G55",
+            "G56": "G56",
+            "G57": "G57",
+            "G58": "G58",
+            "G59": "G59",
+            "G17": "XY Plane",
+            "G18": "ZX Plane",
+            "G19": "YZ Plane",
+            "G90": "Absolute",
+            "G91": "Relative",
+            "G93": "Inverse",
+            "G94": "Units/Min",
+            "G20": "Inches",
+            "G21": "Millimetres",
+            "G43.1": "Active Tool Offset",
+            "G49": "No Tool Offset",
+            "M0": "Stop",
+            "M1": "Stop",
+            "M2": "End",
+            "M30": "End",
+            "M3": "Active-CW",
+            "M4": "Active-CCW",
+            "M5": "Off",
+            "M7": "Mist",
+            "M8": "Flood",
+            "M9": "Off"
+        },
+        //overrides stores the current state of the overrides
+        overrides: {
+            feedRate: 0,
+            rapids: 0,
+            spindleSpeed: 0
+        },
+        singleSelectPort: {}, // set up singleSelectPort
+        configFormatData: [{
+            "code": "0",
+            "setting": "Step pulse time",
+            "units": "microseconds",
+            "explanation": "Sets time length per step. Minimum 3usec.",
+            "tab": "Steps",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 3
+        }, {
+            "code": "1",
+            "setting": "Step idle delay",
+            "units": "milliseconds",
+            "explanation": "Sets a short hold delay when stopping to let dynamics settle before disabling steppers. Value 255 keeps motors enabled with no delay.",
+            "tab": "Steps",
+            "fieldType": "integer",
+            "values": [],
+            "maximum": 255,
+            "minimum": 0
+        }, {
+            "code": "2",
+            "setting": "Step pulse invert",
+            "units": "mask",
+            "explanation": "Inverts the step signal.",
+            "tab": "Inversions",
+            "fieldType": "axisMask",
+            "minimum": 0
+        }, {
+            "code": "3",
+            "setting": "Step direction invert",
+            "units": "mask",
+            "explanation": "Inverts the direction signal.",
+            "tab": "Inversions",
+            "fieldType": "axisMask",
+            "minimum": 0
+        }, {
+            "code": "4",
+            "setting": "Invert step enable pin",
+            "units": "boolean",
+            "explanation": "Inverts the stepper driver enable pin signal.",
+            "tab": "Inversions",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "5",
+            "setting": "Invert limit pins",
+            "units": "boolean",
+            "explanation": "Inverts the all of the limit input pins.",
+            "tab": "Inversions",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "6",
+            "setting": "Invert probe pin",
+            "units": "boolean",
+            "explanation": "Inverts the probe input pin signal.",
+            "tab": "Inversions",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "10",
+            "setting": "Status report options",
+            "units": "mask",
+            "explanation": "Alters data included in status reports.",
+            "tab": "Reporting",
+            "fieldType": "switch",
+            "values": ["standard", "full"],
+            "minimum": 0
+        }, {
+            "code": "11",
+            "setting": "Junction deviation",
+            "units": "millimeters",
+            "explanation": "Sets how fast Grbl travels through consecutive motions. Lower value slows it down.",
+            "tab": "Junction Deviation",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "12",
+            "setting": "Arc tolerance",
+            "units": "millimeters",
+            "explanation": "Sets the G2 and G3 arc tracing accuracy based on radial error. Beware: A very small value may effect performance.",
+            "tab": "Arc Tolerance",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "13",
+            "setting": "Report in inches",
+            "units": "boolean",
+            "explanation": "Enables inch units when returning any position and rate value that is not a settings value.",
+            "tab": "Reporting",
+            "fieldType": "switch",
+            "values": ["mm", "inch"],
+            "minimum": 0
+        }, {
+            "code": "20",
+            "setting": "Soft limits enable",
+            "units": "boolean",
+            "explanation": "Enables soft limits checks within machine travel and sets alarm when exceeded. Requires homing.",
+            "tab": "Limits",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "21",
+            "setting": "Hard limits enable",
+            "units": "boolean",
+            "explanation": "Enables hard limits. Immediately halts motion and throws an alarm when switch is triggered.",
+            "tab": "Limits",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "22",
+            "setting": "Homing cycle enable",
+            "units": "boolean",
+            "explanation": "Enables homing cycle. Requires limit switches on all axes.",
+            "tab": "Homing",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "23",
+            "setting": "Homing direction invert",
+            "units": "mask",
+            "explanation": "Homing searches for a switch in the positive direction. Set axis bit (00000ZYX) to search in negative direction.",
+            "tab": "Homing",
+            "fieldType": "axisMask",
+            "minimum": 0
+        }, {
+            "code": "24",
+            "setting": "Homing locate feed rate",
+            "units": "mm\/min",
+            "explanation": "Feed rate to slowly engage limit switch to determine its location accurately.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "25",
+            "setting": "Homing search seek rate",
+            "units": "mm\/min",
+            "explanation": "Seek rate to quickly find the limit switch before the slower locating phase.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "26",
+            "setting": "Homing switch debounce delay",
+            "units": "milliseconds",
+            "explanation": "Sets a short delay between phases of homing cycle to let a switch debounce.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "27",
+            "setting": "Homing switch pull-off distance",
+            "units": "millimeters",
+            "explanation": "Retract distance after triggering switch to disengage it. Homing will fail if switch isn't cleared.",
+            "tab": "Homing",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "30",
+            "setting": "Maximum spindle speed",
+            "units": "RPM",
+            "explanation": "Maximum spindle speed. Sets PWM to 100% duty cycle.",
+            "tab": "Spindle",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "31",
+            "setting": "Minimum spindle speed",
+            "units": "RPM",
+            "explanation": "Minimum spindle speed. Sets PWM to 0.4% or lowest duty cycle.",
+            "tab": "Spindle",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "32",
+            "setting": "Laser-mode enable",
+            "units": "boolean",
+            "explanation": "Enables laser mode. Consecutive G1\/2\/3 commands will not halt when spindle speed is changed.",
+            "tab": "Laser",
+            "fieldType": "switch",
+            "values": ["off", "on"],
+            "minimum": 0
+        }, {
+            "code": "100",
+            "setting": "X-axis travel resolution",
+            "units": "step\/mm",
+            "explanation": "X-axis travel resolution in steps per millimeter.",
+            "tab": "Axis Resolution",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "101",
+            "setting": "Y-axis travel resolution",
+            "units": "step\/mm",
+            "explanation": "Y-axis travel resolution in steps per millimeter.",
+            "tab": "Axis Resolution",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "102",
+            "setting": "Z-axis travel resolution",
+            "units": "step\/mm",
+            "explanation": "Z-axis travel resolution in steps per millimeter.",
+            "tab": "Axis Resolution",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "110",
+            "setting": "X-axis maximum rate",
+            "units": "mm\/min",
+            "explanation": "X-axis maximum rate. Used as G0 rapid rate.",
+            "tab": "Axis FeedRate",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "111",
+            "setting": "Y-axis maximum rate",
+            "units": "mm\/min",
+            "explanation": "Y-axis maximum rate. Used as G0 rapid rate.",
+            "tab": "Axis FeedRate",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "112",
+            "setting": "Z-axis maximum rate",
+            "units": "mm\/min",
+            "explanation": "Z-axis maximum rate. Used as G0 rapid rate.",
+            "tab": "Axis FeedRate",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "120",
+            "setting": "X-axis acceleration",
+            "units": "mm\/sec^2",
+            "explanation": "X-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
+            "tab": "Axis Acceleration",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "121",
+            "setting": "Y-axis acceleration",
+            "units": "mm\/sec^2",
+            "explanation": "Y-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
+            "tab": "Axis Acceleration",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "122",
+            "setting": "Z-axis acceleration",
+            "units": "mm\/sec^2",
+            "explanation": "Z-axis acceleration. Used for motion planning to not exceed motor torque and lose steps.",
+            "tab": "Axis Acceleration",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "130",
+            "setting": "X-axis maximum travel",
+            "units": "millimeters",
+            "explanation": "Maximum X-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
+            "tab": "Axis Max Travel",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "131",
+            "setting": "Y-axis maximum travel",
+            "units": "millimeters",
+            "explanation": "Maximum Y-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
+            "tab": "Axis Max Travel",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }, {
+            "code": "132",
+            "setting": "Z-axis maximum travel",
+            "units": "millimeters",
+            "explanation": "Maximum Z-axis travel distance from homing switch. Determines valid machine space for soft-limits and homing search distances.",
+            "tab": "Axis Max Travel",
+            "fieldType": "integer",
+            "values": [],
+            "minimum": 0
+        }],
+        isDebugMode: function() {
+            return $('.grbl-debug').hasClass('enabled');
+        },
+        grblConsole: function() {
+            if (this.isDebugMode()) {
+                if (arguments.length == 0) return;
+                if (arguments.length > 1) {
+                    var a;
+                    for (var i = 0; i < arguments.length; i++) {
+                        if (typeof arguments[i] == 'object') {
+                            a = a + ", " + arguments[i].toString();
                         }
                         else {
-                            $('#com-chilipeppr-widget-grbl-debug-console').append(arguments[0]);
+                            a = a + ", " + arguments[i];
                         }
-                        arguments.unshift('GRBL WIDGET:');
-                        console.log.apply(this, arguments);
                     }
-                },
-                findConfigItem: function(index) {
-                    var rObj;
-                    this.configFormatData.forEach(function(obj, index) {
-                        if (obj.code == index) {
-                            rObj = obj;
-                            return true;
-                        }
-                    });
-                    return rObj;
-                },
-                init: function() {
-                    this.uiHover(); //set up the data elements for all UI
+                    $('#com-chilipeppr-widget-grbl-debug-console').append(a + "\n");
+                }
+                else {
+                    $('#com-chilipeppr-widget-grbl-debug-console').append(arguments[0]);
+                }
+                arguments.unshift('GRBL WIDGET:');
+                console.log.apply(this, arguments);
+            }
+        },
+        findConfigItem: function(index) {
+            var rObj;
+            this.configFormatData.forEach(function(obj, index) {
+                if (obj.code == index) {
+                    rObj = obj;
+                    return true;
+                }
+            });
+            return rObj;
+        },
+        init: function() {
+            this.uiHover(); //set up the data elements for all UI
 
-                    this.setupUiFromCookie();
-                    this.btnSetup();
+            this.setupUiFromCookie();
+            this.btnSetup();
 
-                    this.forkSetup();
+            this.forkSetup();
 
 
-                    // setup recv pubsub event
-                    // this is when we receive data in a per line format from the serial port
-                    chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, function(msg) {
-                        this.grblResponse(msg);
-                    });
-                    chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onportopen", this, this.openController);
+            // setup recv pubsub event
+            // this is when we receive data in a per line format from the serial port
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, function(msg) {
+                this.grblResponse(msg);
+            });
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onportopen", this, this.openController);
 
-                    chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onPortOpen", this, this.openController);
-                    chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onportclose", this, this.closeController);
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onPortOpen", this, this.openController);
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onportclose", this, this.closeController);
 
-                    // subscribe to jogdone so we can stop the planner buffer immediately
-                    chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/jogdone", this, function(msg) {
-                        //chilipeppr.publish("/com-chilipeppr-widget-serialport/send", '!\n');
-                        //this.sendCode('!\n');
-                        setTimeout(function() {
-                            chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
-                        }, 2);
-                    });
+            // subscribe to jogdone so we can stop the planner buffer immediately
+            chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/jogdone", this, function(msg) {
+                //chilipeppr.publish("/com-chilipeppr-widget-serialport/send", '!\n');
+                //this.sendCode('!\n');
+                setTimeout(function() {
+                    chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
+                }, 2);
+            });
 
-                    chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvSingleSelectPort", this, function(port) {
-                        if (port !== null) {
-                            this.singleSelectPort = port;
-                            this.grblConsole("wsSend GOT PORT", this.singleSelectPort, port);
-                            this.buffer_name = port.BufferAlgorithm;
-                            if (this.buffer_name !== "grbl") {
-                                $("#grbl-buffer-warning").show();
-                            }
-                            else {
-                                $("#grbl-buffer-warning").hide();
-                            }
-                        }
-                    });
-
-                    //no longer following the send.
-                    //chilipeppr.subscribe("/com-chilipeppr-widget-serialport/send", this, this.bufferPush, 1);
-
-                    //listen for units changed
-                    chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/unitsChanged", this, this.updateWorkUnits);
-                    chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/recvUnits", this, this.updateWorkUnits);
-                    chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/units", this, this.updateWorkUnits); //this sets axes to match 3d viewer.
-                    chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/coordinateUnits", this, this.updateCoordinateUnits);
-                    //listen for whether a gcode file is playing - if so, cancel our $G interval and start sending each 25 lines of gcode file sent.
-                    chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onplay", this, this.trackGcodeLines);
-                    chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onstop", this, this.restartStatusInterval);
-                    chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onpause", this, function(state, metadata) {
-                        if (state === false) {
-                            this.restartStatusInterval();
-                        } //when gcode widget pauses, go back to interval querying $G
-                        else if (state === true) {
-                            this.trackGcodeLines();
-                        } //when gcode widget resumes, begin tracking line count to embed $G into buffer.
-                    });
-                    chilipeppr.subscribe("/com-chilipeppr-widget-gcode/done", this, this.restartStatusInterval);
-
-                    //call to determine the current serialport configuration
-                    chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
-
-                    //count spjs queue
-                    chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onWrite", this, function(data) {
-                        if (data.QCnt >= 0) {
-                            this.q_count = data.QCnt;
-                            $('.stat-queue').html(this.q_count);
-                        }
-                    });
-
-                    //call to find out what current work units are 
-                    chilipeppr.publish("/com-chilipeppr-widget-3dviewer/requestUnits", "");
-
-                    //watch for a 3d viewer /sceneReloaded and pass back axes info
-                    chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/sceneReloaded", this, function(data) {
-                        if (this.last_work.x !== null)
-                            this.publishAxisStatus(this.last_work);
-                        else if (this.last_machine.x !== null)
-                            this.publishAxisStatus(this.last_machine);
-                        else
-                            this.publishAxisStatus({
-                                "x": 0.000,
-                                "y": 0.000,
-                                "z": 0.000
-                            });
-                    });
-                    chilipeppr.subscribe("/com-chilipeppr-widget-grbl-autolevel/probing", this, function(probing) {
-                        this.probing = probing;
-                    });
-                },
-                spindleEnabled: false,
-                spindleDirection: null,
-                coolant: "Off",
-                options: null,
-                setVersion: function(ver) {
-                    this.grblConsole('setting version to ' + ver);
-                    if (ver !== "") {
-                        var pattern = /([0-9.]+[a-z]?)/i;
-                        var match = pattern.exec(ver);
-                        ver = match[1] == undefined ? ver : match[1];
-                        if (this.version != ver) {
-                            this.version = ver;
-                            $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui 
-                            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion", this.version);
-                            if (this.version.substring(0, 1) == '1' && this.config[10] != undefined && parseInt(this.config[10], 10) != 2) {
-                                this.config[10] = 2;
-                                this.commandQueue.push(String.fromCharCode(36) + "10=2\n");
-                                this.doQueue();
-                            }
-                        }
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvSingleSelectPort", this, function(port) {
+                if (port !== null) {
+                    this.singleSelectPort = port;
+                    this.grblConsole("wsSend GOT PORT", this.singleSelectPort, port);
+                    this.buffer_name = port.BufferAlgorithm;
+                    if (this.buffer_name !== "grbl") {
+                        $("#grbl-buffer-warning").show();
                     }
                     else {
-                        this.sendCode(String.fromCharCode(36) + "I\n");
+                        $("#grbl-buffer-warning").hide();
                     }
-                },
-                setupUiFromCookie: function() {
-                    // read vals from cookies
-                    var options = $.cookie('com-chilipeppr-widget-grbl-options');
+                }
+            });
 
-                    if (true && options) {
-                        options = $.parseJSON(options);
-                        //console.log("GRBL: just evaled options: ", options);
+            //no longer following the send.
+            //chilipeppr.subscribe("/com-chilipeppr-widget-serialport/send", this, this.bufferPush, 1);
+
+            //listen for units changed
+            chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/unitsChanged", this, this.updateWorkUnits);
+            chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/recvUnits", this, this.updateWorkUnits);
+            chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/units", this, this.updateWorkUnits); //this sets axes to match 3d viewer.
+            chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/coordinateUnits", this, this.updateCoordinateUnits);
+            //listen for whether a gcode file is playing - if so, cancel our $G interval and start sending each 25 lines of gcode file sent.
+            chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onplay", this, this.trackGcodeLines);
+            chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onstop", this, this.restartStatusInterval);
+            chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onpause", this, function(state, metadata) {
+                if (state === false) {
+                    this.restartStatusInterval();
+                } //when gcode widget pauses, go back to interval querying $G
+                else if (state === true) {
+                    this.trackGcodeLines();
+                } //when gcode widget resumes, begin tracking line count to embed $G into buffer.
+            });
+            chilipeppr.subscribe("/com-chilipeppr-widget-gcode/done", this, this.restartStatusInterval);
+
+            //call to determine the current serialport configuration
+            chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", "");
+
+            //count spjs queue
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onWrite", this, function(data) {
+                if (data.QCnt >= 0) {
+                    this.q_count = data.QCnt;
+                    $('.stat-queue').html(this.q_count);
+                }
+            });
+
+            //call to find out what current work units are 
+            chilipeppr.publish("/com-chilipeppr-widget-3dviewer/requestUnits", "");
+
+            //watch for a 3d viewer /sceneReloaded and pass back axes info
+            chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/sceneReloaded", this, function(data) {
+                if (this.last_work.x !== null)
+                    this.publishAxisStatus(this.last_work);
+                else if (this.last_machine.x !== null)
+                    this.publishAxisStatus(this.last_machine);
+                else
+                    this.publishAxisStatus({
+                        "x": 0.000,
+                        "y": 0.000,
+                        "z": 0.000
+                    });
+            });
+            chilipeppr.subscribe("/com-chilipeppr-widget-grbl-autolevel/probing", this, function(probing) {
+                this.probing = probing;
+            });
+        },
+        spindleEnabled: false,
+        spindleDirection: null,
+        coolant: "Off",
+        options: null,
+        setVersion: function(ver) {
+            this.grblConsole('setting version to ' + ver);
+            if (ver !== "") {
+                var pattern = /([0-9.]+[a-z]?)/i;
+                var match = pattern.exec(ver);
+                ver = match[1] == undefined ? ver : match[1];
+                if (this.version != ver) {
+                    this.version = ver;
+                    $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL (" + this.version + ")"); //update ui 
+                    chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/grblVersion", this.version);
+                    if (this.version.substring(0, 1) == '1' && this.config[10] != undefined && parseInt(this.config[10], 10) != 2) {
+                        this.config[10] = 2;
+                        this.commandQueue.push(String.fromCharCode(36) + "10=2\n");
+                        this.doQueue();
                     }
-                    else {
-                        options = {
-                            showBody: true
-                        };
-                    }
-                    this.options = options;
-                    //console.log("GRBL: options:", options);
+                }
+            }
+            else {
+                this.sendCode(String.fromCharCode(36) + "I\n");
+            }
+        },
+        setupUiFromCookie: function() {
+            // read vals from cookies
+            var options = $.cookie('com-chilipeppr-widget-grbl-options');
 
-                },
-                saveOptionsCookie: function() {
-                    var options = {
-                        showBody: this.options.showBody
-                    };
-                    var optionsStr = JSON.stringify(options);
-                    //console.log("GRBL: saving options:", options, "json.stringify:", optionsStr);
-                    // store cookie
-                    $.cookie('com-chilipeppr-widget-grbl-options', optionsStr, {
-                        expires: 365 * 10,
-                        path: '/'
-                    });
-                },
-                btnSetup: function() {
-                    // chevron hide body
-                    var that = this;
-                    $('#com-chilipeppr-widget-grbl .hidebody').click(function(evt) {
-                        var span = $(this).find('span');
-                        if (span.hasClass('glyphicon-chevron-up')) { // panel-body is open, hide that
-                            span.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
-                            $('#com-chilipeppr-widget-grbl .panel-body, #com-chilipeppr-widget-grbl .panel-footer').addClass('hidden');
-                        }
-                        else {
-                            span.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
-                            $('#com-chilipeppr-widget-grbl .panel-body, #com-chilipeppr-widget-grbl .panel-footer').removeClass('hidden');
-                        }
-                    });
-                    $('#com-chilipeppr-widget-grbl .grbl-feedhold').click(function() {
-                        //console.log("GRBL: feedhold");
-                        alert($(this).data('command'));
-                        that.sendCode($(this).data('command') + "\n");
-                        // announce to other widgets that user hit e-stop
-                        chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
-                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
+            if (true && options) {
+                options = $.parseJSON(options);
+                //console.log("GRBL: just evaled options: ", options);
+            }
+            else {
+                options = {
+                    showBody: true
+                };
+            }
+            this.options = options;
+            //console.log("GRBL: options:", options);
 
-                        $(this).html("!");
-                        $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
-                    });
-                    $('#com-chilipeppr-widget-grbl .grbl-cyclestart').click(function() {
-                        //console.log("GRBL: cyclestart");
-                        that.sendCode('~' + "\n");
-                        //may want to check if buffer queue is >128 before resuming planner.
-                        chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
+        },
+        saveOptionsCookie: function() {
+            var options = {
+                showBody: this.options.showBody
+            };
+            var optionsStr = JSON.stringify(options);
+            //console.log("GRBL: saving options:", options, "json.stringify:", optionsStr);
+            // store cookie
+            $.cookie('com-chilipeppr-widget-grbl-options', optionsStr, {
+                expires: 365 * 10,
+                path: '/'
+            });
+        },
+        btnSetup: function() {
+            // chevron hide body
+            var that = this;
+            $('#com-chilipeppr-widget-grbl .hidebody').click(function(evt) {
+                var span = $(this).find('span');
+                if (span.hasClass('glyphicon-chevron-up')) { // panel-body is open, hide that
+                    span.removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+                    $('#com-chilipeppr-widget-grbl .panel-body, #com-chilipeppr-widget-grbl .panel-footer').addClass('hidden');
+                }
+                else {
+                    span.removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-up');
+                    $('#com-chilipeppr-widget-grbl .panel-body, #com-chilipeppr-widget-grbl .panel-footer').removeClass('hidden');
+                }
+            });
+            $('#com-chilipeppr-widget-grbl .grbl-feedhold').click(function() {
+                //console.log("GRBL: feedhold");
+                alert($(this).data('command'));
+                that.sendCode($(this).data('command') + "\n");
+                // announce to other widgets that user hit e-stop
+                chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
+                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
 
-                        $(this).html("~").removeClass("btn-success");
-                        $('#com-chilipeppr-widget-grbl .grbl-feedhold').html('Hold !');
-                    });
+                $(this).html("!");
+                $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
+            });
+            $('#com-chilipeppr-widget-grbl .grbl-cyclestart').click(function() {
+                //console.log("GRBL: cyclestart");
+                that.sendCode('~' + "\n");
+                //may want to check if buffer queue is >128 before resuming planner.
+                chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
 
-                    $('#com-chilipeppr-widget-grbl .grbl-verbose').click(function() {
-                        //console.log("GRBL: manual status update");
-                        $('#com-chilipeppr-widget-grbl .grbl-verbose').toggleClass("enabled");
-                    });
-                    $('#com-chilipeppr-widget-grbl .grbl-debug').click(function() {
-                        if ($('.grbl-debug').hasClass("enabled")) {
-                            $('#com-chilipeppr-widget-grbl-debug').hide();
-                            $('.grbl-debug').removeClass("enabled");
-                        }
-                        else {
-                            $('#com-chilipeppr-widget-grbl-debug').show()
-                            $('.grbl-debug').addClass("enabled");
-                        }
-                    });
+                $(this).html("~").removeClass("btn-success");
+                $('#com-chilipeppr-widget-grbl .grbl-feedhold').html('Hold !');
+            });
 
-                    $('#com-chilipeppr-widget-grbl .grbl-reset').click(function() {
-                        //console.log("GRBL: reset");
-                        that.sendCode(String.fromCharCode(24));
-                        chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
-                        $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
-                    });
+            $('#com-chilipeppr-widget-grbl .grbl-verbose').click(function() {
+                //console.log("GRBL: manual status update");
+                $('#com-chilipeppr-widget-grbl .grbl-verbose').toggleClass("enabled");
+            });
+            $('#com-chilipeppr-widget-grbl .grbl-debug').click(function() {
+                if ($('.grbl-debug').hasClass("enabled")) {
+                    $('#com-chilipeppr-widget-grbl-debug').hide();
+                    $('.grbl-debug').removeClass("enabled");
+                }
+                else {
+                    $('#com-chilipeppr-widget-grbl-debug').show()
+                    $('.grbl-debug').addClass("enabled");
+                }
+            });
 
-                    $('#com-chilipeppr-widget-grbl-btnoptions').click(this.showConfigModal.bind(this));
+            $('#com-chilipeppr-widget-grbl .grbl-reset').click(function() {
+                //console.log("GRBL: reset");
+                that.sendCode(String.fromCharCode(24));
+                chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
+                $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
+            });
 
-                    $('#com-chilipeppr-widget-grbl .btn-toolbar .btn, .com-chilipeppr-widget-grbl-realtime-commands .btn').popover({
-                        delay: 500,
-                        animation: true,
-                        placement: "auto",
-                        trigger: "hover",
-                        container: 'body'
-                    });
+            $('#com-chilipeppr-widget-grbl-btnoptions').click(this.showConfigModal.bind(this));
 
-                    // new buttons start
-                    // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
-                    $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
-                        that.sendCode('\x84');
-                    });
+            $('#com-chilipeppr-widget-grbl .btn-toolbar .btn, .com-chilipeppr-widget-grbl-realtime-commands .btn').popover({
+                delay: 500,
+                animation: true,
+                placement: "auto",
+                trigger: "hover",
+                container: 'body'
+            });
 
-                    $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
-                        // send ascii code from data-send-code html tag
-                        that.sendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)));
-                    });
+            // new buttons start
+            // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
+            $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
+                that.sendCode('\x84');
+            });
 
-                    $('#com-chilipeppr-widget-grbl .hide-overrides').click(function(evt) {
-                        $(this).toggleClass("active");
-                        $(".com-chilipeppr-widget-grbl-realtime-commands").toggle();
-                    });
+            $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
+                // send ascii code from data-send-code html tag
+                that.sendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)));
+            });
+
+            $('#com-chilipeppr-widget-grbl .hide-overrides').click(function(evt) {
+                $(this).toggleClass("active");
+                $(".com-chilipeppr-widget-grbl-realtime-commands").toggle();
+            });
 
 
-                    // new buttons end
-                },
-                showConfigModal: function() {
-                    this.grblConsole("SJPS sending config request");
-                    this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-                    var interval = setInterval(function(context) {
-                        var that = context;
-                        if (that.config[0] == undefined) {
-                            chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Sorry, cannot load config from the controller.<br/>Is it properly connected");
-                            return false;
-                        }
-                        else {
-                            clearInterval(interval);
-                        }
-                        $('#grbl-config-div').empty();
-                        /*
-                var configtabList = $('<ul></ul>');
-                var configtabListItem = $('<li><a></a></li>');
-                var configtabHolder = $('<div class="tabHolder"></div');
-                var configtabs = {};
-                var integerNode = $("<div class='configItemHolder input-group input-group-sm'><input class='configItem' type='text'><label class=''></label></div>");
-                var axisMaskNode = $("<div class='configItemHolder axisMaskHolder input-group input-group-sm'><input type='hidden' /><label class=''></label><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'><input class='configItem axisMask' type='checkbox' value='1'></div>");
-                var switchNode = $("<div class='configItemHolder boolean input-group input-group-sm'><input type='checkbox' class='boolean'/><span class='checkboxLabel'></span></div>");
-                $.each(that.configFormatData, function(index, data) {
-                    // code setting units explanation tab fieldType values readonly minimum maximum
-                    var node = '';
-                    switch (data.fieldType) {
-                        case 'integer':
-                            node = integerNode.clone(true);
-                            node.data('index', data.code);
-                            node.find(':input:first').data({
-                                'index': data.code,
-                                'tooltip': data.explanation,
-                                'minimum': data.minimum,
-                                'maximum' : data.maximum == 'undefined' ? null : data.maximum
-                            })
-                            .attr('name', "setting_" + data.code)
-                            .prop('id', 'setting_' + data.code)
-                            .prop('readonly', data.readonly)
-                            .css({width: '4rem'})
-                            .on('blur', null, {context:that}, function( event ){
-                                var that = event.data.context;
-                                var val = parseInt($(this).val());
-                                
-                                if($(this).data('minimum') > val){
-                                    $(this).val( that.config[$(this).data('index')][1]);
-                                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Value needs to be over "  +$(this).data('minimum'));
-                                    return;
-                                }
-                                
-                                if($(this).data('maximum') != null && $(this).data('maximum') < val){
-                                    $(this).val( that.config[$(this).data('index')][1]);
-                                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Value needs to be below "  +$(this).data('maximum'));
-                                    return;
-                                }
-                                if(that.config[$(this).data('index')][1] != $(this).val()){
-                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + $(this).val()  + "\n");
-                                    that.config[$(this).data('index')][1] = $(this).val();
-                                    that.doQueue();
-                                }
-                                
-                            });
-                            node.find('label:first').attr('for', 'setting_' + data.code).html(data.setting + " (" + data.units + ")");
-                            break;
-                        case 'axisMask':
-                            node = axisMaskNode.clone(true);
-                            node.data('index', data.code);
-                            node.find('label').html(data.setting);
-                            node.find(':text:first').data({
-                                id:data.code
-                            });
-                            $.each(['X', 'Y', 'Z'], function(index, item) {
-                                var mask = 1 << index;
-                                var checked = (that.config[data.code] & mask) ? true : false;
-                                var elem = node.find(':checkbox:eq(' + index + ')').data({
-                                    index: data.code,
-                                    axis: item,
-                                    tooltip: data.explanation,
-                                    skip: true
-                                }).attr({
-                                    name: 'setting_' + data.code + '_' + item,
-                                    placeholder: item
-                                }).prop({
-                                    checked: checked
-                                });
-                                elem.on('blur', null, {context:that}, function( event ){
-                                    var that = event.data.context;
-                                    var val = 0;
-                                    $(this).closest('div').find(':checkbox').each(function(index,element){
-                                        if($(element).is(':checked')){
-                                            val |= (1 << index);
-                                        }
-                                    });
-                                    
-                                    $(this).closest('div').find(':text:first').val(val);
-                                    if(that.config[$(this).data('index')][1] != val){
-                                        that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + val + "\n");
-                                        that.doQueue();
-                                        that.config[$(this).data('index')][1] = val;
-                                    }
-                                });
-                            });
-                            node.find(':checkbox:first').trigger('blur');
-                            break;
-                        case 'switch':
-                            node = switchNode.clone(true);
-                            node.data('id', data.code);
-                            node.find('span').html(data.setting);
-                            var elem = node.find(':checkbox:first').data({
-                                    index: data.code,
-                                    tooltip: data.explanation,
-                                    on_label: data.values[1],
-                                    off_label: data.values[0]
-                            }).attr({
-                                    name: 'setting_' + data.code,
-                                    checked: that.config[data.code][1] == 1 ? true : false
-                            });
-                            $(node).on('blur', null, {context:that}, function(event){
-                                var that = event.data.context;
-                                var val = $(this).is(':checked') ? 1 : 0;
-                                if(that.config[$(this).data('index')][1] != val){
-                                    that.commandQueue.push(String.fromCharCode(36) + $(this).data('index') + '=' + val  + "\n");
-                                    that.config[$(this).data('index')][1] = val;
-                                    that.doQueue();
-                                }
-                            });
-                            break;
-                    }
-                    var dT = data.tab.split(' ').join('_');
-                    if (configtabs[dT] == undefined) {
-                        var _tH = configtabHolder.clone(true);
-                        _tH.prop('id', 'holder_setting_' + dT);
-                        configtabs[dT] = _tH;
-                        var _tL = configtabListItem.clone(true);
-                        _tL.find('a:first').attr('href', '#holder_setting_' + dT).text(data.tab);
-                        console.log('html tL', _tL.html());
-                        configtabList.append(_tL);
-                    }
-                    $(configtabs[dT]).append(node);
-                    console.log("html node", node);
-                    
-                });
-                console.log('html tablist',configtabList);
-                $('#grbl-config-div').append(configtabList);
-                $.each(configtabs, function(index, element){
-                    console.log('html tabHolder', element);
-                    $('#grbl-config-div').append($(element));    
-                });
-               //$('#grbl-config-div').tabs();
-               
-                */
+            // new buttons end
+        },
+        showConfigModal: function() {
+            this.grblConsole("SJPS sending config request");
+            this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+            var interval = setInterval(function(context) {
+                var that = context;
+                if (that.config[0] == undefined) {
+                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Sorry, cannot load config from the controller.<br/>Is it properly connected");
+                    return false;
+                }
+                else {
+                    clearInterval(interval);
+                }
+                $('#grbl-config-div').empty();
 
-                        that.config.forEach(function(config_element, index_num) {
-                            var elem = $('\
+                that.config.forEach(function(config_element, index_num) {
+                    var elem = $('\
                     <div class="input-group input-group-sm">\
                         <span class="input-group-addon">&#36;' + index_num + '</span>\
                         <input class="form-control" data-index="' + index_num + '" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
                         <span class="input-group-addon">' + config_element[1] + '</span>\
                     </div>');
 
-                            //this should speed up the save event materially.  
-                            $(elem).on('blur', function(e, that) {
-                                var val = $(this).val();
-                                var index = $(this).data("index");
-                                if (val != that.config[index][0]) {
-                                    var bits = val.split('.');
-                                    if (bits[1] && bits[1].length > 3) {
-                                        val = parseFloat(val).toFixed(3);
-                                    }
-                                    var cmd = String.fromCharCode(36) + index + "=" + val + "\n";
-                                    that.commandQueue.push(cmd);
-                                    that.doQueue();
-                                    that.config[index][0] = val;
-                                }
-                            }, that).appendTo('#grbl-config-div');
-                        }, that);
-
-                        $('#grbl-config-div').find('.tabHolder').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
-                        $('.save-config').click(that.saveConfigModal.bind(that));
-                        $('#com-chilipeppr-widget-grbl-modal').modal('show');
-
-                        /*$('#grbl-config-div').find('.boolean').each(function(){
-                    alert($(this).html());
-                   $(this).switchButton({
-                                show_labels: true,
-                                on_label: $(this).data('on_label') ,
-                                off_label: $(this).data('off_label'),
-                                width:25,
-                                height:11,
-                                button_width:12,
-                                checked: $(this).prop('checked'),
-                                on_callback: $(this).prop('checked',true).trigger('blur'),
-                                off_callback: $(this).prop('checked',false).trigger('blur')
-                            });
- 
-                });
-                */
-                    }, 1000, this);
-                },
-                hideConfigModal: function() {
-                    $('#com-chilipeppr-widget-grbl-modal').modal('hide');
-                },
-                saveConfigModal: function() {
-                    this.grblConsole("Save Settings");
-
-                    var that = this;
-                    $.each($("#grbl-config-div input"), function(k, inp) {
-                        var val;
-                        if ($(inp).data('skip') == true) return;
-                        if ($(inp).is(':text')) {
-                            val = $(inp).val();
-                        }
-                        else if ($(inp).is(':checkbox')) {
-                            val = $(inp).is(':checked') ? 1 : 0;
-                        }
-                        var index = $(inp).data("index");
-
+                    //this should speed up the save event materially.  
+                    $(elem).on('blur', function(e, that) {
+                        var val = $(this).val();
+                        var index = $(this).data("index");
                         if (val != that.config[index][0]) {
-                            that.assignConfigValue(index, val);
                             var bits = val.split('.');
-                            var cmd = String.fromCharCode(36) + index + "=" + that.config[index][0] + "\n";
+                            if (bits[1] && bits[1].length > 3) {
+                                val = parseFloat(val).toFixed(3);
+                            }
+                            var cmd = String.fromCharCode(36) + index + "=" + val + "\n";
                             that.commandQueue.push(cmd);
-                        }
-                    });
-                    // we need to re-send $$ ??
-                    // that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-                    if (this.commandQueue.length == 0) {
-                        this.hideConfigModal();
-                        return true;
-                    }
-                    this.doQueue();
-                    //changed this to hold the window in modal state until the config changes are made.  
-                    //it would probably be better to write each change on change of the input value rather than wait for a commit
-                    //then the human interaction time would be greater than the eeprom delay and we'd not have this trouble.  
-                    var configInterval = setInterval(function(that) {
-                        if (that.commandQueue.length == 0) {
-                            that.hideConfigModal();
-                            clearInterval(configInterval);
-                        }
-                        else {
-                            chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Please wait - saving new config");
                             that.doQueue();
+                            that.config[index][0] = val;
                         }
-                    }, 500, this);
+                    }, that).appendTo('#grbl-config-div');
+                }, that);
 
-                    return true;
-                },
-                assignConfigValue: function(index, val) {
-                    index = parseInt(index, 10);
+                $('#grbl-config-div').find('.tabHolder').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
+                $('.save-config').click(that.saveConfigModal.bind(that));
+                $('#com-chilipeppr-widget-grbl-modal').modal('show');
 
-                    if ([11, 12, 24, 25, 27, 100, 101, 102, 110, 111, 112, 120, 121, 122, 130, 131, 132].indexOf(index) >= 0) {
-                        val = parseFloat(val).toFixed(3);
+            }, 1000, this);
+        },
+        hideConfigModal: function() {
+            $('#com-chilipeppr-widget-grbl-modal').modal('hide');
+        },
+        saveConfigModal: function() {
+            this.grblConsole("Save Settings");
+
+            var that = this;
+            $.each($("#grbl-config-div input"), function(k, inp) {
+                var val;
+                if ($(inp).data('skip') == true) return;
+                if ($(inp).is(':text')) {
+                    val = $(inp).val();
+                }
+                else if ($(inp).is(':checkbox')) {
+                    val = $(inp).is(':checked') ? 1 : 0;
+                }
+                var index = $(inp).data("index");
+
+                if (val != that.config[index][0]) {
+                    that.assignConfigValue(index, val);
+                    var bits = val.split('.');
+                    var cmd = String.fromCharCode(36) + index + "=" + that.config[index][0] + "\n";
+                    that.commandQueue.push(cmd);
+                }
+            });
+            // we need to re-send $$ ??
+            // that.commandQueue.push(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+            if (this.commandQueue.length == 0) {
+                this.hideConfigModal();
+                return true;
+            }
+            this.doQueue();
+            //changed this to hold the window in modal state until the config changes are made.  
+            //it would probably be better to write each change on change of the input value rather than wait for a commit
+            //then the human interaction time would be greater than the eeprom delay and we'd not have this trouble.  
+            var configInterval = setInterval(function(that) {
+                if (that.commandQueue.length == 0) {
+                    that.hideConfigModal();
+                    clearInterval(configInterval);
+                }
+                else {
+                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Please wait - saving new config");
+                    that.doQueue();
+                }
+            }, 500, this);
+
+            return true;
+        },
+        assignConfigValue: function(index, val) {
+            index = parseInt(index, 10);
+
+            if ([11, 12, 24, 25, 27, 100, 101, 102, 110, 111, 112, 120, 121, 122, 130, 131, 132].indexOf(index) >= 0) {
+                val = parseFloat(val).toFixed(3);
+            }
+            else {
+                val = parseInt(val, 10);
+            }
+
+            this.grblConsole("parsing settings", index, val);
+
+            var obj = this.findConfigItem(index);
+            if (obj.hasProperty('code')) {
+                this.config[index] = [val, obj.setting]; //save config value and description
+            }
+            else {
+                this.grblConsole("cannot find config object", index);
+            }
+        },
+        commandQueue: [],
+        doQueue: function() {
+            if (this.commandQueue.length > 0) {
+                if (this.availableBuffer > this.commandQueue[0].length + 1) {
+                    var cmd = this.commandQueue.shift();
+                    this.sendCode(cmd);
+                    this.availableBuffer -= cmd.length;
+                }
+            }
+        },
+        availableBuffer: 0,
+        updateWorkUnits: function(units) {
+            var wm;
+            if (units === "mm") {
+                wm = 0;
+            }
+            else if (units === "inch") {
+                wm = 1;
+            }
+            if (this.work_mode != wm) {
+                this.work_mode = wm;
+            }
+            this.updateReportUnits();
+            this.grblConsole("Updated Work Units - " + this.work_mode);
+            //update report units if they have changed
+            // LUCA -> commented
+            //  this.updateReportUnits();
+        },
+        coordinateUnits: function(unit) {
+            this.grblConsole('received coordinate unit update', unit);
+            if (unit == 'G20') {
+                this.updateWorkUnits('inch');
+            }
+            else if (unit == 'G21') {
+                this.updateWorkUnits('mm');
+            }
+        },
+        updateReportUnits: function() {
+            switch (this.work_mode) {
+                case 0: //mm
+                    if (this.config[13] == undefined || this.config[13][0] == 1) {
+                        this.sendCode(String.fromCharCode(36) + "13=0\n");
+                        this.grblConsole("update report units", {
+                            controller: this.controller_units,
+                            work: this.work_mode,
+                            report: this.report_mode
+                        });
+                        this.config[13][0] = 0;
+                        $(".stat-units").html("mm");
                     }
-                    else {
-                        val = parseInt(val, 10);
+                    break;
+                case 1:
+                    if (this.config[13] == undefined || this.config[13] == 0) {
+                        this.sendCode(String.fromCharCode(36) + "13=1\n");
+                        this.grblConsole("update report units", {
+                            controller: this.controller_units,
+                            work: this.work_mode,
+                            report: this.report_mode
+                        });
+                        this.config[13][0] = 1;
+                        $(".stat-units").html("inch");
                     }
-                    if (this.widgetDebug) {
-                        this.grblConsole("parsing settings", index, val);
-                    }
-                    var obj = this.findConfigItem(index);
-                    if (obj.hasProperty('code')) {
-                        this.config[index] = [val, obj.setting]; //save config value and description
-                    }
-                },
-                commandQueue: [],
-                doQueue: function() {
-                    if (this.commandQueue.length > 0) {
-                        if (this.availableBuffer > this.commandQueue[0].length + 1) {
-                            var cmd = this.commandQueue.shift();
-                            this.sendCode(cmd);
-                            this.availableBuffer -= cmd.length;
-                        }
-                    }
-                },
-                availableBuffer: 0,
-                updateWorkUnits: function(units) {
-                    var wm;
-                    if (units === "mm") {
-                        wm = 0;
-                    }
-                    else if (units === "inch") {
-                        wm = 1;
-                    }
-                    if (this.work_mode != wm) {
-                        this.work_mode = wm;
-                    }
-                    this.updateReportUnits();
-                    this.grblConsole("Updated Work Units - " + this.work_mode);
-                    //update report units if they have changed
-                    // LUCA -> commented
-                    //  this.updateReportUnits();
-                },
-                coordinateUnits: function(unit) {
-                    this.grblConsole('received coordinate unit update', unit);
-                    if (unit == 'G20') {
-                        this.updateWorkUnits('inch');
-                    }
-                    else if (unit == 'G21') {
-                        this.updateWorkUnits('mm');
-                    }
-                },
-                updateReportUnits: function() {
-                        switch (this.work_mode) {
-                            case 0: //mm
-                                if (this.config[13] == undefined || this.config[13][0] == 1) {
-                                    this.sendCode(String.fromCharCode(36) + "13=0\n");
-                                    this.grblConsole("update report units", {
-                                        controller: this.controller_units,
-                                        work: this.work_mode,
-                                        report: this.report_mode
-                                    });
-                                    this.config[13][0] = 0;
-                                    $(".stat-units").html("mm");
-                                }
-                                break;
-                            case 1:
-                                if (this.config[13] == undefined || this.config[13] == 0) {
-                                    this.sendCode(String.fromCharCode(36) + "13=1\n");
-                                    this.grblConsole("update report units", {
-                                        controller: this.controller_units,
-                                        work: this.work_mode,
-                                        report: this.report_mode
-                                    });
-                                    this.config[13][0] = 1;
-                                    $(".stat-units").html("inch");
-                                }
-                                break;
-                        }
+                    break;
+            }
         },
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
@@ -1419,29 +1232,31 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                                 var bit = fields[0].split(':');
                                 if ((bit[0] == 'Hold' && bit[1] == '0') || (bit[0] == 'Door' && bit[1] == '0')) {
                                     $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
-                                } else 
+                                }
+                                else
                                 if (bit[0] == 'Door' && bit[1] == '3') {
                                     $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
-                                }  
-                               
+                                }
+
 
                             }
                             else {
                                 that.status = fields[0];
-                                 if(bit[0] == 'Jog'){
+                                if (bit[0] == 'Jog') {
                                     $('.grbl-feedhold').text('Cancel').data({
                                         title: "Jog Cancel",
                                         content: "Immediately cancels a jog command. This bypasses the planner buffer",
                                         command: 0x85
-                                    });    
-                                } else {
+                                    });
+                                }
+                                else {
                                     $('.grbl-feedhold').text('Cancel').data({
                                         title: "FeedHold",
                                         content: "Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.",
                                         command: '!'
-                                    });  
+                                    });
                                 }
-                                
+
                             }
                         }
                         else {
