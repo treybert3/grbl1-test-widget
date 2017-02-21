@@ -1043,7 +1043,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             this.grblConsole("parsing settings", index, val);
 
             var obj = this.findConfigItem(index);
-            if (obj.hasProperty('code')) {
+            if (obj.hasOwnProperty('code')) {
                 this.config[index] = [val, obj.setting]; //save config value and description
             }
             else {
