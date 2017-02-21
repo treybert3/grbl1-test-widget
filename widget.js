@@ -1,17 +1,5 @@
 /* global $, cprequire_test, cpdefine, chilipeppr requirejs */
-/*
-requirejs.config({
-    paths: {
-        jqueryui_entire: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery-ui',
-        jquerytabs: '//chilipeppr.com/js/jquery-ui-1.10.4/ui/jquery.ui.tabs',
-    },
-    shim: {
-        jquerytabs: {
-            deps: ['jqueryui_entire']
-        },
-    }
-});
-*/
+
 
 // Test this element. This code is auto-removed by the chilipeppr.load()
 cprequire_test(["inline:com-chilipeppr-widget-grbl"], function(grbl) {
@@ -112,7 +100,7 @@ function Queue() {
 
 
 
-cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidget", "jqueryui", "jquerycookie", "jquerytabs"], function() {
+cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"], function() {
 
     return {
 
