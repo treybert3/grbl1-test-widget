@@ -1045,7 +1045,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
             $('#com-chilipeppr-widget-grbl-modal').modal('hide');
         },
         saveConfigModal: function() {
-            this.grblConfig("Save Settings");
+            this.grblConsole("Save Settings");
 
             var that = this;
             $.each($("#grbl-config-div input"), function(k, inp) {
@@ -1129,7 +1129,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                 this.work_mode = wm;
                 this.updateReportUnits();
             }
-            this.grblConfig("Updated Work Units - " + this.work_mode);
+            this.grblConsole("Updated Work Units - " + this.work_mode);
             //update report units if they have changed
             // LUCA -> commented
             //  this.updateReportUnits();
@@ -1147,7 +1147,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     if (this.controller_units != 'mm') {
                         this.controller_units = "mm";
                         this.sendCode("G21\n");
-                        this.grblConfig("update report units", this.controller_units);
+                        this.grblConsole("update report units", this.controller_units);
                         $(".stat-units").html(this.controller_units);
                     }
                 }
@@ -1156,7 +1156,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jqueryuiWidg
                     if (this.controller_units != 'inch') {
                         this.controller_units = "inch";
                         this.sendCode("G20\n");
-                        this.grblConfig("update report units", this.controller_units);
+                        this.grblConsole("update report units", this.controller_units);
                         $(".stat-units").html(this.controller_units);
                     }
                 }
