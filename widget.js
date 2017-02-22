@@ -951,7 +951,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             // LUCA -> commented
             //  this.updateReportUnits();
         },
-        coordinateUnits: function(unit) {
+        updateCoordinateUnits: function(unit) {
             this.grblConsole('received coordinate unit update', unit);
             if (unit == 'G20') {
                 this.updateWorkUnits('inch');
