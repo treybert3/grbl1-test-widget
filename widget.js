@@ -566,9 +566,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             vars.forEach(function(item, index){
                 var bits = item.split('=');
                 if(bits[0].toLowerCase() == 'debug' && bits[1] == 1){
-                    $('#com-chilipeppr-widget-grbl .grbl-debug').addClass('enabled');
+                    $('#com-chilipeppr-widget-grbl .grbl-debug').trigger('click'); 
                 }
             },this);
+            
             this.uiHover(); //set up the data elements for all UI
 
             this.setupUiFromCookie();
@@ -1226,7 +1227,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                         //we need the bits
                         var fields = result[1].split("|");
                         //0 is always the machine state
-                        var status = new RegExp("^(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
+                        var status = new RegExp("(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
                         if (status.exec(fields[0])) {
                             if (fields[0].indexOf('Hold:') >= 0 || fields[0].indexOf('Door:') >= 0) {
                                 that.status = subStates[fields[0]];
@@ -1241,10 +1242,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                     $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
                                 }
 
-
                             }
                             else {
                                 if(that.status != fields[0]){
+                                    that.status = fields[0];
+                                    that.grblConsole("setting status to " + that.status);
+                                    //UI updates
+                                    chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
+                                    $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
                                     if(that.status == 'Jog') {
                                         $('.grbl-feedhold').text('Cancel').data({
                                             title: "Jog Cancel",
@@ -1262,7 +1267,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                             }
                         }
                         else {
-                            that.status = 'Offline';
+                            if(that.status != "Offline"){
+                                that.status = 'Offline';
+                                that.grblConsole("setting status to " + that.status);
+                                //UI updates
+                                chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
+                                $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
+                            }
                         }
 
                         if (that.alarm !== true && that.status === "Alarm") {
@@ -1286,10 +1297,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                             $('#stat-state-background-box').css('background-color', '#f5f5f5');
                         }
 
-                        that.grblConsole("setting status to " + that.status);
-                        //UI updates
-                        chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
-                        $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
+                
                         var receivedMachineCoords = false;
                         var receivedWorkCoords = false;
                         var i;
