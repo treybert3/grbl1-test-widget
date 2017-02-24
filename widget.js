@@ -925,12 +925,24 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
         },
         commandQueue: [],
+        isConnected: function(){
+            return this.status != 'Offline' && this.status != '';
+        },
+        connectedToPort: false,
         doQueue: function() {
-            if (this.commandQueue.length > 0) {
-                if (this.availableBuffer > this.commandQueue[0].length + 1) {
-                    var cmd = this.commandQueue.shift();
-                    this.sendCode(cmd);
-                    this.availableBuffer -= cmd.length;
+            if(this.isConnected()){
+                if (this.commandQueue.length > 0) {
+                    if (this.availableBuffer > this.commandQueue[0].length + 1) {
+                        var cmd = this.commandQueue.shift();
+                        this.sendCode(cmd);
+                        this.availableBuffer -= cmd.length;
+                        if(cmd == 'G20\n'){
+                            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", "inch");
+                        } else 
+                        if(cmd == 'G21\n'){
+                            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", "mm");
+                        }
+                    }
                 }
             }
         },
@@ -966,7 +978,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             switch (this.work_mode) {
                 case 0: //mm
                     if (this.config[13] == undefined || this.config[13][0] == 1) {
-                        this.sendCode(String.fromCharCode(36) + "13=0\n");
+                        this.commandQueue.push(String.fromCharCode(36) + "13=0\n");
                         this.grblConsole("update report units", {
                             controller: this.controller_units,
                             work: this.work_mode,
@@ -978,7 +990,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                     break;
                 case 1:
                     if (this.config[13] == undefined || this.config[13][0] == 0) {
-                        this.sendCode(String.fromCharCode(36) + "13=1\n");
+                        this.commandQueue.push(String.fromCharCode(36) + "13=1\n");
                         this.grblConsole("update report units", {
                             controller: this.controller_units,
                             work: this.work_mode,
@@ -996,6 +1008,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             this.grblConsole("opening controller");
             //wait three second for arduino initialization before requesting the grbl config variables.
             setTimeout(function() {
+                that.connectedToPort = true;
                 chilipeppr.publish("/com-chilipeppr-widget-serialport/requestSingleSelectPort", ""); //Request port info
                 if (that.version === "") {
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
@@ -1044,6 +1057,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             this.report_mode = 0;
             this.work_mode = 0;
             this.status = "Offline";
+            
             chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', this.status);
             $('.com-chilipeppr-grbl-state').text(this.status);
             this.setVersion("");
