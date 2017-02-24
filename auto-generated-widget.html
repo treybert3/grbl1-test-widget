@@ -1086,6 +1086,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
         },
         updateReportUnits: function() {
+            this.grblConsole("in update report units", {work: this.work_mode, report:this.report_mode});
             switch (this.work_mode) {
                 case 0: //mm
                     if (this.config[13] == undefined || this.config[13][0] == 1) {
