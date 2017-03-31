@@ -825,12 +825,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 }
                 $('#grbl-config-div').empty();
 
-                that.config.forEach(function(config_element, index_num) {
+                that.configFormData.forEach(function(config_element, index_num) {
                     var elem = $('\
                     <div class="input-group input-group-sm">\
-                        <span class="input-group-addon">&#36;' + index_num + '</span>\
-                        <input class="form-control" data-index="' + index_num + '" id="com-chilipeppr-widget-grbl-config-' + index_num + '" value="' + config_element[0] + '"/>\
-                        <span class="input-group-addon">' + config_element[1] + '</span>\
+                        <span class="input-group-addon">&#36;' + config_element.code + '</span>\
+                        <input class="form-control" data-index="' + config_element.code + '" id="com-chilipeppr-widget-grbl-config-' + config_element.code + '" value="' + that.config[config_element.code][0] + '"/>\
+                        <span class="input-group-addon">' + config_element.setting + '</span>\
                     </div>');
 
                     //this should speed up the save event materially.  
@@ -1114,7 +1114,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                         that.getControllerInfo(); //send a $G every 2 seconds
                     }
                     else {
-                        this.grblConsole("q count is " + that.q_count);
+                        that.grblConsole("q count is " + that.q_count);
                     }
 
                 }, 2000);
