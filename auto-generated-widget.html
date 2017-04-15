@@ -862,13 +862,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             $('#com-chilipeppr-widget-grbl .grbl-feedhold').click(function() {
                 //console.log("GRBL: feedhold");
                 //alert($(this).data('command'));
-                that.sendCode($(this).data('command') + "\n");
+                that.sendCode($(this).data('command') + " \n");
                 // announce to other widgets that user hit e-stop
-                chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
-                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
-
-                $(this).html("!");
-                $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
+                if($(this).data('command') == '!'){
+                    chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
+                    chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
+                    $(this).html("!");
+                    $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
+                }
             });
             $('#com-chilipeppr-widget-grbl .grbl-cyclestart').click(function() {
                 //console.log("GRBL: cyclestart");
@@ -877,7 +878,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
 
                 $(this).html("~").removeClass("btn-success");
-                $('#com-chilipeppr-widget-grbl .grbl-feedhold').html('Hold !');
+                if(that.status != 'Jog'){
+                    $('#com-chilipeppr-widget-grbl .grbl-feedhold').html('Hold !');
+                }
             });
 
             $('#com-chilipeppr-widget-grbl .grbl-verbose').click(function() {
@@ -901,7 +904,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
 
             $('#com-chilipeppr-widget-grbl .grbl-reset').click(function() {
                 //console.log("GRBL: reset");
-                that.sendCode(String.fromCharCode(24));
+                that.sendCode(String.fromCharCode(24) + " \n");
                 chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
                 $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
             });
@@ -919,12 +922,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             // new buttons start
             // https://github.com/gnea/grbl/wiki/Grbl-v1.1-Commands
             $('#com-chilipeppr-widget-grbl .grbl-safety-door').click(function() {
-                that.sendCode('\x84');
+                that.sendCode('\x84 ' + " \n");
             });
 
             $('#com-chilipeppr-widget-grbl .overrides-btn .btn').click(function() {
                 // send ascii code from data-send-code html tag
-                that.sendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)));
+                that.sendCode(String.fromCharCode(parseInt($(this).data("send-code"), 16)) + "\n");
             });
 
             $('#com-chilipeppr-widget-grbl .hide-overrides').click(function(evt) {
@@ -1394,14 +1397,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                         $('.grbl-feedhold').text('Cancel').data({
                                             title: "Jog Cancel",
                                             content: "Immediately cancels a jog command. This bypasses the planner buffer",
-                                            command: 0x85
-                                        });
+                                            command: String.fromCharCode(parseInt(0x85,16)) +" \n"
+                                        }).popover();
+                                        
                                     } else {
                                         $('.grbl-feedhold').text('Hold!').data({
                                             title: "FeedHold",
                                             content: "Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.",
-                                            command: '!'
-                                        });
+                                            command: '!' + " \n"
+                                        }).popover();
                                     }
                                 }
                             }
@@ -1420,7 +1424,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                             that.alarm = true;
                             $('.stat-state').text("Alarm - Click To Reset (CTRL+X)");
                             $('.stat-state').click(function() {
-                                that.sendCode(String.fromCharCode(24) + "\n");
+                                that.sendCode(String.fromCharCode(24) + " \n");
                             });
                             $(".stat-state").hover(function() {
                                 $(this).css('cursor', 'pointer');
@@ -1691,7 +1695,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                 $('.stat-state').text("Alarm - Click To Reset (CTRL+X)");
                                 $('.stat-state').unbind("click")
                                     .click(function() {
-                                        that.sendCode(String.fromCharCode(24));
+                                        that.sendCode(String.fromCharCode(24) + "\n");
                                     })
                                     .hover(function() {
                                         $(this).css('cursor', 'pointer');
