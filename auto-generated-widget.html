@@ -773,16 +773,24 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
 
             //watch for a 3d viewer /sceneReloaded and pass back axes info
             chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/sceneReloaded", this, function(data) {
-                if (this.last_work.x !== null)
+                if (this.last_work.x !== null){
                     this.publishAxisStatus(this.last_work);
-                else if (this.last_machine.x !== null)
-                    this.publishAxisStatus(this.last_machine);
-                else
+                }else if (this.last_machine.x !== null){
+                    if(this.offsets.x !== null){
+                        ['x','y','z'].forEach( function(f, index){
+                            this.last_work[f] = this.last_machine[f] - this.offsets[f];
+                        }, this);
+                        this.publishAxisStatus(this.last_work);
+                    } else {
+                        this.publishAxisStatus(this.last_machine);
+                    }
+                } else {
                     this.publishAxisStatus({
                         "x": 0.000,
                         "y": 0.000,
                         "z": 0.000
                     });
+                }
             });
             chilipeppr.subscribe("/com-chilipeppr-widget-grbl-autolevel/probing", this, function(probing) {
                 this.probing = probing;
@@ -1140,6 +1148,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 if (that.version === "") {
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
                     that.sendCode(String.fromCharCode(36) + "I\n");
+                    
                 }
                 else {
                     if (that.isV1()) {
@@ -1189,6 +1198,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             $('.com-chilipeppr-grbl-state').text(this.status);
             this.setVersion("");
             $('#com-chilipeppr-widget-grbl .panel-title').text("GRBL");
+            /*
             this.offsets = {
                 "x": 0.000,
                 "y": 0.000,
@@ -1209,6 +1219,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 "y": 0.000,
                 "z": 0.000
             });
+            */
         },
         getControllerInfo: function() {
             var json = {
@@ -1353,6 +1364,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             var msg = recvline.dataline;
             var parsing = true;
             var that = this;
+            
             $.each(pushMessages, function(key, value) {
                 if (!parsing) {
                     return;
