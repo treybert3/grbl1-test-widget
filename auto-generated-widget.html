@@ -1166,9 +1166,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 that.sendCode("?\n");
                 that.sendCode("$G\n");
                 //wait one additional second before checking for what reporting units grbl is configured for.
-                setTimeout(function(context) {
-                    context.updateReportUnits();
-                    if (context.isV1()) {
+                setTimeout(function() {
+                    that.updateReportUnits();
+                    if (that.isV1()) {
                         $('.v1Suppress').hide();
                         $('.v1Show').show();
                         // hide the new override btns 
@@ -1178,11 +1178,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                         $('.v1Suppress').show();
                         $('.v1Show').hide();
                     }
-                }, 1000, that);
+                    that.restartStatusInterval(); //Start the $G tracking loop
+                }, 1000);
 
-                that.restartStatusInterval(); //Start the $G tracking loop
-
-            }, 3000);
+            }, 5000); //redefined as five seconds
         },
         closeController: function(isWithDelay) {
             $("#grbl-buffer-warning").show();
