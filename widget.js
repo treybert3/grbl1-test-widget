@@ -1057,7 +1057,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                     that.restartStatusInterval(); //Start the $G tracking loop
                 }, 1000);
 
-            }, 5000); //redefined as five seconds
+            }, 2000); 
         },
         closeController: function(isWithDelay) {
             $("#grbl-buffer-warning").show();
