@@ -824,11 +824,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 
                var val = $(this).text();
                $(this).text('');
-               var node = $("<input>").val(val)
+               var node = $("<input>").val(val).css('width','4rem')
                .on('blur', function(){
-                   var val = this.val();
-                   this.parent().text(val);
-                   this.remove();
+                   var val = $(this).val();
+                   $(this).parent().text(val);
+                   $(this).remove();
                    chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', parseInt(val, 10));
                })
                .appendTo($(this));
