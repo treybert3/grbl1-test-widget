@@ -825,7 +825,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                var val = $(this).text();
                $(this).text('');
                var node = $("<input>").val(val).css('width','4rem')
-               .on('blur', function(){
+               .on('focusout', function(){
                    var val = $(this).val();
                    $(this).parent().text(val);
                    $(this).remove();
