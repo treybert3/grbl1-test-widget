@@ -943,7 +943,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 $(".com-chilipeppr-widget-grbl-realtime-commands").toggle();
             });
 
-
+            
+            $('.stat-jogFeedate').on('click', function(){
+               var val = this.text();
+               this.text('');
+               var node = $("<input>");
+               node.on('blur', function(){
+                   var val = this.val();
+                   this.parent().text(val);
+                   this.remove();
+                   chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', parseInt(val, 10));
+               });
+                
+            });
             // new buttons end
         },
         showConfigModal: function() {
@@ -2591,6 +2603,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 </div>
                 <div class="col col-xs-3 well">
                     <span class="stat-sm stat-queue">0</span>
+                </div>
+                <div class="col col-xs-3 lblpad" id="ttl-spindle">
+                    Jog Feedrate
+                </div>
+                <div class="col col-xs-3 well">
+                    <span class="stat-sm "><span class="stat-jogFeedRate">200</span>  mm/min</span>
                 </div>
             </div><!-- row -->
             <span style="font-size:0.8em;">(These parameters may not update in real time)</span>

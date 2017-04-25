@@ -819,7 +819,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 $(".com-chilipeppr-widget-grbl-realtime-commands").toggle();
             });
 
-
+            
+            $('.stat-jogFeedate').on('click', function(){
+               var val = this.text();
+               this.text('');
+               var node = $("<input>");
+               node.on('blur', function(){
+                   var val = this.val();
+                   this.parent().text(val);
+                   this.remove();
+                   chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', parseInt(val, 10));
+               });
+                
+            });
             // new buttons end
         },
         showConfigModal: function() {
