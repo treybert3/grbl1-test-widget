@@ -820,7 +820,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             });
 
             
-            $('.stat-jogFeedate').on('click', function(){
+            $('.stat-jogFeedRate').on('click', function(){
+                alert('clicked');
                var val = this.text();
                this.text('');
                var node = $("<input>");
@@ -2062,7 +2063,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 i = this.err_log.length - 1;
             //save error in log array
             this.err_log[i] = line.toString() + " - " + msg;
-            this.grblConsole(this.err_og[i]);
+            this.grblConsole(this.err_log[i]);
         },
         forkSetup: function() {
             var topCssSelector = '#com-chilipeppr-widget-grbl';
