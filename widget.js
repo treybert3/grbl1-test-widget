@@ -820,17 +820,18 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             });
 
             
-            $('.stat-jogFeedRate').on('click', function(){
-                alert('clicked');
-               var val = this.text();
-               this.text('');
-               var node = $("<input>");
-               node.on('blur', function(){
+            $('.stat-jogFeedRate').on('click', function(e){
+                
+               var val = $(this).text();
+               $(this).text('');
+               var node = $("<input>").val(val)
+               .on('blur', function(){
                    var val = this.val();
                    this.parent().text(val);
                    this.remove();
                    chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', parseInt(val, 10));
-               });
+               })
+               .appendTo($(this));
                 
             });
             // new buttons end
