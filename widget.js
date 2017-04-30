@@ -1041,6 +1041,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.harmoniseCoordinates(unitSystem);
         },
         updateReportUnits: function() {
+            /*
             if (this.isV1()) {
                 return;
             }
@@ -1074,6 +1075,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     }
                     break;
             }
+            */
         },
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
@@ -1672,7 +1674,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     case 'setting':
                         var configCode = parseInt(result[1], 10);
                         that.assignConfigValue(configCode, result[2]);
-                        that.updateReportUnits();
+                        //that.updateReportUnits();
                         break;
                     case 'message':
                         //not all messages are implemented
