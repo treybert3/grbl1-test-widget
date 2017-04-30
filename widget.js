@@ -833,7 +833,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                    $(this).remove();
                    $('.stat-jogFeedRate').text(val);
                    jogFeedEditing = false;
-                   chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', parseInt(val, 10));
+                   var jFR = parseInt(val,10);
+                   alert(jFR);
+                   
+                   chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', jFR);
                    alert('updated jogFeedRate through publish');
                 })
                 .appendTo($(this));
