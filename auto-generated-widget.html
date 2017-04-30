@@ -1669,11 +1669,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                     break;
 
                                 case 'G21':
-
+                                    console.info(that.config);
                                     if (that.controller_units !== 'mm') {
                                         that.controller_units = 'mm';
                                         $('.stat-units').html(that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
+                                        
                                         if (that.config[13][0] == 1) {
                                             that.sendCode(String.fromCharCode(36) +"13=0\n");
                                             that.config[13][0] = 0;
@@ -1689,6 +1690,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                     break;
 
                                 case 'G20':
+                                    console.info(that.config);
                                     if (that.controller_units !== 'inch') {
                                         that.controller_units = "inch";
                                         $('.stat-units').html(that.controller_units);
