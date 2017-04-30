@@ -992,7 +992,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
         },
         availableBuffer: 0,
+        harmoniseCoordinates: function(unitSystem){
+          if(this.currentUnitSystem == unitSystem){
+              return;
+          }
+          this.currentUnitSystem = unitSystem;
+          if(unitSystem == 'G21'){
+              if(this.config[13][0] != 1){
+                this.send(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) +"\n");
+              }
+          } else {
+              if(this.config[13][0] != 0){
+                this.send(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) +"\n");
+              }
+          }
+        },
         updateWorkUnits: function(units) {
+            return;
             var wm;
             if (units === "mm") {
                 wm = 0;
@@ -1010,6 +1026,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             //  this.updateReportUnits();
         },
         updateCoordinateUnits: function(unit) {
+            return;
             this.grblConsole('received coordinate unit update', unit);
             if (unit == 'G20') {
                 this.updateWorkUnits('inch');
@@ -1019,6 +1036,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
         },
         updateReportUnits: function() {
+            return;
             this.grblConsole("in update report units", {work: this.work_mode, report:this.report_mode});
             switch (this.work_mode) {
                 case 0: //mm
