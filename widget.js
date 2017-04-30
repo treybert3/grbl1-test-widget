@@ -554,10 +554,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 console.info.apply(mainArguments);
             }
         },
-        findConfigItem: function(index) {
+        findConfigItem: function(i) {
             var rObj;
             this.configFormatData.forEach(function(obj, index) {
-                if (obj.code == index) {
+                if (obj.code == i) {
                     rObj = obj;
                     return true;
                 }
