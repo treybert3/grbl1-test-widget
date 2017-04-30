@@ -100,7 +100,7 @@ function Queue() {
 
 
 
-cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"], function() {
+cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie"], function() {
 
     return {
 
@@ -567,13 +567,13 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
         init: function() {
             var query = window.location.search.substring(1);
             var vars = query.split("&");
-            vars.forEach(function(item, index){
+            vars.forEach(function(item, index) {
                 var bits = item.split('=');
-                if(bits[0].toLowerCase() == 'debug' && bits[1] == 1){
-                    $('#com-chilipeppr-widget-grbl .grbl-debug').trigger('click'); 
+                if (bits[0].toLowerCase() == 'debug' && bits[1] == 1) {
+                    $('#com-chilipeppr-widget-grbl .grbl-debug').trigger('click');
                 }
-            },this);
-            
+            }, this);
+
             this.uiHover(); //set up the data elements for all UI
 
             this.setupUiFromCookie();
@@ -652,18 +652,21 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
 
             //watch for a 3d viewer /sceneReloaded and pass back axes info
             chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/sceneReloaded", this, function(data) {
-                if (this.last_work.x !== null){
+                if (this.last_work.x !== null) {
                     this.publishAxisStatus(this.last_work);
-                }else if (this.last_machine.x !== null){
-                    if(this.offsets.x !== null){
-                        ['x','y','z'].forEach( function(f, index){
+                }
+                else if (this.last_machine.x !== null) {
+                    if (this.offsets.x !== null) {
+                        ['x', 'y', 'z'].forEach(function(f, index) {
                             this.last_work[f] = this.last_machine[f] - this.offsets[f];
                         }, this);
                         this.publishAxisStatus(this.last_work);
-                    } else {
+                    }
+                    else {
                         this.publishAxisStatus(this.last_machine);
                     }
-                } else {
+                }
+                else {
                     this.publishAxisStatus({
                         "x": 0.000,
                         "y": 0.000,
@@ -679,8 +682,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
         spindleDirection: null,
         coolant: "Off",
         options: null,
-        isV1: function(){
-          return this.version.substring(0,1) == '1' || $('#com-chilipeppr-widget-grbl .grbl-verbose').hasClass("enabled");  
+        isV1: function() {
+            return this.version.substring(0, 1) == '1' || $('#com-chilipeppr-widget-grbl .grbl-verbose').hasClass("enabled");
         },
         setVersion: function(ver) {
             this.grblConsole('setting version to ' + ver);
@@ -718,8 +721,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 };
             }
             this.options = options;
-            this.jogFeedRate = parseInt(options.jogFeedRate,10);
-            if(isNaN(this.jogFeedRate)) this.jogFeedRate = 200;
+            this.jogFeedRate = parseInt(options.jogFeedRate, 10);
+            if (isNaN(this.jogFeedRate)) this.jogFeedRate = 200;
             //console.log("GRBL: options:", options);
 
         },
@@ -755,7 +758,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 //alert($(this).data('command'));
                 that.sendCode($(this).data('command') + " \n");
                 // announce to other widgets that user hit e-stop
-                if($(this).data('command') == '!'){
+                if ($(this).data('command') == '!') {
                     chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
                     chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
                     $(this).html("!");
@@ -769,7 +772,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerresume', "");
 
                 $(this).html("~").removeClass("btn-success");
-                if(that.status != 'Jog'){
+                if (that.status != 'Jog') {
                     $('#com-chilipeppr-widget-grbl .grbl-feedhold').html('Hold !');
                 }
             });
@@ -788,7 +791,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                     $('.grbl-debug').addClass("enabled");
                 }
             });
-            
+
             $('#com-chilipeppr-widget-grbl .grbl-v1mode').click(function() {
                 $('#com-chilipeppr-widget-grbl .grbl-v1mode').toggleClass("enabled");
             });
@@ -826,26 +829,26 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 $(".com-chilipeppr-widget-grbl-realtime-commands").toggle();
             });
 
-            
+
             var jogFeedEditing = false;
             $('.stat-jogFeedRate').text(this.jogFeedRate)
-                .on('click', function(e){
-                    if(jogFeedEditing) return;
+                .on('click', function(e) {
+                    if (jogFeedEditing) return;
                     jogFeedEditing = true;
                     var val = $(this).text();
                     $(this).text('');
-                    var node = $("<input>").val(val).css('width','4rem')
-                    .on('focusout', function(){
-                       var val = $(this).val();
-                       $('.stat-jogFeedRate').text(val);
-                       jogFeedEditing = false;
-                       var jFR = parseInt(val,10);
-                       chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
-                       $(this).remove();
-                       that.saveOptionsCookie();
-                    })
-                    .appendTo($(this));
-                    
+                    var node = $("<input>").val(val).css('width', '4rem')
+                        .on('focusout', function() {
+                            var val = $(this).val();
+                            $('.stat-jogFeedRate').text(val);
+                            jogFeedEditing = false;
+                            var jFR = parseInt(val, 10);
+                            chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
+                            $(this).remove();
+                            that.saveOptionsCookie();
+                        })
+                        .appendTo($(this));
+
                 });
             chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', parseInt(this.jogFeedRate, 10));
             // new buttons end
@@ -873,9 +876,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                     </div>');
                     $(elem).popover({
                         toggle: 'popover',
-                        title:  String.fromCharCode(36) + config_element.code,
+                        title: String.fromCharCode(36) + config_element.code,
                         placement: 'bottom',
-                        content:    config_element.explanation
+                        content: config_element.explanation
                     });
                     //this should speed up the save event materially.  
                     $(elem).on('blur', function(e, that) {
@@ -970,12 +973,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
         },
         commandQueue: [],
-        isConnected: function(){
+        isConnected: function() {
             return this.status != 'Offline' && this.status != '';
         },
         connectedToPort: false,
         doQueue: function() {
-            if(this.isConnected()){
+            if (this.isConnected()) {
                 if (this.commandQueue.length > 0) {
                     if (this.availableBuffer > this.commandQueue[0].length + 1) {
                         var cmd = this.commandQueue.shift();
@@ -986,24 +989,31 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
         },
         availableBuffer: 0,
-        harmoniseCoordinates: function(unitSystem){
-          if(this.currentUnitSystem == unitSystem){
-              return;
-          }
-          this.currentUnitSystem = unitSystem;
-          if(unitSystem == 'G21' ){
-              if(this.config[13][0] != 1){
-                this.send(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) +"\n");
-              }
-          } else {
-              if(this.config[13][0] != 0){
-                this.send(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) +"\n");
-              }
-          }
-          chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", unitSystem == 'G21' ? 'mm' : 'inch');
+        harmoniseCoordinates: function(unitSystem) {
+            var isDirty = false;
+            if (this.currentUnitSystem != unitSystem) {
+                isDirty = true;
+            }
+            this.currentUnitSystem = unitSystem;
+            if (this.isConnected()) {
+                if (unitSystem == 'G21' && this.config[13][0] != 1) {
+                    this.send(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+                }
+
+                else if (unitSystem == 'G20' && this.config[13][0] != 0) {
+                    this.send(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+                }
+            }
+            if (isDirty) {
+                chilipeppr.unsubscribe("/com-chilipeppr-interface-cnccontroller/coordinateUnits");
+                chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", unitSystem == 'G21' ? 'mm' : 'inch');
+                chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/coordinateUnits", this, this.updateCoordinateUnits);
+            }
         },
         updateWorkUnits: function(units) {
-            if(this.isV1()){return;}
+            if (this.isV1()) {
+                return;
+            }
             var wm;
             if (units === "mm") {
                 wm = 0;
@@ -1021,18 +1031,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             //  this.updateReportUnits();
         },
         updateCoordinateUnits: function(unit) {
-            if(this.isV1()){return;}
             this.grblConsole('received coordinate unit update', unit);
             if (unit == 'G20') {
-                this.updateWorkUnits('inch');
+                this.controller_units = 'inch';
             }
-            else if (unit == 'G21') {
-                this.updateWorkUnits('mm');
+            else {
+                this.controller_units = 'mm';
             }
+            this.harmoniseCoordinates();
         },
         updateReportUnits: function() {
-            if(this.isV1()){return;}
-            this.grblConsole("in update report units", {work: this.work_mode, report:this.report_mode});
+            if (this.isV1()) {
+                return;
+            }
+            this.grblConsole("in update report units", {
+                work: this.work_mode,
+                report: this.report_mode
+            });
             switch (this.work_mode) {
                 case 0: //mm
                     if (this.config[13] == undefined || this.config[13][0] == 1) {
@@ -1042,7 +1057,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                             work: this.work_mode,
                             report: this.report_mode
                         });
-                        this.config[13] = [0,""];
+                        this.config[13] = [0, ""];
                         $(".stat-units").html("mm");
                     }
                     break;
@@ -1054,7 +1069,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                             work: this.work_mode,
                             report: this.report_mode
                         });
-                        this.config[13] = [1,''];
+                        this.config[13] = [1, ''];
                         $(".stat-units").html("inch");
                     }
                     break;
@@ -1071,7 +1086,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 if (that.version === "") {
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
                     that.sendCode(String.fromCharCode(36) + "I\n");
-                    
+
                 }
                 else {
                     if (that.isV1()) {
@@ -1104,7 +1119,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                     that.restartStatusInterval(); //Start the $G tracking loop
                 }, 1000);
 
-            }, 2000); 
+            }, 2000);
         },
         closeController: function(isWithDelay) {
             $("#grbl-buffer-warning").show();
@@ -1115,7 +1130,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             this.report_mode = 0;
             this.work_mode = 0;
             this.status = "Offline";
-            
+
             chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', this.status);
             $('.com-chilipeppr-grbl-state').text(this.status);
             this.setVersion("");
@@ -1286,7 +1301,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             var msg = recvline.dataline;
             var parsing = true;
             var that = this;
-            
+
             $.each(pushMessages, function(key, value) {
                 if (!parsing) {
                     return;
@@ -1321,20 +1336,21 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
 
                             }
                             else {
-                                if(that.status != fields[0]){
+                                if (that.status != fields[0]) {
                                     that.status = fields[0];
                                     that.grblConsole("setting status to " + that.status);
                                     //UI updates
                                     chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
                                     $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
-                                    if(that.status == 'Jog') {
+                                    if (that.status == 'Jog') {
                                         $('.grbl-feedhold').text('Cancel').data({
                                             title: "Jog Cancel",
                                             content: "Immediately cancels a jog command. This bypasses the planner buffer",
-                                            command: String.fromCharCode(parseInt(0x85,16)) +" \n"
+                                            command: String.fromCharCode(parseInt(0x85, 16)) + " \n"
                                         }).popover();
-                                        
-                                    } else {
+
+                                    }
+                                    else {
                                         $('.grbl-feedhold').text('Hold!').data({
                                             title: "FeedHold",
                                             content: "Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.",
@@ -1345,7 +1361,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                             }
                         }
                         else {
-                            if(that.status != "Offline"){
+                            if (that.status != "Offline") {
                                 that.status = 'Offline';
                                 that.grblConsole("setting status to " + that.status);
                                 //UI updates
@@ -1375,7 +1391,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                             $('#stat-state-background-box').css('background-color', '#f5f5f5');
                         }
 
-                
+
                         var receivedMachineCoords = false;
                         var receivedWorkCoords = false;
                         var i;
@@ -1730,8 +1746,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                         var tmp = new Array;
                         that.compileOptions = "";
                         for (var i = 0; i < result[1].length; i++) {
-                            opt = result[1
-                            ].substring(i, 1);
+                            opt = result[1].substring(i, 1);
                             if (optionCodes[opt]) {
                                 tmp.push(optionCodes[opt]);
                             }
