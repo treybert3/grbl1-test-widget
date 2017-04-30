@@ -835,9 +835,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                    $('.stat-jogFeedRate').text(val);
                    jogFeedEditing = false;
                    var jFR = parseInt(val,10);
-                   alert(jFR);
-                   
-                   chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', jFR);
+                   chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
                    alert('updated jogFeedRate through publish');
                 })
                 .appendTo($(this));
