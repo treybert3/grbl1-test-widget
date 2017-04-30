@@ -835,10 +835,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                    $('.stat-jogFeedRate').text(val);
                    jogFeedEditing = false;
                    var jFR = parseInt(val,10);
-                   chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
+                   chilipeppr.store('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
                    $(this).remove();
-                   
-                   
+
                 })
                 .appendTo($(this));
                 
