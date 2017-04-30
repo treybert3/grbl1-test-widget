@@ -713,7 +713,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
             else {
                 options = {
-                    showBody: true
+                    showBody: true,
+                    jogFeedRate: 200
                 };
             }
             this.options = options;
@@ -722,7 +723,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
         },
         saveOptionsCookie: function() {
             var options = {
-                showBody: this.options.showBody
+                showBody: this.options.showBody,
+                jogFeedRate: this.jogFeedRate
             };
             var optionsStr = JSON.stringify(options);
             //console.log("GRBL: saving options:", options, "json.stringify:", optionsStr);
@@ -824,24 +826,26 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
 
             
             var jogFeedEditing = false;
-            $('.stat-jogFeedRate').on('click', function(e){
-                if(jogFeedEditing) return;
-                jogFeedEditing = true;
-                var val = $(this).text();
-                $(this).text('');
-                var node = $("<input>").val(val).css('width','4rem')
-                .on('focusout', function(){
-                   var val = $(this).val();
-                   $('.stat-jogFeedRate').text(val);
-                   jogFeedEditing = false;
-                   var jFR = parseInt(val,10);
-                   chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
-                   $(this).remove();
-
-                })
-                .appendTo($(this));
-                
-            });
+            $('.stat-jogFeedRate').text(this.jogFeedRate)
+                .on('click', function(e){
+                    if(jogFeedEditing) return;
+                    jogFeedEditing = true;
+                    var val = $(this).text();
+                    $(this).text('');
+                    var node = $("<input>").val(val).css('width','4rem')
+                    .on('focusout', function(){
+                       var val = $(this).val();
+                       $('.stat-jogFeedRate').text(val);
+                       jogFeedEditing = false;
+                       var jFR = parseInt(val,10);
+                       chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
+                       $(this).remove();
+    
+                    })
+                    .appendTo($(this));
+                    
+                });
+            chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', parseInt(this.jogFeedRate, 10));
             // new buttons end
         },
         showConfigModal: function() {
@@ -1725,7 +1729,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                         var tmp = new Array;
                         that.compileOptions = "";
                         for (var i = 0; i < result[1].length; i++) {
-                            opt = result[1].substring(i, 1);
+                            opt = result[1
+                            ].substring(i, 1);
                             if (optionCodes[opt]) {
                                 tmp.push(optionCodes[opt]);
                             }
