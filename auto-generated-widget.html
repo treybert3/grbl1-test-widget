@@ -995,7 +995,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                         <input class="form-control" data-index="' + config_element.code + '" id="com-chilipeppr-widget-grbl-config-' + config_element.code + '" value="' + that.config[config_element.code][0] + '"/>\
                         <span class="input-group-addon">' + config_element.setting + '</span>\
                     </div>');
-
+                    $(elem).popover({
+                        toggle: 'popover',
+                        title:  String.fromCharCode(36) + config_element.code,
+                        placement: 'bottom',
+                        content:    config_element.explanation
+                    });
                     //this should speed up the save event materially.  
                     $(elem).on('blur', function(e, that) {
                         var val = $(this).val();
@@ -1679,16 +1684,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                         
                                         if (that.config[13][0] == 1) {
                                             that.sendCode(String.fromCharCode(36) + "13=0\n");
-                                            //that.config[13][0] = 0;
+                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                                         }
                                     }
                                     else {
                                         if (that.config[13][0] == 1) {
                                             that.sendCode(String.fromCharCode(36) + "13=0\n");
-                                            //that.config[13][0] = 0;
+                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                                         }
                                     }
-                                    that.updateWorkUnits('mm');
+                                    //that.updateWorkUnits('mm');
                                     break;
 
                                 case 'G20':
@@ -1699,14 +1704,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                                         if (that.config[13][0] == 0) {
                                             that.sendCode(String.fromCharCode(36) + "13=1\n");
-                                            //that.config[13][0] = 1;
+                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                                         }
-                                        that.updateWorkUnits('inch');
+                                        //that.updateWorkUnits('inch');
                                     }
                                     else {
                                         if (that.config[13][0] == 0) {
                                             that.sendCode(String.fromCharCode(36) + "13=1\n");
-                                            //that.config[13][0] = 1;
+                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                                         }
                                     }
                                     break;
