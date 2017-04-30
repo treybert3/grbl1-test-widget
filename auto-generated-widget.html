@@ -1154,15 +1154,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // LUCA -> commented
             //  this.updateReportUnits();
         },
-        updateCoordinateUnits: function(unit) {
-            this.grblConsole('received coordinate unit update', unit);
-            if (unit == 'G20') {
+        updateCoordinateUnits: function(unitSystem) {
+            this.grblConsole('received coordinate unit update', unitSystem);
+            if (unitSystem == 'G20') {
                 this.controller_units = 'inch';
             }
             else {
                 this.controller_units = 'mm';
             }
-            this.harmoniseCoordinates();
+            this.harmoniseCoordinates(unitSystem);
         },
         updateReportUnits: function() {
             if (this.isV1()) {
