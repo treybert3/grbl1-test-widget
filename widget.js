@@ -532,6 +532,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             if (this.isDebugMode()) {
                 if (arguments.length == 0) return;
                 if (arguments.length > 1) {
+                    console.warn('grblConsole arguments' , arguments);
                     var a;
                     for (var i = 0; i < arguments.length; i++) {
                         if (typeof arguments[i] == 'object') {
@@ -833,6 +834,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                    $('.stat-jogFeedRate').text(val);
                    jogFeedEditing = false;
                    chilipeppr.publish('/com-chilipeppr-widget-grbl/jogFeedRate', parseInt(val, 10));
+                   alert('updated jogFeedRate through publish');
                 })
                 .appendTo($(this));
                 
