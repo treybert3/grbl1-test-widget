@@ -248,7 +248,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             '/com-chilipeppr-interface-cnccontroller/proberesponse': 'Publish a probe response with the coordinates triggered during probing, or an alarm state if the probe does not contact a surface',
             '/com-chilipeppr-interface-cnccontroller/status': 'Publish a signal each time the GRBL status changes',
             '/com-chilipeppr-interface-cnccontroller/grblVersion': 'Publish the version number of the currently installed grbl',
-            "/com-chilipeppr-interface-cnccontroller/distance": 'publish whether we are in absolute or incremental mode'
+            "/com-chilipeppr-interface-cnccontroller/distance": 'publish whether we are in absolute or incremental mode',
+            '/com-chilipeppr-interface-cnccontroller/jogFeedRate': 'publish change in desired jog feed rate'
         },
         subscribe: {
             '/com-chilipeppr-interface-cnccontroller/jogdone': 'We subscribe to a jogdone event so that we can fire off an exclamation point (!) to the GRBL to force it to drop all planner buffer items to stop the jog immediately.',
