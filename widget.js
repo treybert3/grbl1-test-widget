@@ -532,7 +532,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
         grblConsole: function() {
             if (this.isDebugMode()) {
                 if (arguments.length == 0) return;
-                if (arguments.length > 1) {
+                /*if (arguments.length > 1) {
                     console.warn('grblConsole arguments' , arguments);
                     var a;
                     for (var i = 0; i < arguments.length; i++) {
@@ -548,6 +548,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 else {
                     $('#com-chilipeppr-widget-grbl-debug-console').append(JSON.stringify(arguments[0]) + "\n");
                 }
+                */
                 var mainArguments = Array.prototype.slice.call(arguments);
                 mainArguments.unshift('GRBL WIDGET: ');
                 console.info.apply(mainArguments);
@@ -836,7 +837,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                    jogFeedEditing = false;
                    var jFR = parseInt(val,10);
                    chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
-                   alert('updated jogFeedRate through publish');
+                   
                 })
                 .appendTo($(this));
                 
