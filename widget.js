@@ -718,6 +718,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 };
             }
             this.options = options;
+            this.jogFeedRate = options.jogFeedRate;
             //console.log("GRBL: options:", options);
 
         },
@@ -1568,16 +1569,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                         that.controller_units = "inch";
                                         $('.stat-units').html(that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        if (that.config[13][1] == 0) {
+                                        if (that.config[13][0] == 0) {
                                             that.sendCode(String.fromCharCode(36) +"13=1\n")
-                                            that.config[13][1] = 1;
+                                            that.config[13][0] = 1;
                                         }
                                         that.updateWorkUnits('inch');
                                     }
                                     else {
-                                        if (that.config[13][1] == 0) {
+                                        if (that.config[13][0] == 0) {
                                             that.sendCode(String.fromCharCode(36) +"13=1\n")
-                                            that.config[13][1] = 1;
+                                            that.config[13][0] = 1;
                                         }
                                     }
                                     break;
