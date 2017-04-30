@@ -840,7 +840,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                        var jFR = parseInt(val,10);
                        chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', jFR);
                        $(this).remove();
-    
+                       that.saveOptionsCookie();
                     })
                     .appendTo($(this));
                     
@@ -862,7 +862,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 }
                 $('#grbl-config-div').empty();
 
-                that.configFormData.forEach(function(config_element, index_num) {
+                that.configFormatData.forEach(function(config_element, index_num) {
                     var elem = $('\
                     <div class="input-group input-group-sm">\
                         <span class="input-group-addon">&#36;' + config_element.code + '</span>\
@@ -1549,15 +1549,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                         that.controller_units = 'mm';
                                         $('.stat-units').html(that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        if (that.config[13][1] == 1) {
-                                            that.sendCode("$13=0\n");
-                                            that.config[13][1] = 0;
+                                        if (that.config[13][0] == 1) {
+                                            that.sendCode(String.fromCharCode(36) +"13=0\n");
+                                            that.config[13][0] = 0;
                                         }
                                     }
                                     else {
-                                        if (that.config[13][1] == 1) {
-                                            that.sendCode("$13=0\n");
-                                            that.config[13][1] = 0;
+                                        if (that.config[13][0] == 1) {
+                                            that.sendCode(String.fromCharCode(36) +"13=0\n");
+                                            that.config[13][0] = 0;
                                         }
                                     }
                                     that.updateWorkUnits('mm');
@@ -1569,14 +1569,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                         $('.stat-units').html(that.controller_units);
                                         chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
                                         if (that.config[13][1] == 0) {
-                                            that.sendCode("$13=1\n");
+                                            that.sendCode(String.fromCharCode(36) +"13=1\n")
                                             that.config[13][1] = 1;
                                         }
                                         that.updateWorkUnits('inch');
                                     }
                                     else {
                                         if (that.config[13][1] == 0) {
-                                            that.sendCode("$13=1\n");
+                                            that.sendCode(String.fromCharCode(36) +"13=1\n")
                                             that.config[13][1] = 1;
                                         }
                                     }
