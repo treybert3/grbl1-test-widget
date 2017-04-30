@@ -718,7 +718,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 };
             }
             this.options = options;
-            this.jogFeedRate = options.jogFeedRate;
+            this.jogFeedRate = parseInt(options.jogFeedRate,10);
+            if(isNaN(this.jogFeedRate)) this.jogFeedRate = 200;
             //console.log("GRBL: options:", options);
 
         },
