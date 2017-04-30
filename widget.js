@@ -981,12 +981,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                         var cmd = this.commandQueue.shift();
                         this.sendCode(cmd);
                         this.availableBuffer -= cmd.length;
-                        if(cmd == 'G20\n'){
-                            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", "inch");
-                        } else 
-                        if(cmd == 'G21\n'){
-                            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", "mm");
-                        }
                     }
                 }
             }
@@ -997,7 +991,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
               return;
           }
           this.currentUnitSystem = unitSystem;
-          if(unitSystem == 'G21'){
+          if(unitSystem == 'G21' ){
               if(this.config[13][0] != 1){
                 this.send(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) +"\n");
               }
@@ -1006,9 +1000,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 this.send(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) +"\n");
               }
           }
+          chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", unitSystem == 'G21' ? 'mm' : 'inch');
         },
         updateWorkUnits: function(units) {
-            return;
+            if(this.isV1()){return;}
             var wm;
             if (units === "mm") {
                 wm = 0;
@@ -1026,7 +1021,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             //  this.updateReportUnits();
         },
         updateCoordinateUnits: function(unit) {
-            return;
+            if(this.isV1()){return;}
             this.grblConsole('received coordinate unit update', unit);
             if (unit == 'G20') {
                 this.updateWorkUnits('inch');
@@ -1036,7 +1031,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
             }
         },
         updateReportUnits: function() {
-            return;
+            if(this.isV1()){return;}
             this.grblConsole("in update report units", {work: this.work_mode, report:this.report_mode});
             switch (this.work_mode) {
                 case 0: //mm
@@ -1574,19 +1569,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                     if (that.controller_units !== 'mm') {
                                         that.controller_units = 'mm';
                                         $('.stat-units').html(that.controller_units);
-                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        
-                                        if (that.config[13][0] == 1) {
-                                            that.sendCode(String.fromCharCode(36) + "13=0\n");
-                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-                                        }
                                     }
-                                    else {
-                                        if (that.config[13][0] == 1) {
-                                            that.sendCode(String.fromCharCode(36) + "13=0\n");
-                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-                                        }
-                                    }
+                                    that.harmoniseCoordinates('G21');
                                     //that.updateWorkUnits('mm');
                                     break;
 
@@ -1595,19 +1579,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                                     if (that.controller_units !== 'inch') {
                                         that.controller_units = "inch";
                                         $('.stat-units').html(that.controller_units);
-                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        if (that.config[13][0] == 0) {
-                                            that.sendCode(String.fromCharCode(36) + "13=1\n");
-                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-                                        }
-                                        //that.updateWorkUnits('inch');
                                     }
-                                    else {
-                                        if (that.config[13][0] == 0) {
-                                            that.sendCode(String.fromCharCode(36) + "13=1\n");
-                                            that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
-                                        }
-                                    }
+                                    that.harmoniseCoordinates('G20');
                                     break;
                             }
                         }, that);
@@ -2074,7 +2047,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready","jquerycookie"
                 if (isNaN(val)) {
                     val = 0.000;
                 }
-
                 _axes[index] = parseFloat(val).toFixed(3);
             });
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", _axes);
