@@ -873,6 +873,27 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 $('#grbl-config-div').empty();
 
                 that.configFormatData.forEach(function(config_element, index_num) {
+                    switch(config_element.fieldType){
+                    case 'switch':
+                    var elem = $('\
+                   <div class="input-group input-group-sm">\
+                        <span class="input-group-addon">&#36;' + config_element.code + '</span>\
+                        <select class="form-control" data-index="' + config_element.code + '" id="com-chilipeppr-widget-grbl-config-' + config_element.code + '">\
+                        <option value="0"></option>\
+                        <option value="1"></option>\
+                        </select>\
+                        <span class="input-group-addon">' + config_element.setting + '</span>\
+                    </div>');
+                    
+                    $(elem).find('option').each(function(index, e){
+                        var v = parseInt($(this).val(),10);
+                        if(v == that.config[config_element.code][0]){
+                            $(this).prop('selected','selected');
+                        }
+                        $(this).text(config_element.values[v]);
+                    });    
+                    break;
+                    default:
                     var elem = $('\
                     <div class="input-group input-group-sm">\
                         <span class="input-group-addon">&#36;' + config_element.code + '</span>\
@@ -880,6 +901,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         <span class="input-group-addon">' + config_element.setting + '</span>\
                     </div>');
                    
+                    }
                     //this should speed up the save event materially.  
                     $(elem).on('blur', function(e, that) {
                         var val = $(this).val();
