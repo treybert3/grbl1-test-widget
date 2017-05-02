@@ -1024,11 +1024,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.currentUnitSystem = unitSystem;
             if (this.isConnected()) {
                 if (unitSystem == 'G21' && this.config[13][0] != 1) {
-                    this.send(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+                    this.sendCode(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                 }
 
                 else if (unitSystem == 'G20' && this.config[13][0] != 0) {
-                    this.send(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+                    this.sendCode(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                 }
             }
             if (isDirty) {
@@ -1375,6 +1375,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         }
 
                         if (that.status != _status) {
+                            that.status = _status;
                             //done status. now update the UI
                             that.grblConsole("setting status to " + that.status);
                             chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
