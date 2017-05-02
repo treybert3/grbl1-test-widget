@@ -1346,7 +1346,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     case 'status':
 
                         //we need the bits
-                        console.error('status');
                         var fields = result[1].split("|");
                         //0 is always the machine state
                         var status = new RegExp("(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
