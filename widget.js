@@ -874,12 +874,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         <input class="form-control" data-index="' + config_element.code + '" id="com-chilipeppr-widget-grbl-config-' + config_element.code + '" value="' + that.config[config_element.code][0] + '"/>\
                         <span class="input-group-addon">' + config_element.setting + '</span>\
                     </div>');
-                    $(elem).popover({
-                        toggle: 'popover',
-                        title: String.fromCharCode(36) + config_element.code,
-                        placement: 'bottom',
-                        content: config_element.explanation
-                    });
+                   
                     //this should speed up the save event materially.  
                     $(elem).on('blur', function(e, that) {
                         var val = $(this).val();
@@ -894,7 +889,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             that.doQueue();
                             that.config[index][0] = val;
                         }
-                    }, that).appendTo('#grbl-config-div');
+                    }, that).appendTo('#grbl-config-div').popover({
+                        title: String.fromCharCode(36) + config_element.code,
+                        placement: 'bottom',
+                        content: config_element.explanation,
+                        trigger: 'hover'
+                    });
                 }, that);
 
                 $('#grbl-config-div').append('<br/><button type="button" class="btn btn-sm btn-primary save-config">Save Settings To GRBL</button>');
@@ -1322,11 +1322,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         var fields = result[1].split("|");
                         //0 is always the machine state
                         var status = new RegExp("(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
+                        var _status;
                         if (status.exec(fields[0])) {
                             if (fields[0].indexOf('Hold:') >= 0 || fields[0].indexOf('Door:') >= 0) {
-                                that.status = subStates[fields[0]];
-
+                                _status = subStates[fields[0]];
                                 // adding some button status
+                                if(that.status != _status){
                                 var bit = fields[0].split(':');
                                 if ((bit[0] == 'Hold' && bit[1] == '0') || (bit[0] == 'Door' && bit[1] == '0')) {
                                     $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
@@ -1335,43 +1336,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 if (bit[0] == 'Door' && bit[1] == '3') {
                                     $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
                                 }
-
+                                }
                             }
                             else {
-                                if (that.status != fields[0]) {
-                                    that.status = fields[0];
-                                    that.grblConsole("setting status to " + that.status);
-                                    //UI updates
-                                    chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
-                                    $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
-                                    if (that.status == 'Jog') {
-                                        $('.grbl-feedhold').text('Cancel').data({
-                                            title: "Jog Cancel",
-                                            content: "Immediately cancels a jog command. This bypasses the planner buffer",
-                                            command: String.fromCharCode(parseInt(0x85, 16)) + " \n"
-                                        }).popover();
-
-                                    }
-                                    else {
-                                        $('.grbl-feedhold').text('Hold!').data({
-                                            title: "FeedHold",
-                                            content: "Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.",
-                                            command: '!' + " \n"
-                                        }).popover();
-                                    }
-                                }
+                                _status = fields[0];
                             }
                         }
                         else {
-                            if (that.status != "Offline") {
-                                that.status = 'Offline';
-                                that.grblConsole("setting status to " + that.status);
-                                //UI updates
-                                chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
-                                $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
-                            }
+                            _status = 'Offline';
                         }
-
+                        
+                        if(that.status != _status){
+                            //done status. now update the UI
+                            that.grblConsole("setting status to " + that.status);
+                            chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
+                            $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
+                        }
+                        
                         if (that.alarm !== true && that.status === "Alarm") {
                             that.alarm = true;
                             $('.stat-state').text("Alarm - Click To Reset (CTRL+X)");
@@ -1448,7 +1429,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     if (feedRate != that.feedRate) {
                                         that.feedRate = feedRate;
                                         $('.stat-feedrate').html(feedRate);
-                                    } // Why floating feedrate? is not integer?
+                                    } 
+                                    
                                     var spindleSpeed = _bits[1] == '0' ? "Off" : spindleSpeed;
                                     if (spindleSpeed != that.spindleSpeed) {
                                         that.spindleSpeed = spindleSpeed;
@@ -2058,7 +2040,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             $('.stat-mcoords').html("X:" + this.last_machine.x.toFixed(3) + " Y:" + this.last_machine.y.toFixed(3) + " Z:" + this.last_machine.z.toFixed(3));
         },
         publishAxisStatus: function(axes) {
-            if (this.widgetDebug) console.log("GRBL WIDGET: axis data received", axes);
+            this.grblConsole("axis data received", axes);
             var _axes = {};
             $.each(axes, function(index, val) {
                 if (isNaN(val)) {
