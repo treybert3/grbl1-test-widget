@@ -978,12 +978,17 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons end
         },
         showConfigModal: function() {
+            if(!this.isConnected()){
+                chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "The controller is not connected or offline");
+                return true;
+            }
+            this.config = [];
             this.grblConsole("SJPS sending config request");
             this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             var interval = setInterval(function(context) {
                 var that = context;
                 if (that.config[0] == undefined) {
-                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Sorry, cannot load config from the controller.<br/>Is it properly connected");
+                    chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "Cannot load config from the controller.<br/>Is it properly connected?");
                     return false;
                 }
                 else {
