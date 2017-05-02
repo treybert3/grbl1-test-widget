@@ -854,7 +854,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             // new buttons end
         },
         showConfigModal: function() {
-            if(!this.isConnected()){
+            if (!this.isConnected()) {
                 chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "The controller is not connected or offline");
                 return true;
             }
@@ -873,9 +873,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 $('#grbl-config-div').empty();
 
                 that.configFormatData.forEach(function(config_element, index_num) {
-                    switch(config_element.fieldType){
-                    case 'switch':
-                    var elem = $('\
+                    switch (config_element.fieldType) {
+                        case 'switch':
+                            var elem = $('\
                    <div class="input-group input-group-sm">\
                         <span class="input-group-addon">&#36;' + config_element.code + '</span>\
                         <select class="form-control" data-index="' + config_element.code + '" id="com-chilipeppr-widget-grbl-config-' + config_element.code + '">\
@@ -884,23 +884,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         </select>\
                         <span class="input-group-addon">' + config_element.setting + '</span>\
                     </div>');
-                    
-                    $(elem).find('option').each(function(index, e){
-                        var v = parseInt($(this).val(),10);
-                        if(v == that.config[config_element.code][0]){
-                            $(this).prop('selected','selected');
-                        }
-                        $(this).text(config_element.values[v]);
-                    });    
-                    break;
-                    default:
-                    var elem = $('\
+
+                            $(elem).find('option').each(function(index, e) {
+                                var v = parseInt($(this).val(), 10);
+                                if (v == that.config[config_element.code][0]) {
+                                    $(this).prop('selected', 'selected');
+                                }
+                                $(this).text(config_element.values[v]);
+                            });
+                            break;
+                        default:
+                            var elem = $('\
                     <div class="input-group input-group-sm">\
                         <span class="input-group-addon">&#36;' + config_element.code + '</span>\
                         <input class="form-control" data-index="' + config_element.code + '" id="com-chilipeppr-widget-grbl-config-' + config_element.code + '" value="' + that.config[config_element.code][0] + '"/>\
                         <span class="input-group-addon">' + config_element.setting + '</span>\
                     </div>');
-                   
+
                     }
                     //this should speed up the save event materially.  
                     $(elem).on('blur', function(e, that) {
@@ -1346,6 +1346,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     case 'status':
 
                         //we need the bits
+                        console.error('status');
                         var fields = result[1].split("|");
                         //0 is always the machine state
                         var status = new RegExp("(Idle|Run|Hold|Jog|Alarm|Door|Check|Sleep)", "i");
@@ -1354,15 +1355,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             if (fields[0].indexOf('Hold:') >= 0 || fields[0].indexOf('Door:') >= 0) {
                                 _status = subStates[fields[0]];
                                 // adding some button status
-                                if(that.status != _status){
-                                var bit = fields[0].split(':');
-                                if ((bit[0] == 'Hold' && bit[1] == '0') || (bit[0] == 'Door' && bit[1] == '0')) {
-                                    $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
-                                }
-                                else
-                                if (bit[0] == 'Door' && bit[1] == '3') {
-                                    $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
-                                }
+                                if (that.status != _status) {
+                                    var bit = fields[0].split(':');
+                                    if ((bit[0] == 'Hold' && bit[1] == '0') || (bit[0] == 'Door' && bit[1] == '0')) {
+                                        $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('Resume').addClass("btn-success");
+                                    }
+                                    else
+                                    if (bit[0] == 'Door' && bit[1] == '3') {
+                                        $('#com-chilipeppr-widget-grbl .grbl-cyclestart').html('~').removeClass("btn-success");
+                                    }
                                 }
                             }
                             else {
@@ -1372,14 +1373,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                         else {
                             _status = 'Offline';
                         }
-                        
-                        if(that.status != _status){
+
+                        if (that.status != _status) {
                             //done status. now update the UI
                             that.grblConsole("setting status to " + that.status);
                             chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/status', that.status);
                             $('.com-chilipeppr-grbl-state').text(that.status); //Update UI
                         }
-                        
+
                         if (that.alarm !== true && that.status === "Alarm") {
                             that.alarm = true;
                             $('.stat-state').text("Alarm - Click To Reset (CTRL+X)");
@@ -1456,8 +1457,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     if (feedRate != that.feedRate) {
                                         that.feedRate = feedRate;
                                         $('.stat-feedrate').html(feedRate);
-                                    } 
-                                    
+                                    }
+
                                     var spindleSpeed = _bits[1] == '0' ? "Off" : spindleSpeed;
                                     if (spindleSpeed != that.spindleSpeed) {
                                         that.spindleSpeed = spindleSpeed;
