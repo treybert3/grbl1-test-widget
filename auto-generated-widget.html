@@ -880,9 +880,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             $('#com-chilipeppr-widget-grbl .grbl-feedhold').click(function() {
                 //console.log("GRBL: feedhold");
                 //alert($(this).data('command'));
-                that.sendCode($(this).data('command') + " \n");
+                var _cmd;
+                _cmd = $(this).data('command');
+                if(typeof _cmd == undefined) _cmd = '!';
+                that.sendCode(_cmd + " \n");
                 // announce to other widgets that user hit e-stop
-                if ($(this).data('command') == '!') {
+                if (_cmd == '!') {
                     chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
                     chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
                     $(this).html("!");
@@ -1147,11 +1150,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
             this.currentUnitSystem = unitSystem;
             if (this.isConnected()) {
-                if (unitSystem == 'G21' && this.config[13][0] != 1) {
+                if (unitSystem == 'G20' && this.config[13][0] != 1) { //reset to mm
                     this.sendCode(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                 }
 
-                else if (unitSystem == 'G20' && this.config[13][0] != 0) {
+                else if (unitSystem == 'G21' && this.config[13][0] != 0) { //reset to inches
                     this.sendCode(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
                 }
             }
@@ -2408,7 +2411,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             </div>
             
             <div class="btn-group">
-                <button type="button" class="btn btn-xs btn-default btn-danger grbl-feedhold" data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Feedhold" data-content="Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.">
+                <button type="button" data-command='!' class="btn btn-xs btn-default btn-danger grbl-feedhold" data-delay="500" data-animation="true" data-placement="auto" data-container="body" data-trigger="hover" data-title="Feedhold" data-content="Stop movement immediately. Maintains positional accuracy. Sends ! command to GRBL which jumps past the planner buffer so you get immediate stop. Movement can be resumed with ~ command. If you want to jog you should flush queue with CTRL+X.">
                     <!-- span class="glyphicon glyphicon-stop"></span -->
                     Hold !
                 </button>

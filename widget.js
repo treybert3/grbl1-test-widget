@@ -756,9 +756,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             $('#com-chilipeppr-widget-grbl .grbl-feedhold').click(function() {
                 //console.log("GRBL: feedhold");
                 //alert($(this).data('command'));
-                that.sendCode($(this).data('command') + " \n");
+                var _cmd;
+                _cmd = $(this).data('command');
+                if(typeof _cmd == undefined) _cmd = '!';
+                that.sendCode(_cmd + " \n");
                 // announce to other widgets that user hit e-stop
-                if ($(this).data('command') == '!') {
+                if (_cmd == '!') {
                     chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/plannerpause', "");
                     chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/feedhold", "");
                     $(this).html("!");
