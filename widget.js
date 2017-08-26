@@ -1026,12 +1026,16 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
             this.currentUnitSystem = unitSystem;
             if (this.isConnected()) {
-                if (unitSystem == 'G20' && this.config[13][0] != 1) { //reset to mm
-                    this.sendCode(String.fromCharCode(36) + "13=1\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+                if (unitSystem == 'G20' && this.config[13][0] != 1) { //reset to inches
+                    var that = this;
+                    this.sendCode(String.fromCharCode(36) + "13=1\n");
+                    window.setTimeout(that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n"), 1000);
                 }
 
-                else if (unitSystem == 'G21' && this.config[13][0] != 0) { //reset to inches
-                    this.sendCode(String.fromCharCode(36) + "13=0\n" + String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+                else if (unitSystem == 'G21' && this.config[13][0] != 0) { //reset to mm
+                    var that = this;
+                    this.sendCode(String.fromCharCode(36) + "13=1\n");
+                    window.setTimeout(that.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n"), 1000);
                 }
             }
             if (isDirty) {
