@@ -158,7 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-02f',
+        widgetVersion: '2017-09-02g',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -624,6 +624,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/unitsChanged", this, this.updateWorkUnits);
             chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/recvUnits", this, this.updateWorkUnits);
             chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/units", this, this.updateWorkUnits); //this sets axes to match 3d viewer.
+            
             
             //listen for whether a gcode file is playing - if so, cancel our $G interval and start sending each 25 lines of gcode file sent.
             chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onplay", this, this.trackGcodeLines);
@@ -1684,13 +1685,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 });
                                 $('#stat-state-background-box').css('background-color', 'pink');
 
-                                that.addError("Error", that.errorMessages[errorCode]);
+                                that.addError("Error", errorMessages[errorCode]);
                                 break;
 
                             default:
-                                that.addError("Error", that.errorMessages[errorCode]);
-                                chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", that.errorMessages[errorCode]);
-
+                                that.addError("Error", errorMessages[errorCode]);
                         }
                         that.doQueue();
                         break;
@@ -2093,15 +2092,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         publishAxisStatus: function(axes) {
             this.grblConsole("axis data received", axes);
-            if(this.controller_units == '')
-            if(this.report_mode == 0 && this.controller_units == 'inch'){
-                ['x','y','z'].forEach(function(value,index){
-                    axes[index] = (parseFloat(value) * 25.4).toFixed(3);
-                }, this);
-            } else 
-            if(this.report_mode == 1 && this.controller_units == 'mm'){
+            if(this.report_mode == 0 && this.work_mode == 1){
                 ['x','y','z'].forEach(function(value,index){
                     axes[index] = (parseFloat(value) / 25.4).toFixed(3);
+                }, this);
+            } else 
+            if(this.report_mode == 1 && this.work_mode == 0){
+                ['x','y','z'].forEach(function(value,index){
+                    axes[index] = (parseFloat(value) * 25.4).toFixed(3);
                 }, this);
             }
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", axes);
