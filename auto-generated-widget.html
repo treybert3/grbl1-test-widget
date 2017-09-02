@@ -1561,18 +1561,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "f":
                                     //feed rate
                                     feedRate = parseInt(bit[1], 10);
-                                     if(that.report_mode == 1 && that.controller_units == 'inch'){
-                                            that.feedRate = feedRate;
-                                        } else 
-                                        if(that.report_mode == 0 && that.controller_units == 'inch'){
-                                            that.feedRate = (feedRate * 25.4).toFixed(2);
-                                        } else 
-                                        if(that.report_mode == 0 && that.controller_units == 'mm'){
-                                            that.feedRate = feedRate;
-                                        } else 
-                                        if(that.report_mode == 1 && that.controller_units == 'mm'){
-                                            that.feedRate = (feedRate / 25.4).toFixed(2);
-                                        }
+                
+                                     if(that.report_mode == 1 && that.work_mode == 0){
+                                         that.feedRate = (feedRate * 25.4).toFixed(2);
+                                     } else 
+                                     if(that.report_mode == 0 && that.work_mode == 1){
+                                            that.feedRate = (feedRate/25.4).toFixed(2);
+                                     } else{
+                                         that.feedRate = feedRate;
+                                     } 
                                     
                                         $('.stat-feedrate').html(that.feedRate);
                                     
