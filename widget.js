@@ -1618,7 +1618,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         } else {
                                             that.publishAxisStatus({"x":null,"y":null,"z":null});
                                         }
-                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(value.replace("G",""))});
+                                        //chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(value.replace("G",""))});
                                     }
                                     //that.updateWorkUnits('mm');
                                     break;
