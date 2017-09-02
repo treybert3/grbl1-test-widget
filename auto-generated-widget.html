@@ -707,7 +707,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
             this.forkSetup();
 
-
+            $('#widgetVersion').text('(v. ' + this.widgetVersion + ')');
             // setup recv pubsub event
             // this is when we receive data in a per line format from the serial port
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/recvline", this, function(msg) {
