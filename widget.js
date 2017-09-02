@@ -158,7 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-02c',
+        widgetVersion: '2017-09-02d',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -1616,7 +1616,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         if(that.last_machine.x !== null) {
                                             that.publishAxisStatus(that.last_machine);
                                         } else {
-                                            that.publishAxisStatus({"x":null,"y":null,"z":null});
+                                            that.publishAxisStatus({"x":0,"y":0,"z":0});
                                         }
                                         //chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(value.replace("G",""))});
                                     }
