@@ -158,7 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-02g',
+        widgetVersion: '2017-09-02h',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -2094,15 +2094,15 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.grblConsole("axis data received", axes);
             if(this.report_mode == 0 && this.work_mode == 1){
                 ['x','y','z'].forEach(function(value,index){
-                    axes[index] = (parseFloat(value) / 25.4).toFixed(3);
+                    axes[value] = (parseFloat(axes[value]) / 25.4).toFixed(3);
                 }, this);
             } else 
             if(this.report_mode == 1 && this.work_mode == 0){
                 ['x','y','z'].forEach(function(value,index){
-                    axes[index] = (parseFloat(value) * 25.4).toFixed(3);
+                    axes[value] = (parseFloat(axes[value]) * 25.4).toFixed(3);
                 }, this);
             }
-            console.error('grbl:',axes);
+            //console.error('grbl:',axes);
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", axes);
         },
         plannerLastEvent: "resume",
