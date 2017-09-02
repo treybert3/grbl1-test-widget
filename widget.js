@@ -158,7 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-02h',
+        widgetVersion: '2017-09-02i',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -729,6 +729,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                     grblVersion: ""
                 };
             }
+            if(options.grbVersion == 'undefined') options.grbVersion = "";
             this.options = options;
             this.version = this.options.grblVersion;
             this.jogFeedRate = parseInt(options.jogFeedRate, 10);
@@ -1773,7 +1774,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 if(this.report_mode == 0 && this.controller_units == 'mm'){
                                 } else 
                                 if(this.report_mode == 0 && this.controller_units == 'inch'){
-                                    obj[index] = (ob[index] * 25.4);
+                                    obj[index] = (obj[index] * 25.4);
                                 } else 
                                 if(this.report_mode == 1 && this.controller_units == 'mm'){
                                     obj[index] = (obj[index] / 25.4);
