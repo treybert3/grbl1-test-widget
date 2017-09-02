@@ -139,7 +139,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             "/com-chilipeppr-widget-serialport/ws/onconnect": "When we see a new connect, query for status.",
             "/com-chilipeppr-widget-serialport/recvline": "When we get a dataline from serialport, process it and fire off generic CNC controller signals to the /com-chilipeppr-interface-cnccontroller channel.",
             "/com-chilipeppr-widget-serialport/send": "Subscribe to serial send and override so no other subscriptions receive command.",
-            "/com-chilipeppr-widget-grbl-autolevel/probing": "Subscribe to the autolevel widget to listen for probing commands"
+            "/com-chilipeppr-widget-grbl-autolevel/probing": "Subscribe to the autolevel widget to listen for probing commands",
+            "/com-chilipeppr-widget-serialport/onQueue": "we need to track whether someone is manually changing the config"
         },
         //plannerPauseAt: 128, // grbl planner buffer can handle 128 bytes of data
         //qLength: new Queue(),
@@ -157,6 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
+        widgetVersion: '2017-09-02a',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -622,7 +624,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/unitsChanged", this, this.updateWorkUnits);
             chilipeppr.subscribe("/com-chilipeppr-widget-3dviewer/recvUnits", this, this.updateWorkUnits);
             chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/units", this, this.updateWorkUnits); //this sets axes to match 3d viewer.
-            chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/coordinateUnits", this, this.updateCoordinateUnits);
+            
             //listen for whether a gcode file is playing - if so, cancel our $G interval and start sending each 25 lines of gcode file sent.
             chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onplay", this, this.trackGcodeLines);
             chilipeppr.subscribe("/com-chilipeppr-widget-gcode/onstop", this, this.restartStatusInterval);
@@ -647,6 +649,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 }
             });
 
+            chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onQueue", this, function(data){
+               if(/\$\d{1,3}\s*?=/.test(data.D)){
+                   this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
+               } 
+            });
             //call to find out what current work units are 
             chilipeppr.publish("/com-chilipeppr-widget-3dviewer/requestUnits", "");
 
@@ -717,19 +724,21 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             else {
                 options = {
                     showBody: true,
-                    jogFeedRate: 200
+                    jogFeedRate: 200,
+                    grblVersion: ""
                 };
             }
             this.options = options;
+            this.version = this.options.grblVersion;
             this.jogFeedRate = parseInt(options.jogFeedRate, 10);
             if (isNaN(this.jogFeedRate)) this.jogFeedRate = 200;
             //console.log("GRBL: options:", options);
-
         },
         saveOptionsCookie: function() {
             var options = {
                 showBody: this.options.showBody,
-                jogFeedRate: this.jogFeedRate
+                jogFeedRate: this.jogFeedRate,
+                grblVersion: this.version
             };
             var optionsStr = JSON.stringify(options);
             //console.log("GRBL: saving options:", options, "json.stringify:", optionsStr);
@@ -1001,6 +1010,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             else {
                 this.grblConsole("cannot find config object", index);
             }
+            this.updateReportUnits();
         },
         commandQueue: [],
         isConnected: function() {
@@ -1020,6 +1030,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         availableBuffer: 0,
         harmoniseCoordinates: function(unitSystem) {
+            return;/*
             var isDirty = false;
             if (this.currentUnitSystem != unitSystem) {
                 isDirty = true;
@@ -1043,18 +1054,11 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", unitSystem == 'G21' ? 'mm' : 'inch');
                 chilipeppr.subscribe("/com-chilipeppr-interface-cnccontroller/coordinateUnits", this, this.updateCoordinateUnits);
             }
+            */
         },
         updateWorkUnits: function(units) {
-            if (this.isV1()) {
-                return;
-            }
-            var wm;
-            if (units === "mm") {
-                wm = 0;
-            }
-            else if (units === "inch") {
-                wm = 1;
-            }
+            var wm = units === 'mm' ? 0 : 1;
+            
             if (this.work_mode != wm) {
                 this.work_mode = wm;
             }
@@ -1065,7 +1069,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             //  this.updateReportUnits();
         },
         updateCoordinateUnits: function(unitSystem) {
-            this.grblConsole('received coordinate unit update', unitSystem);
+            return;
+            /*this.grblConsole('received coordinate unit update', unitSystem);
             if (unitSystem == 'G20') {
                 this.controller_units = 'inch';
             }
@@ -1073,43 +1078,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 this.controller_units = 'mm';
             }
             this.harmoniseCoordinates(unitSystem);
+            */
         },
         updateReportUnits: function() {
-            /*
-            if (this.isV1()) {
-                return;
+            if(this.config[13] !== undefined){
+                if(this.config[13][0] === 0){
+                    this.report_mode = 0;
+                }else if(this.config[13][0] === 1){
+                    this.report_mode = 1;
+                } 
+            } else {
+                this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
             }
-            this.grblConsole("in update report units", {
-                work: this.work_mode,
-                report: this.report_mode
-            });
-            switch (this.work_mode) {
-                case 0: //mm
-                    if (this.config[13] == undefined || this.config[13][0] == 1) {
-                        this.commandQueue.push(String.fromCharCode(36) + "13=0\n");
-                        this.grblConsole("update report units", {
-                            controller: this.controller_units,
-                            work: this.work_mode,
-                            report: this.report_mode
-                        });
-                        this.config[13] = [0, ""];
-                        $(".stat-units").html("mm");
-                    }
-                    break;
-                case 1:
-                    if (this.config[13] == undefined || this.config[13][0] == 0) {
-                        this.commandQueue.push(String.fromCharCode(36) + "13=1\n");
-                        this.grblConsole("update report units", {
-                            controller: this.controller_units,
-                            work: this.work_mode,
-                            report: this.report_mode
-                        });
-                        this.config[13] = [1, ''];
-                        $(".stat-units").html("inch");
-                    }
-                    break;
-            }
-            */
+            console.log("GRBL: Updated Report Units - " + this.report_mode);
         },
         //formerly queryControllerForStatus
         openController: function(isWithDelay) {
@@ -1422,6 +1403,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     ['x', 'y', 'z'].forEach(function(val, index) {
                                         this.last_machine[val] = parseFloat(coords[index]);
                                     }, that);
+                                    that.last_machine.unit = that.report_mode == 1 ? 'inch' : 'mm';
                                     receivedMachineCoords = true;
                                     break;
                                 case "wpos":
@@ -1430,6 +1412,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     ['x', 'y', 'z'].forEach(function(val, index) {
                                         this.last_work[val] = parseFloat(coords[index]);
                                     }, that);
+                                    that.last_work.unit = that.report_mode == 1 ? 'inch' : 'mm';
                                     receivedWorkCoords = true;
                                     break;
                                 case "wco":
@@ -1438,6 +1421,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     ['x', 'y', 'z'].forEach(function(val, index) {
                                         this.offsets[val] = parseFloat(offset[index]);
                                     }, that);
+                                    
                                     break;
                                 case "bf":
                                     //typically disabled in grbl 1.1
@@ -1452,25 +1436,45 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case "f":
                                     //feed rate
                                     feedRate = parseInt(bit[1], 10);
-                                    if (feedRate != that.feedRate) {
-                                        that.feedRate = feedRate;
-                                        $('.stat-feedrate').html(feedRate);
-                                    }
+                                     if(that.report_mode == 1 && that.controller_units == 'inch'){
+                                            that.feedRate = feedRate;
+                                        } else 
+                                        if(that.report_mode == 0 && that.controller_units == 'inch'){
+                                            that.feedRate = (feedRate * 25.4).toFixed(2);
+                                        } else 
+                                        if(that.report_mode == 0 && that.controller_units == 'mm'){
+                                            that.feedRate = feedRate;
+                                        } else 
+                                        if(that.report_mode == 1 && that.controller_units == 'mm'){
+                                            that.feedRate = (feedRate / 25.4).toFixed(2);
+                                        }
+                                    
+                                        $('.stat-feedrate').html(that.feedRate);
+                                    
                                     break;
                                 case "fs":
                                     //feed rate and spindle speed
                                     var _bits = bit[1].split(',');
-                                    var feedRate = _bits[0];
-                                    if (feedRate != that.feedRate) {
-                                        that.feedRate = feedRate;
-                                        $('.stat-feedrate').html(feedRate);
-                                    }
+                                    var feedRate = parseInt(_bits[0],10);
+                                    
+                                        if(that.report_mode == 1 && that.controller_units == 'inch'){
+                                            that.feedRate = feedRate;
+                                        } else 
+                                        if(that.report_mode == 0 && that.controller_units == 'inch'){
+                                            that.feedRate = (feedRate * 25.4).toFixed(2);
+                                        } else 
+                                        if(that.report_mode == 0 && that.controller_units == 'mm'){
+                                            that.feedRate = feedRate;
+                                        } else 
+                                        if(that.report_mode == 1 && that.controller_units == 'mm'){
+                                            that.feedRate = (feedRate / 25.4).toFixed(2);
+                                        }
+                                        $('.stat-feedrate').html(that.feedRate);
+                                    
 
-                                    var spindleSpeed = _bits[1] == '0' ? "Off" : spindleSpeed;
-                                    if (spindleSpeed != that.spindleSpeed) {
-                                        that.spindleSpeed = spindleSpeed;
-                                        $('.stat-spindle').html(spindleSpeed == 0 ? 'Off' : spindleSpeed);
-                                    }
+                                        var spindleSpeed = _bits[1];
+                                        $('.stat-spindle').html(that.spindleSpeed == 0 ? 'Off' : that.spindleSpeed);
+                                    
                                     break;
                                 case "pn":
                                     //reports pin status
@@ -1548,7 +1552,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             ['x', 'y', 'z'].forEach(function(val) {
                                 this.last_work[val] = (this.last_machine[val] - this.offsets[val]);
                             }, that);
-
                         }
                         else if (!receivedMachineCoords && receivedWorkCoords) {
                             ['x', 'y', 'z'].forEach(function(val) {
@@ -1600,23 +1603,26 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     break;
 
                                 case 'G21':
-                                    console.info(that.config);
-                                    if (that.controller_units !== 'mm') {
-                                        that.controller_units = 'mm';
+                                case 'G20':
+                                    var t = value === 'G21' ? 'mm' : 'inch';
+                                    if (that.controller_units !== t) {
+                                        that.controller_units = t;
                                         $('.stat-units').html(that.controller_units);
+                                        console.log("GRBL: we have a unit change. publish it. units:", that.controller_units);
+                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
+                                        if(that.last_work.x !== null){
+                                            that.publishAxisStatus(that.last_work);
+                                        }else 
+                                        if(that.last_machine.x !== null) {
+                                            that.publishAxisStatus(that.last_machine);
+                                        } else {
+                                            that.publishAxisStatus({"x":null,"y":null,"z":null});
+                                        }
+                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(valu.replace("G",""))});
                                     }
-                                    that.harmoniseCoordinates('G21');
                                     //that.updateWorkUnits('mm');
                                     break;
 
-                                case 'G20':
-                                    console.info(that.config);
-                                    if (that.controller_units !== 'inch') {
-                                        that.controller_units = "inch";
-                                        $('.stat-units').html(that.controller_units);
-                                    }
-                                    that.harmoniseCoordinates('G20');
-                                    break;
                             }
                         }, that);
 
@@ -1748,12 +1754,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             var bits = result[2].split(':');
                             var probeSuccess = parseInt(bits[1], 10);
                             var coords = bits[0].split(',');
-                            var obj = {
-                                x: (parseFloat(coords[0]) - that.offsets.x),
-                                y: (parseFloat(coords[1]) - that.offsets.y),
-                                z: (parseFloat(coords[2]) - that.offsets.z),
-                                status: probeSuccess
-                            };
+                            var obj = {};
+                            ['x','y','z'].forEach(function(value,index){
+                                if(this.controller)
+                                obj[index] = parseFloat(coords[index]);
+                                if(this.report_mode == 1 && this.controller_units == 'inch'){
+                                } else 
+                                if(this.report_mode == 0 && this.controller_units == 'mm'){
+                                } else 
+                                if(this.report_mode == 0 && this.controller_units == 'inch'){
+                                    obj[index] = (ob[index] * 25.4);
+                                } else 
+                                if(this.report_mode == 1 && this.controller_units == 'mm'){
+                                    obj[index] = (obj[index] / 25.4);
+                                }
+                                obj[index] = obj[index] - this.offsets[value];
+                            }, that);
+                            obj.status = 'probeSuccess';
                             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/proberesponse", obj);
                         }
                         break;
@@ -2076,14 +2093,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         publishAxisStatus: function(axes) {
             this.grblConsole("axis data received", axes);
-            var _axes = {};
-            $.each(axes, function(index, val) {
-                if (isNaN(val)) {
-                    val = 0.000;
-                }
-                _axes[index] = parseFloat(val).toFixed(3);
-            });
-            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", _axes);
+            chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", axes);
         },
         plannerLastEvent: "resume",
         publishPlannerPause: function() {
