@@ -282,7 +282,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-02a',
+        widgetVersion: '2017-09-02b',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -1742,7 +1742,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                         } else {
                                             that.publishAxisStatus({"x":null,"y":null,"z":null});
                                         }
-                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(valu.replace("G",""))});
+                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(value.replace("G",""))});
                                     }
                                     //that.updateWorkUnits('mm');
                                     break;
