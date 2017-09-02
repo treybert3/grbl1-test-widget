@@ -843,7 +843,14 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             });
 
 
+            
+            this.setJogRate(this.jogFeedRate);
+            // new buttons end
+        },
+        setJogRate: function(rate){
             var jogFeedEditing = false;
+                this.jogFeedRate = rate;
+            var that= this;
             $('.stat-jogFeedRate').text(this.jogFeedRate)
                 .on('click', function(e) {
                     if (jogFeedEditing) return;
@@ -861,11 +868,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                             that.saveOptionsCookie();
                         })
                         .appendTo($(this));
-
                 });
             chilipeppr.publish('/com-chilipeppr-interface-cnccontroller/jogFeedRate', parseInt(this.jogFeedRate, 10));
-            // new buttons end
-        },
+            },
         showConfigModal: function() {
             if (!this.isConnected()) {
                 chilipeppr.publish("/com-chilipeppr-elem-flashmsg/flashmsg", "GRBL Widget", "The controller is not connected or offline");
@@ -1082,14 +1087,23 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             */
         },
         updateReportUnits: function() {
+            var rm = this.report_mode;
             if(this.config[13] !== undefined){
                 if(this.config[13][0] === 0){
                     this.report_mode = 0;
                 }else if(this.config[13][0] === 1){
                     this.report_mode = 1;
-                } 
+                }
             } else {
                 this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + "\n");
+            }
+            if(this.report_mode != rm){
+                if(rm == 0){
+                    //need to reduce jograte
+                    this.setJogRate(this.jogFeedRate/25.4);
+                } else {
+                    this.setJogRate(this.jogFeedRate*25.4);
+                }
             }
             console.log("GRBL: Updated Report Units - " + this.report_mode);
         },
@@ -2276,6 +2290,18 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             $("#ttl-mcoords").attr("data-title", "Machine Coordinates");
             $("#ttl-mcoords").attr("data-content", "Shows the current machine coordinates based on the machine origin.  This differs from the current work coordinates when a work coordinate offset has been applied.");
             $("#ttl-mcoords").popover();
+            
+            $("#ttl-jogFeedRate").attr("data-delay", "500");
+            $("#ttl-jogFeedRate").attr("data-animation", "true");
+            $("#ttl-jogFeedRate").attr("data-placement", "auto");
+            $("#ttl-jogFeedRate").attr("data-container", "body");
+            $("#ttl-jogFeedRate").attr("data-trigger", "hover");
+            $("#ttl-jogFeedRate").attr("data-toggle", "popover");
+            $("#ttl-jogFeedRate").attr("data-title", "Jog Feed Rate");
+            $("#ttl-jogFeedRate").attr("data-content", "Shows the current jog feed rate in the reporting units/min.  Click the box to edit.");
+            $("#ttl-jogFeedRate").popover();
+            
+            
         }
     };
 });
