@@ -1231,7 +1231,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
 
         },
         grblResponseV1: function(recvline) {
-            console.error("grbl: in response");
+            //console.error("grbl: in response");
             var pushMessages = {
                 status: new RegExp("^\\<(.*?)\\>", "i"),
                 gCodeState: new RegExp("^\\[GC:(.*?)\\]", "i"),
