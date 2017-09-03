@@ -1623,20 +1623,22 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case 'G21':
                                 case 'G20':
                                     var t = value === 'G21' ? 'mm' : 'inch';
-                                    that.controller_units = t;
-                                    $('.stat-units').html(that.controller_units);
-                                    console.log("GRBL: we have a unit change. publish it. units:", that.controller_units);
-                                    chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                    if(that.last_work.x !== null){
-                                        that.publishAxisStatus(that.last_work);
-                                    }else 
-                                    if(that.last_machine.x !== null) {
-                                        that.publishAxisStatus(that.last_machine);
-                                    } else {
-                                        that.publishAxisStatus({"x":0,"y":0,"z":0});
-                                    }
-                                    //chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(value.replace("G",""))});
+                                    if(that.controller_units !== t){
+                                        that.controller_units = t;
+                                        $('.stat-units').html(that.controller_units);
+                                        console.log("GRBL: we have a unit change. publish it. units:", that.controller_units);
+                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
+    
+                                        if(that.last_work.x !== null){
+                                            that.publishAxisStatus(that.last_work);
+                                        } else 
+                                        if(that.last_machine.x !== null) {
+                                            that.publishAxisStatus(that.last_machine);
+                                        } else {
+                                            that.publishAxisStatus({"x":0,"y":0,"z":0});
+                                        }
                                     //that.updateWorkUnits('mm');
+                                    }
                                     break;
 
                             }
