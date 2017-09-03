@@ -1326,10 +1326,10 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             }
         },
         trackGcodeLines: function() {
-            if (this.g_status_reports !== null) {
+            /*if (this.g_status_reports !== null) {
                 clearInterval(this.g_status_reports);
                 this.g_status_reports = null; //clear status report interval flag
-            }
+            }*/
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/jsonSend", this, function(msg) {
                 // ERROR: msg.Id could be undefined
                 if (msg.Id !== undefined && msg.Id.slice(1) % 5 === 0)
@@ -1343,12 +1343,12 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             var that = this;
             if (this.g_status_reports === null) { //confirm no setInterval is currently running.
                 that.g_status_reports = setInterval(function() {
-                    if (that.q_count === 0) { //only send $G if the queue is clear
+                    //if (that.q_count === 0) { //only send $G if the queue is clear
                         that.getControllerInfo(); //send a $G every 2 seconds
-                    }
+                    /*}
                     else {
                         that.grblConsole("q count is " + that.q_count);
-                    }
+                    }*/
 
                 }, 2000);
             }
