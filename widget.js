@@ -158,7 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-03b',
+        widgetVersion: '2017-09-03c',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -1518,9 +1518,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     var spindleDirection = '';
                                     var mistCoolant = false;
                                     var floodCoolant = false;
-                                    $.each(bit[1], function(index, value) {
+                                    $.each(_bits, function(index, value) {
                                         switch (value) {
-                                            /* case 'S':
+                                             case 'S':
                                                 spindleEnabled = true;
                                                 spindleDirection = "CW";
                                                 break;
@@ -1528,7 +1528,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                                 spindleEnabled = true;
                                                 spindleDirection = "CCW";
                                                 break;
-                                          */
+                                          
                                             case 'F':
                                                 floodCoolant = true;
                                                 break;
