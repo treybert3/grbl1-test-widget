@@ -158,7 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-03f',
+        widgetVersion: '2017-09-03h',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -855,9 +855,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         setJogRate: function(rate){
             var jogFeedEditing = false;
-                this.jogFeedRate = rate;
+            this.jogFeedRate = rate;
             var that= this;
-            $('.stat-jogFeedRate').text(this.jogFeedRate)
+            $('.stat-jogFeedRate').text(this.jogFeedRate.toFixed(0))
                 .on('click', function(e) {
                     if (jogFeedEditing) return;
                     jogFeedEditing = true;
