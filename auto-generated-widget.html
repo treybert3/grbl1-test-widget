@@ -282,7 +282,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-03e',
+        widgetVersion: '2017-09-03f',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -1566,7 +1566,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                     ['x', 'y', 'z'].forEach(function(val, index) {
                                         this.offsets[val] = parseFloat(offset[index]);
                                     }, that);
-                                    
+                                    that.offsets.unit = that.report_mode == 1 ? 'inch' : 'mm';
                                     break;
                                 case "bf":
                                     //typically disabled in grbl 1.1
@@ -2231,7 +2231,8 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         },
         publishAxisStatus: function(axes) {
             this.grblConsole("axis data received", axes);
-            if(this.report_mode == 0 && this.work_mode == 1){
+            if(axes.unit == 'undefined'){
+            if(this.report_mode == 0 && this.work_mode == 1){ //report in mm display in inches
                 ['x','y','z'].forEach(function(value,index){
                     axes[value] = (parseFloat(axes[value]) / 25.4).toFixed(3);
                 }, this);
@@ -2240,6 +2241,18 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 ['x','y','z'].forEach(function(value,index){
                     axes[value] = (parseFloat(axes[value]) * 25.4).toFixed(3);
                 }, this);
+            }
+            } else {
+                if(axes.unit == 0 && this.work_mode == 1){
+                    ['x','y','z'].forEach(function(value,index){
+                        axes[value] = (parseFloat(axes[value]) / 25.4).toFixed(3);
+                    }, this);
+                } else 
+                if (axes.unit == 1 & this.work_mode == 0){
+                    ['x','y','z'].forEach(function(value,index){
+                        axes[value] = (parseFloat(axes[value]) * 25.4).toFixed(3);
+                    }, this);
+                }
             }
             //console.error('grbl:',axes);
             chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/axes", axes);
