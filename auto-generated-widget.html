@@ -282,7 +282,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-03d',
+        widgetVersion: '2017-09-03e',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -1745,21 +1745,19 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                                 case 'G21':
                                 case 'G20':
                                     var t = value === 'G21' ? 'mm' : 'inch';
-                                    if (that.controller_units !== t) {
-                                        that.controller_units = t;
-                                        $('.stat-units').html(that.controller_units);
-                                        console.log("GRBL: we have a unit change. publish it. units:", that.controller_units);
-                                        chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
-                                        if(that.last_work.x !== null){
-                                            that.publishAxisStatus(that.last_work);
-                                        }else 
-                                        if(that.last_machine.x !== null) {
-                                            that.publishAxisStatus(that.last_machine);
-                                        } else {
-                                            that.publishAxisStatus({"x":0,"y":0,"z":0});
-                                        }
-                                        //chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(value.replace("G",""))});
+                                    that.controller_units = t;
+                                    $('.stat-units').html(that.controller_units);
+                                    console.log("GRBL: we have a unit change. publish it. units:", that.controller_units);
+                                    chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/units", that.controller_units);
+                                    if(that.last_work.x !== null){
+                                        that.publishAxisStatus(that.last_work);
+                                    }else 
+                                    if(that.last_machine.x !== null) {
+                                        that.publishAxisStatus(that.last_machine);
+                                    } else {
+                                        that.publishAxisStatus({"x":0,"y":0,"z":0});
                                     }
+                                    //chilipeppr.publish("/com-chilipeppr-interface-cnccontroller/coords",{coord:value,coordNum: parseInt(value.replace("G",""))});
                                     //that.updateWorkUnits('mm');
                                     break;
 
