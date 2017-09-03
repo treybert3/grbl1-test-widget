@@ -158,7 +158,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
         controller_units: null,
         status: "Offline",
         version: "",
-        widgetVersion: '2017-09-03c',
+        widgetVersion: '2017-09-03d',
         q_count: 0,
         alarm: false,
         spindleSpeed: 'Off',
@@ -567,6 +567,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             return rObj;
         },
         init: function() {
+            console.error('grbl: reference');
             var query = window.location.search.substring(1);
             var vars = query.split("&");
             vars.forEach(function(item, index) {
