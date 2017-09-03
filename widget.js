@@ -654,6 +654,9 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             chilipeppr.subscribe("/com-chilipeppr-widget-serialport/onQueue", this, function(data){
                if(/\$\d{1,3}\s*?=/.test(data.D)){
                    this.sendCode(String.fromCharCode(36) + String.fromCharCode(36) + '\n');
+               } else 
+               if(/G20|G21/i.test(data.D)){
+                   this.sendCode(String.fromCharCode(36) + "G\n");
                }
             });
             //call to find out what current work units are 
@@ -1121,7 +1124,6 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
                 if (that.version === "") {
                     that.sendCode("*init*\n"); //send request for grbl init line (grbl was already connected to spjs when chilipeppr loaded and no init was sent back.
                     that.sendCode(String.fromCharCode(36) + "I\n");
-
                 }
                 else {
                     if (that.isV1()) {
