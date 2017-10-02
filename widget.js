@@ -729,7 +729,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             else {
                 options = {
                     showBody: true,
-                    jogFeedRate: 200,
+                    jogFeedRate: 5000,
                     grblVersion: ""
                 };
             }
@@ -737,7 +737,7 @@ cpdefine("inline:com-chilipeppr-widget-grbl", ["chilipeppr_ready", "jquerycookie
             this.options = options;
             this.version = this.options.grblVersion;
             this.jogFeedRate = parseInt(this.options.jogFeedRate, 10);
-            if (isNaN(this.jogFeedRate)) this.jogFeedRate = 200;
+            if (isNaN(this.jogFeedRate)) this.jogFeedRate = 5000;
             this.setJogRate(this.jogFeedRate);
             //console.log("GRBL: options:", options);
         },
